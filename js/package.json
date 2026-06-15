@@ -7,9 +7,10 @@
   "exports": {
     ".": "./index.mjs"
   },
-  "files": ["index.mjs"],
+  "files": ["index.mjs", "sanskrit-util.global.js"],
   "scripts": {
-    "test": "node test/vectors.test.mjs && node test/units.test.mjs"
+    "build": "node build-global.mjs",
+    "test": "node test/vectors.test.mjs && node test/units.test.mjs && node test/global.test.mjs"
   },
   "keywords": ["sanskrit", "iast", "slp1", "devanagari", "transliteration", "cdsl", "lexicography"],
   "license": "MIT",

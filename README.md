@@ -79,6 +79,19 @@ import { to_slp1, form_key, norm } from '@sanskrit-lexicon/sanskrit-util'; // or
 to_slp1('aiśvarya'); // 'ESvarya'
 ```
 
+### Browser, no bundler (plain `<script>`)
+For static pages that load plain scripts (no ES-module `import`), use the global build
+[`js/sanskrit-util.global.js`](js/sanskrit-util.global.js) — it exposes `window.SanskritUtil`:
+```html
+<script src="sanskrit-util.global.js"></script>
+<script>
+  SanskritUtil.norm('धर्म');        // 'dharma'
+  SanskritUtil.to_slp1('aiśvarya'); // 'ESvarya'
+</script>
+```
+The global build is **generated** from `index.mjs` by `node js/build-global.mjs` (single source;
+CI fails via `--check` if it goes stale) and is behaviour-identical to the ESM build and Python.
+
 ### In a sibling repo without publishing (this GitHub-root layout)
 Drop a 12-line re-export shim named `sanskrit_util.py` that loads
 `../../sanskrit-util/py/sanskrit_util/__init__.py` by relative path — see the working example at
