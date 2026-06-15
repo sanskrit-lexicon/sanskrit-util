@@ -102,10 +102,19 @@ export function iast_to_devanagari(text) {
 // ---- normalization keys ----
 const DEVA_RE = /[ऀ-ॿ]/;
 
+// Whitespace pinned to match the Python port's _WS_CHARS exactly. JS String.trim()/\s strip the
+// BOM/ZWNBSP U+FEFF (which sneaks in when a file is read without a BOM-aware decoder) while Python
+// str.strip()/\s do not (and conversely Python strips U+0085 NEL) — list the class explicitly so
+// norm()/form_key()/slp1_norm() yield identical keys in both languages.
+const WS = '\\t\\n\\x0b\\f\\r \\x85\\xa0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff';
+const WS_TRIM_RE = new RegExp('^[' + WS + ']+|[' + WS + ']+$', 'g');
+const WS_RUN_RE = new RegExp('[' + WS + ']+', 'g');
+const wstrim = (s) => s.replace(WS_TRIM_RE, '');
+
 export function norm(s) {
   s = s || '';
   if (DEVA_RE.test(s)) s = deva_to_iast(s);
-  return s.normalize('NFD').replace(/\p{Mn}/gu, '').normalize('NFC').toLowerCase().trim();
+  return wstrim(s.normalize('NFD').replace(/\p{Mn}/gu, '').normalize('NFC').toLowerCase());
 }
 
 export function nfold(s) {
@@ -118,7 +127,7 @@ const FK_VOWELS = new Set([...'aāiīuūṛṝḷḹeēoō']);
 const COMBINING_RE = /\p{Mn}/u;
 
 export function form_key(s) {
-  s = (s || '').trim().toLowerCase();
+  s = wstrim(s || '').toLowerCase();
   if (s === '-' || s === '–' || s === '—') return '';
   s = s.replace(/ḥ$/, '');
   s = s.replace(/[ṃṁṅñṇ]/g, 'n');
@@ -168,7 +177,7 @@ export function strip_slp1_accents(slp1) {
 export function slp1_norm(slp1) {
   let s = strip_slp1_accents(slp1 ?? '');
   s = s.replace(/\d+$/, '');
-  return s.replace(/\s+/g, ' ').trim();
+  return wstrim(s.replace(WS_RUN_RE, ' '));
 }
 
 export function slp1_form_key(slp1) {

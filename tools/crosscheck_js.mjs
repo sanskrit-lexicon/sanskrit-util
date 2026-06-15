@@ -3,7 +3,8 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import * as su from '../js/index.mjs';
 
-const STR_FNS = ['to_slp1', 'from_slp1', 'deva_to_iast', 'iast_to_devanagari', 'norm', 'nfold', 'form_key', 'normalize_sanskrit'];
+const STR_FNS = ['to_slp1', 'from_slp1', 'deva_to_iast', 'iast_to_devanagari', 'norm', 'nfold', 'form_key', 'normalize_sanskrit',
+  'strip_slp1_accents', 'slp1_norm', 'slp1_form_key'];
 const inp = JSON.parse(readFileSync(process.argv[2], 'utf8'));
 const out = {};
 for (const fn of STR_FNS) out[fn] = inp.str.map((s) => su[fn](s));

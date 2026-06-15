@@ -168,6 +168,13 @@ def iast_to_devanagari(text):
 # ---- normalization keys ----------------------------------------------------
 _DEVA_RE = re.compile('[ऀ-ॿ]')
 
+# Whitespace stripped/collapsed IDENTICALLY to the JS port. JS String.trim() and JS \s strip the
+# BOM/ZWNBSP U+FEFF (which sneaks in when a file is read without utf-8-sig — the CDSL BOM pitfall),
+# while Python str.strip()/\s do not (and conversely Python strips U+0085 NEL, JS does not). Pin an
+# explicit class so norm()/form_key()/slp1_norm() yield the SAME key in both languages.
+_WS_CHARS = '\t\n\x0b\x0c\r \x85\xa0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000\ufeff'
+_WS_RUN = re.compile('[' + re.escape(_WS_CHARS) + ']+')
+
 
 def norm(s):
     """EXACT diacritic-insensitive lookup key: (Devanāgarī->IAST if present), NFD, drop all
@@ -177,7 +184,7 @@ def norm(s):
         s = deva_to_iast(s)
     s = unicodedata.normalize('NFD', s)
     s = ''.join(c for c in s if unicodedata.category(c) != 'Mn')
-    return unicodedata.normalize('NFC', s).lower().strip()
+    return unicodedata.normalize('NFC', s).lower().strip(_WS_CHARS)
 
 
 def nfold(s):
@@ -198,7 +205,7 @@ _FK_VOWELS = set('aāiīuūṛṝḷḹeēoō')
 
 def form_key(s):
     """Length-preserving fold for comparing Sanskrit word forms. See module note above."""
-    s = (s or '').strip().lower()
+    s = (s or '').strip(_WS_CHARS).lower()
     if s in ('-', '–', '—'):                    # warnemyr 'no recorded form' placeholder -> blank
         return ''
     s = re.sub('ḥ$', '', s)                     # nom-sg visarga
@@ -249,7 +256,8 @@ SLP1_ALPHABET = SLP1_VOWELS + SLP1_MARKS + SLP1_CONSONANTS   # valid SLP1 letter
 
 _SLP1_ACCENTS = re.compile(r'[/\\^~]')   # udātta / anudātta / svarita / candrabindu
 _SLP1_TRAILING_NUM = re.compile(r'\d+$')
-_WS = re.compile(r'\s+')
+# whitespace collapse uses the unified _WS_RUN / _WS_CHARS (defined with norm()) so SLP1 keys
+# match the JS port on the BOM/NEL edge cases too.
 
 
 def strip_slp1_accents(slp1):
@@ -264,7 +272,7 @@ def slp1_norm(slp1):
     the per-repo normalize_lemma / normalizeSlp1Lemma headword normalizers."""
     s = strip_slp1_accents(slp1 or '')
     s = _SLP1_TRAILING_NUM.sub('', s)
-    return _WS.sub(' ', s).strip()
+    return _WS_RUN.sub(' ', s).strip(_WS_CHARS)
 
 
 def slp1_form_key(slp1):

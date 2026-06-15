@@ -23,8 +23,9 @@ ROOT = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(ROOT, 'py'))
 import sanskrit_util as su  # noqa: E402
 
-STR_FNS = ['to_slp1', 'from_slp1', 'deva_to_iast', 'iast_to_devanagari', 'norm', 'nfold', 'form_key', 'normalize_sanskrit']
-DONOR_STR_FNS = ['to_slp1', 'from_slp1', 'form_key']           # always comparable
+STR_FNS = ['to_slp1', 'from_slp1', 'deva_to_iast', 'iast_to_devanagari', 'norm', 'nfold', 'form_key', 'normalize_sanskrit',
+           'strip_slp1_accents', 'slp1_norm', 'slp1_form_key']
+DONOR_STR_FNS = ['to_slp1', 'from_slp1', 'form_key']           # always comparable (donor has no SLP1-side API)
 DONOR_NORM_FNS = ['norm', 'nfold']                            # compare on non-Devanāgarī only
 
 ACUTE, GRAVE, SVAR, ANUD = '́', '̀', '॑', '॒'
@@ -36,6 +37,13 @@ EXOTIC = [
     'kṛṣṇa' + ANUD, 'धर्मं', 'अग्निः', 'क्ष्म्य', 'श्री', 'ॐ', 'a‍b', 'ṛṝḷḹ',
     'AÁBC', 'XYZ123', 'saṃskṛtam', 'kāṃkṣ', 'tat tvam asi', 'kó',
 ]
+
+
+# whitespace/BOM/NEL trim+collapse divergences (leading, trailing, internal) — built via chr() so
+# the source stays ASCII; these must produce identical keys in both ports after the WS-class fix.
+_BOM, _NEL, _NBSP, _IDSP = chr(0xFEFF), chr(0x85), chr(0xA0), chr(0x3000)
+EXOTIC += [_BOM + 'agni', 'agni' + _BOM, 'a' + _BOM + 'b', _NEL + 'rama', 'rama' + _NEL,
+           _BOM + 'aMSa2', 'a/MSa' + _BOM, _NBSP + 'deva' + _NBSP, ' x ', _IDSP + 'y' + _IDSP]
 
 
 def load_donor():
@@ -127,7 +135,7 @@ def main():
         for kind, fn, key, a, b in fails[:40]:
             print(f'  [{kind}] {fn}({key!r}): {a!r}  vs  {b!r}')
         return 1
-    print('OK: package-Python == JS-port on all 9 functions'
+    print(f'OK: package-Python == JS-port on all {len(STR_FNS) + 1} functions'
           + ('' if donor_note else ' AND == donor on the 6 donor-origin functions'))
     return 0
 
