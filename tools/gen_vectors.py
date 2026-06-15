@@ -34,6 +34,13 @@ STR_INPUTS = [
     # Devanāgarī (norm/nfold/deva_to_iast are Devanāgarī-aware)
     'धर्म', 'कृष्ण', 'सञ्जय', 'गच्छति', 'अग्नि', 'राजन्', 'सुखं', 'विद्या', 'अऽपि',
 ]
+# Devanāgarī inputs for deva_to_slp1 — the Devanāgarī subset of STR_INPUTS plus the retroflex-ḻa
+# (ळ) cases that motivate the direct transcode: ळ → 'L' must NOT collapse onto vocalic ḷ (ऌ /
+# the ◌ॢ mātrā), which is 'x'. 'अग्निमीळे' = RV 1.1.1 incipit; 'खेळ' = Marathi; 'कॢप्त' = kḷpta.
+DEVA_SLP1_INPUTS = [
+    '', 'धर्म', 'कृष्ण', 'सञ्जय', 'गच्छति', 'अग्नि', 'राजन्', 'सुखं', 'विद्या', 'अऽपि',
+    'ळ', 'खेळ', 'अग्निमीळे', 'ऌ', 'कॢप्त',
+]
 # SLP1 inputs for from_slp1
 SLP1_INPUTS = ['', 'Siva', 'kfzRa', 'jYAna', 'saMskftam', 'EkSvarya', 'OzaDa', 'aMSa', 'BAva', 'rAjan']
 # SLP1 inputs for the SLP1-side helpers: accents (/ \ ^ ~), trailing homonym digits, whitespace,
@@ -52,6 +59,7 @@ def build():
     v['from_slp1'] = [{'in': s, 'out': su.from_slp1(s)} for s in SLP1_INPUTS]
     v['to_roman'] = [{'in': n, 'out': su.to_roman(n)} for n in NUM_INPUTS]
     v['deva_to_iast'] = [{'in': s, 'out': su.deva_to_iast(s)} for s in STR_INPUTS]
+    v['deva_to_slp1'] = [{'in': s, 'out': su.deva_to_slp1(s)} for s in DEVA_SLP1_INPUTS]
     v['iast_to_devanagari'] = [{'in': s, 'out': su.iast_to_devanagari(s)} for s in STR_INPUTS]
     v['norm'] = [{'in': s, 'out': su.norm(s)} for s in STR_INPUTS]
     v['nfold'] = [{'in': s, 'out': su.nfold(s)} for s in STR_INPUTS]

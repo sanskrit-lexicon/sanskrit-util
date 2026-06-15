@@ -28,6 +28,7 @@ full cross-repo dedup map.
 | `from_slp1(slp1)` | SLP1 → IAST |
 | `to_roman(nums)` | `[1,4,10]` gaṇa numbers → `['I','IV','X']` |
 | `deva_to_iast(s)` | Devanāgarī → IAST (inherent-`a` + virāma aware) |
+| `deva_to_slp1(s)` | Devanāgarī → SLP1 (direct; `ळ`→`L`, not `x`) — round-trip partner of `from_slp1` |
 | `iast_to_devanagari(s)` | IAST → Devanāgarī (**approximate, display only** — no conjunct shaping) |
 | `norm(s)` | **exact** diacritic-insensitive key — Devanāgarī-aware; lookup/index |
 | `nfold(s)` | `norm()` + every nasal folded to `n` — recall fallback only |

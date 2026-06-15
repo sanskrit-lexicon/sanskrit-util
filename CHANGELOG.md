@@ -18,8 +18,20 @@ Golden vectors grow 346 → **403** across **12** functions (`JS == Python` stil
 commit); +4 Python unit tests and a new JS unit suite (`js/test/units.test.mjs`) lock the
 constants' cross-language parity. Purely additive — existing exports unchanged.
 
-_Deferred:_ a proper `deva_to_slp1` / SLP1→Devanāgarī round-trip (the `ळ`→`L` vs `x` decision and
-real virāma/conjunct shaping need their own change).
+### Added — `deva_to_slp1` (Devanāgarī → SLP1, direct)
+`deva_to_slp1(s)` transcodes Devanāgarī straight to SLP1 (inherent-`a` + virāma aware), replacing
+the lossy `to_slp1(deva_to_iast(s))` chain that consumers had to hand-roll. The crux is the
+**`ळ`→`L` vs `x` decision** that 0.1.0 deferred: `deva_to_iast` collapses `ळ` (U+0933, retroflex ḻa)
+onto vocalic `ḷ` — both render as IAST `ḷ` (U+1E37) — so the chained form mis-maps `ळ` to `x`
+(vocalic ḷ), and that can't be recovered after the IAST step. `deva_to_slp1` makes the decision
+directly: `ळ`→`L` (the round-trip partner of `from_slp1('L')`→`ḻ`) while `ऌ` / the `◌ॢ` mātrā stay
+`x`. The Devanāgarī→SLP1 maps are derived from the existing Devanāgarī→IAST maps (so they track
+`to_slp1` exactly) with the one `ळ`→`L` override, and the traversal mirrors `deva_to_iast`. Golden
+vectors **403 → 418** across **13** functions; +3 Python and matching JS unit tests lock the
+`ळ`/`ऌ` distinction cross-language. Purely additive — existing exports unchanged.
+
+_Still deferred:_ a real SLP1→Devanāgarī round-trip, and proper virāma/conjunct shaping for
+`iast_to_devanagari` (still approximate, display-only) — these need their own change.
 
 ## 0.1.0 — 2026-06-14
 

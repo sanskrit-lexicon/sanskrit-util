@@ -23,8 +23,8 @@ ROOT = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(ROOT, 'py'))
 import sanskrit_util as su  # noqa: E402
 
-STR_FNS = ['to_slp1', 'from_slp1', 'deva_to_iast', 'iast_to_devanagari', 'norm', 'nfold', 'form_key', 'normalize_sanskrit',
-           'strip_slp1_accents', 'slp1_norm', 'slp1_form_key']
+STR_FNS = ['to_slp1', 'from_slp1', 'deva_to_iast', 'deva_to_slp1', 'iast_to_devanagari', 'norm', 'nfold', 'form_key',
+           'normalize_sanskrit', 'strip_slp1_accents', 'slp1_norm', 'slp1_form_key']
 DONOR_STR_FNS = ['to_slp1', 'from_slp1', 'form_key']           # always comparable (donor has no SLP1-side API)
 DONOR_NORM_FNS = ['norm', 'nfold']                            # compare on non-Devanāgarī only
 
