@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sanskrit-util"
+version = "0.1.0"
+description = "Shared Sanskrit string helpers (IAST/SLP1/Devanagari transcode + normalization keys) for the CDSL / Sanskrit-Lexicon repos"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [{ name = "Sanskrit Lexicon / CDSL" }]
+keywords = ["sanskrit", "iast", "slp1", "devanagari", "transliteration", "cdsl", "lexicography"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Topic :: Text Processing :: Linguistic",
+  "License :: OSI Approved :: MIT License",
+]
+
+[project.urls]
+Homepage = "https://github.com/sanskrit-lexicon/sanskrit-util"
+
+[tool.setuptools]
+packages = ["sanskrit_util"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

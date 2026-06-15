@@ -1,0 +1,83 @@
+# -*- coding: utf-8 -*-
+"""Targeted unit tests for the documented Sanskrit pitfalls — the reasons these helpers must
+NOT be re-implemented ad hoc per repo. Run: pytest tests/test_units.py."""
+import os
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(HERE, '..'))
+import sanskrit_util as su  # noqa: E402
+
+ACUTE = '́'
+
+
+def test_to_slp1_digraphs():
+    assert su.to_slp1('aiśvarya') == 'ESvarya'      # ai -> E (one phoneme), ś -> S
+    assert su.to_slp1('auṣadha') == 'OzaDa'
+    assert su.to_slp1('saṃskṛta') == 'saMskfta'
+
+
+def test_slp1_roundtrip_iast():
+    for w in ['śiva', 'kṛṣṇa', 'jñāna', 'rājan', 'saṃskṛta']:
+        assert su.from_slp1(su.to_slp1(w)) == w
+
+
+def test_form_key_preserves_length():
+    # length is meaningful here: krānta (PPP) != kranta
+    assert su.form_key('krānta') != su.form_key('kranta')
+
+
+def test_form_key_folds_anusvara_to_homorganic():
+    assert su.form_key('krāṃta') == su.form_key('krānta')   # anusvāra == homorganic nasal
+
+
+def test_form_key_drops_visarga_and_vowel_accent():
+    assert su.form_key('rāmaḥ') == 'rāma'                   # nom-sg visarga stripped
+    assert su.form_key('dev' + 'a' + ACUTE) == 'deva'      # pitch accent on a vowel dropped
+
+
+def test_form_key_keeps_sibilant_not_accent():
+    # ś == s + U+0301 (same codepoint as the acute); must NOT be mistaken for an accent
+    assert su.form_key('śas') == 'śas'
+    assert 'ś' in su.form_key('śiva')
+
+
+def test_norm_is_diacritic_insensitive_but_length_blind():
+    assert su.norm('Śiva') == su.norm('shiva'.replace('sh', 'ś'))  # case + diacritic folded
+    assert su.norm('rājan') == 'rajan'
+    assert su.norm('  Agni  ') == 'agni'                   # trims + lowercases
+
+
+def test_norm_is_devanagari_aware():
+    assert su.norm('धर्म') == 'dharma'                      # transliterates first
+
+
+def test_nfold_folds_nasals_only_as_fallback():
+    assert su.nfold('saṃ') == su.nfold('san')              # anusvāra reaches homorganic
+    assert su.norm('am') != su.norm('an')                  # exact key keeps am/an distinct
+
+
+def test_normalize_sanskrit_is_lossy_ascii():
+    assert su.normalize_sanskrit('Śiva') == 'siva'
+    assert su.normalize_sanskrit('kṛṣṇa') == 'krsna'       # length+retroflex collapsed to ASCII
+
+
+def test_empty_and_none_safe():
+    for f in (su.to_slp1, su.from_slp1, su.deva_to_iast, su.iast_to_devanagari,
+              su.norm, su.nfold, su.form_key, su.normalize_sanskrit):
+        assert f('') == ''
+        assert f(None) == ''
+    assert su.to_roman([]) == []
+    assert su.to_roman([11]) == []                         # out-of-range dropped
+
+
+if __name__ == '__main__':
+    import traceback
+    funcs = [v for k, v in sorted(globals().items()) if k.startswith('test_') and callable(v)]
+    ok = 0
+    for t in funcs:
+        try:
+            t(); ok += 1
+        except Exception:
+            print(f'FAIL {t.__name__}'); traceback.print_exc()
+    print(f'{ok}/{len(funcs)} unit tests passed')

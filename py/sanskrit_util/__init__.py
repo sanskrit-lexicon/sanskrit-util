@@ -1,0 +1,227 @@
+# -*- coding: utf-8 -*-
+"""sanskrit_util — shared Sanskrit string helpers for the CDSL / Sanskrit-Lexicon repos.
+
+Single source of truth, consolidated from WhitneyRoots/scripts/sanskrit_util.py and the
+reader.js / linguistics.js twins so the same key/transcode logic is not re-typed per repo.
+The JS port in ../../js/index.mjs is byte-for-byte behaviour-identical (proved by the shared
+vectors in ../../vectors/vectors.json).
+
+Public API
+----------
+to_slp1(iast)            IAST -> SLP1
+from_slp1(slp1)          SLP1 -> IAST
+to_roman(nums)           [1,2,...] gaṇa numbers -> ['I','II',...]
+deva_to_iast(s)          Devanāgarī -> IAST
+iast_to_devanagari(s)    IAST -> Devanāgarī (approximate, display only)
+norm(s)                  EXACT diacritic-insensitive lookup key (Devanāgarī-aware)
+nfold(s)                 norm() + every nasal folded to 'n' (recall fallback)
+form_key(s)              length-PRESERVING comparison key (ā≠a) for verb/PPP form matching
+normalize_sanskrit(s)    LOSSY ASCII-folding search key (ā→a, ś→s, ṃ→m …) — v3-explorer style
+
+Pick the right key:
+  - norm / nfold        : reversible, diacritic-insensitive (search & index lookup)
+  - form_key            : compare *generated* forms vs *recorded* forms (length matters)
+  - normalize_sanskrit  : crude ASCII bucket; prefer norm() unless you specifically want ASCII
+"""
+import re
+import unicodedata
+
+__version__ = "0.1.0"
+
+__all__ = [
+    "to_slp1", "from_slp1", "to_roman", "deva_to_iast", "iast_to_devanagari",
+    "norm", "nfold", "form_key", "normalize_sanskrit",
+]
+
+# ---- IAST -> SLP1 (longest-key-first; aspirates + diphthongs are digraphs) ----
+_SLP1 = {
+    'ai': 'E', 'au': 'O', 'kh': 'K', 'gh': 'G', 'ch': 'C', 'jh': 'J', 'ṭh': 'W', 'ḍh': 'Q',
+    'th': 'T', 'dh': 'D', 'ph': 'P', 'bh': 'B',
+    'ā': 'A', 'ī': 'I', 'ū': 'U', 'ṛ': 'f', 'ṝ': 'F', 'ḷ': 'x', 'ḹ': 'X',
+    'ṃ': 'M', 'ṁ': 'M', 'ḥ': 'H', 'ṅ': 'N', 'ñ': 'Y', 'ṭ': 'w', 'ḍ': 'q', 'ṇ': 'R',
+    'ś': 'S', 'ṣ': 'z', 'ḻ': 'L',
+    'a': 'a', 'i': 'i', 'u': 'u', 'e': 'e', 'o': 'o', 'k': 'k', 'g': 'g', 'c': 'c', 'j': 'j',
+    't': 't', 'd': 'd', 'n': 'n', 'p': 'p', 'b': 'b', 'm': 'm', 'y': 'y', 'r': 'r', 'l': 'l',
+    'v': 'v', 's': 's', 'h': 'h',
+}
+
+
+def to_slp1(iast):
+    """IAST -> SLP1. Longest-key-first so aspirates/diphthongs (kh, ai) map as one phoneme."""
+    out, i, s = [], 0, (iast or '')
+    while i < len(s):
+        two = s[i:i + 2]
+        if two in _SLP1:
+            out.append(_SLP1[two]); i += 2; continue
+        out.append(_SLP1.get(s[i], s[i])); i += 1
+    return ''.join(out)
+
+
+_ROMAN = {1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V', 6: 'VI', 7: 'VII', 8: 'VIII', 9: 'IX', 10: 'X'}
+
+
+def to_roman(nums):
+    """[1,4,10] -> ['I','IV','X']; numbers outside 1..10 are dropped."""
+    return [_ROMAN[n] for n in nums if n in _ROMAN]
+
+
+# ---- SLP1 -> IAST (inverse of _SLP1; SLP1 is one ASCII char per phoneme) ----
+_FROM_SLP1 = {
+    'A': 'ā', 'I': 'ī', 'U': 'ū', 'f': 'ṛ', 'F': 'ṝ', 'x': 'ḷ', 'X': 'ḹ',
+    'E': 'ai', 'O': 'au', 'M': 'ṃ', 'H': 'ḥ',
+    'K': 'kh', 'G': 'gh', 'N': 'ṅ', 'C': 'ch', 'J': 'jh', 'Y': 'ñ',
+    'w': 'ṭ', 'W': 'ṭh', 'q': 'ḍ', 'Q': 'ḍh', 'R': 'ṇ',
+    'T': 'th', 'D': 'dh', 'P': 'ph', 'B': 'bh',
+    'S': 'ś', 'z': 'ṣ', 'L': 'ḻ',
+}
+
+
+def from_slp1(slp1):
+    """SLP1 -> IAST. Used to render vidyut-prakriya output (SLP1) for the reader."""
+    return ''.join(_FROM_SLP1.get(ch, ch) for ch in (slp1 or ''))
+
+
+# ---- Devanāgarī -> IAST (port of reader.js deva2iast; inherent-'a' + virāma aware) ----
+_DV_VOWEL = {
+    'अ': 'a', 'आ': 'ā', 'इ': 'i', 'ई': 'ī', 'उ': 'u', 'ऊ': 'ū', 'ऋ': 'ṛ', 'ॠ': 'ṝ',
+    'ऌ': 'ḷ', 'ॡ': 'ḹ', 'ए': 'e', 'ऐ': 'ai', 'ओ': 'o', 'औ': 'au',
+}
+_DV_MATRA = {
+    'ा': 'ā', 'ि': 'i', 'ी': 'ī', 'ु': 'u', 'ू': 'ū', 'ृ': 'ṛ', 'ॄ': 'ṝ', 'ॢ': 'ḷ',
+    'े': 'e', 'ै': 'ai', 'ो': 'o', 'ौ': 'au',
+}
+_DV_CONS = {
+    'क': 'k', 'ख': 'kh', 'ग': 'g', 'घ': 'gh', 'ङ': 'ṅ', 'च': 'c', 'छ': 'ch', 'ज': 'j',
+    'झ': 'jh', 'ञ': 'ñ', 'ट': 'ṭ', 'ठ': 'ṭh', 'ड': 'ḍ', 'ढ': 'ḍh', 'ण': 'ṇ', 'त': 't',
+    'थ': 'th', 'द': 'd', 'ध': 'dh', 'न': 'n', 'प': 'p', 'फ': 'ph', 'ब': 'b', 'भ': 'bh',
+    'म': 'm', 'य': 'y', 'र': 'r', 'ल': 'l', 'व': 'v', 'श': 'ś', 'ष': 'ṣ', 'स': 's',
+    'ह': 'h', 'ळ': 'ḷ',
+}
+_DV_MARK = {'ं': 'ṃ', 'ः': 'ḥ', 'ँ': 'ṃ'}
+_VIRAMA = '्'
+
+
+def deva_to_iast(s):
+    """Devanāgarī -> IAST. Inherent 'a' supplied after a bare consonant unless a virāma or
+    mātrā follows; avagraha (ऽ) dropped. Mirror of reader.js deva2iast()."""
+    s = s or ''
+    out = []
+    i = 0
+    n = len(s)
+    while i < n:
+        ch = s[i]
+        if ch in _DV_CONS:
+            out.append(_DV_CONS[ch])
+            nx = s[i + 1] if i + 1 < n else ''
+            if nx == _VIRAMA:
+                i += 1                       # bare consonant (conjunct)
+            elif nx in _DV_MATRA:
+                out.append(_DV_MATRA[nx]); i += 1
+            else:
+                out.append('a')             # inherent vowel
+        elif ch in _DV_VOWEL:
+            out.append(_DV_VOWEL[ch])
+        elif ch in _DV_MARK:
+            out.append(_DV_MARK[ch])
+        elif ch == 'ऽ':
+            pass                             # avagraha — drop
+        else:
+            out.append(ch)
+        i += 1
+    return ''.join(out)
+
+
+# ---- IAST -> Devanāgarī (approximate display transcode; port of linguistics.js) ----
+_IAST_TO_DEVA = {
+    'a': 'अ', 'ā': 'आ', 'i': 'इ', 'ī': 'ई', 'u': 'उ', 'ū': 'ऊ', 'ṛ': 'ऋ', 'ṝ': 'ॠ',
+    'ḷ': 'ऌ', 'ḹ': 'ॡ', 'e': 'ए', 'ai': 'ऐ', 'o': 'ओ', 'au': 'औ', 'ṃ': 'ं', 'ḥ': 'ः',
+    'k': 'क', 'kh': 'ख', 'g': 'ग', 'gh': 'घ', 'ṅ': 'ङ',
+    'c': 'च', 'ch': 'छ', 'j': 'ज', 'jh': 'झ', 'ñ': 'ञ',
+    'ṭ': 'ट', 'ṭh': 'ठ', 'ḍ': 'ड', 'ḍh': 'ढ', 'ṇ': 'ण',
+    't': 'त', 'th': 'थ', 'd': 'द', 'dh': 'ध', 'n': 'न',
+    'p': 'प', 'ph': 'फ', 'b': 'ब', 'bh': 'भ', 'm': 'म',
+    'y': 'य', 'r': 'र', 'l': 'ल', 'v': 'व',
+    'ś': 'श', 'ṣ': 'ष', 's': 'स', 'h': 'ह',
+}
+_IAST_TO_DEVA_KEYS = sorted(_IAST_TO_DEVA, key=len, reverse=True)
+
+
+def iast_to_devanagari(text):
+    """Approximate IAST -> Devanāgarī for *display only* (no virāma/conjunct shaping).
+    Longest-key-first to keep digraphs (kh, ai) intact. Port of linguistics.js iastToDevanagari()."""
+    result = (text or '').lower()
+    for key in _IAST_TO_DEVA_KEYS:
+        result = result.replace(key, _IAST_TO_DEVA[key])
+    return result
+
+
+# ---- normalization keys ----------------------------------------------------
+_DEVA_RE = re.compile('[ऀ-ॿ]')
+
+
+def norm(s):
+    """EXACT diacritic-insensitive lookup key: (Devanāgarī->IAST if present), NFD, drop all
+    combining marks, NFC, lower, strip. Mirror of reader.js norm()."""
+    s = s or ''
+    if _DEVA_RE.search(s):
+        s = deva_to_iast(s)
+    s = unicodedata.normalize('NFD', s)
+    s = ''.join(c for c in s if unicodedata.category(c) != 'Mn')
+    return unicodedata.normalize('NFC', s).lower().strip()
+
+
+def nfold(s):
+    """NASAL-FOLDED recall key: norm() then fold every m/n (and homorganic nasals, already
+    reduced to n/m by norm) to 'n'. FALLBACK index only — keeps am/an distinct on the exact
+    key while letting anusvāra spellings reach homorganic forms. Mirror of reader.js nfold()."""
+    return re.sub('[mn]', 'n', norm(s))
+
+
+# ---- length-preserving comparison key (vidyut ↔ warnemyr ↔ DCS form matching) ----
+# Unlike norm()/nfold(), form_key() PRESERVES vowel length (ā≠a): krānta ≠ kranta is a real
+# difference when comparing generated vs recorded forms. It folds anusvāra + homorganic nasals
+# -> n (krāṃta == krānta), strips the nom-sg visarga, and drops PITCH accents on a vowel — but
+# keeps ś (= s + U+0301, same codepoint as the acute accent) and the retroflex/vocalic dots.
+_FK_ACCENT = {'́', '̀', '॑', '॒'}   # acute, grave, Vedic svarita/anudātta
+_FK_VOWELS = set('aāiīuūṛṝḷḹeēoō')
+
+
+def form_key(s):
+    """Length-preserving fold for comparing Sanskrit word forms. See module note above."""
+    s = (s or '').strip().lower()
+    if s in ('-', '–', '—'):                    # warnemyr 'no recorded form' placeholder -> blank
+        return ''
+    s = re.sub('ḥ$', '', s)                     # nom-sg visarga
+    s = re.sub('[ṃṁṅñṇ]', 'n', s)              # anusvāra + ṅ/ñ/ṇ -> n (precomposed, before NFD)
+    out = []
+    for ch in unicodedata.normalize('NFD', s):
+        if ch in _FK_ACCENT:
+            j = len(out) - 1                    # walk back past ALL combining marks to base letter
+            while j >= 0 and unicodedata.combining(out[j]):
+                j -= 1
+            base = unicodedata.normalize('NFC', ''.join(out[j:])) if j >= 0 else ''
+            if base in _FK_VOWELS:              # accent on a (long/vocalic) vowel -> drop; on s (->ś) -> keep
+                continue
+        out.append(ch)
+    return unicodedata.normalize('NFC', ''.join(out))
+
+
+# ---- lossy ASCII-folding search key (v3-explorer normalizeSanskrit) --------
+_NS_MAP = {
+    'ā': 'a', 'ī': 'i', 'ū': 'u', 'ṛ': 'r', 'ṝ': 'r', 'ḷ': 'l', 'ḹ': 'l',
+    'ṅ': 'n', 'ñ': 'n', 'ṭ': 't', 'ḍ': 'd', 'ṇ': 'n', 'ś': 's', 'ṣ': 's',
+    'ḥ': 'h', 'ṃ': 'm',
+}
+_NS_RE = re.compile('[āīūṛṝḷḹṅñṭḍṇśṣḥṃ]')
+
+
+def normalize_sanskrit(text):
+    """LOSSY ASCII-folding key (ā→a, ś→s, ṭ→t, ṃ→m …): collapses length, retroflex AND nasal
+    in one pass. NOT reversible and NOT the same as norm(); kept for v3-explorer parity. Prefer
+    norm() unless you specifically need a bare-ASCII bucket. Port of linguistics.js normalizeSanskrit()."""
+    if not text:
+        return ''
+    s = unicodedata.normalize('NFD', text)
+    s = re.sub('[̀-ͯ]', '', s)
+    s = _NS_RE.sub(lambda m: _NS_MAP.get(m.group(0), m.group(0)), s)
+    return s.lower()
