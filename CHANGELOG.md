@@ -1,5 +1,26 @@
 # Changelog
 
+## Unreleased
+
+### Added — SLP1-side API
+The original 0.1.0 surface was IAST/Devanāgarī-centric, but the CDSL dictionaries are
+**SLP1-native** (case is phonemic there), so every dict repo had re-rolled its own SLP1
+alphabet + headword normalizer. New, behaviour-identical in Python and JS:
+
+- `SLP1_VOWELS`, `SLP1_MARKS`, `SLP1_CONSONANTS`, `SLP1_ALPHABET` — valid SLP1 character classes.
+- `strip_slp1_accents(slp1)` — drop the SLP1 accent/candrabindu marks `/ \ ^ ~`.
+- `slp1_norm(slp1)` — canonical CDSL **headword** key (strip accents + trailing homonym digits,
+  collapse whitespace; **case preserved**). The shared form of the per-repo `normalize_lemma` /
+  `normalizeSlp1Lemma`.
+- `slp1_form_key(slp1)` — length-preserving **compare** key for SLP1 forms (`form_key ∘ from_slp1`).
+
+Golden vectors grow 346 → **403** across **12** functions (`JS == Python` still asserted on every
+commit); +4 Python unit tests and a new JS unit suite (`js/test/units.test.mjs`) lock the
+constants' cross-language parity. Purely additive — existing exports unchanged.
+
+_Deferred:_ a proper `deva_to_slp1` / SLP1→Devanāgarī round-trip (the `ळ`→`L` vs `x` decision and
+real virāma/conjunct shaping need their own change).
+
 ## 0.1.0 — 2026-06-14
 
 Initial extraction. Consolidates the Sanskrit string helpers that were duplicated across the

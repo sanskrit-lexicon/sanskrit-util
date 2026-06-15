@@ -150,7 +150,34 @@ export function normalize_sanskrit(text) {
     .toLowerCase();
 }
 
+// ---- SLP1-side API ----
+// The CDSL dictionaries store headwords in SLP1, where case is PHONEMIC (S=ś≠s) — so the
+// IAST helpers above can't key them without a transcode, and every CDSL repo re-rolled its own
+// SLP1 alphabet + headword normalizer. Behaviour-identical port of the Python additions.
+export const SLP1_VOWELS = 'aAiIuUfFxXeEoO';                          // f/F=ṛ/ṝ, x/X=ḷ/ḹ, E=ai, O=au
+export const SLP1_MARKS = 'MH~';                                     // anusvāra, visarga, candrabindu
+export const SLP1_CONSONANTS = 'kKgGNcCjJYwWqQRtTdDnpPbBmyrlvSzshL'; // L = Vedic retroflex ḻa
+export const SLP1_ALPHABET = SLP1_VOWELS + SLP1_MARKS + SLP1_CONSONANTS; // valid SLP1 letters (no avagraha)
+
+const SLP1_ACCENTS_RE = /[/\\^~]/g; // udātta / anudātta / svarita / candrabindu
+
+export function strip_slp1_accents(slp1) {
+  return (slp1 ?? '').replace(SLP1_ACCENTS_RE, '');
+}
+
+export function slp1_norm(slp1) {
+  let s = strip_slp1_accents(slp1 ?? '');
+  s = s.replace(/\d+$/, '');
+  return s.replace(/\s+/g, ' ').trim();
+}
+
+export function slp1_form_key(slp1) {
+  return form_key(from_slp1(strip_slp1_accents(slp1 ?? '')));
+}
+
 export default {
   to_slp1, from_slp1, to_roman, deva_to_iast, iast_to_devanagari,
   norm, nfold, form_key, normalize_sanskrit,
+  SLP1_VOWELS, SLP1_MARKS, SLP1_CONSONANTS, SLP1_ALPHABET,
+  strip_slp1_accents, slp1_norm, slp1_form_key,
 };

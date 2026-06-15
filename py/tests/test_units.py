@@ -71,6 +71,33 @@ def test_empty_and_none_safe():
     assert su.to_roman([11]) == []                         # out-of-range dropped
 
 
+# ---- SLP1-side API ----
+def test_slp1_alphabet_constants():
+    assert su.SLP1_VOWELS == 'aAiIuUfFxXeEoO'
+    assert su.SLP1_MARKS == 'MH~'
+    assert su.SLP1_CONSONANTS == 'kKgGNcCjJYwWqQRtTdDnpPbBmyrlvSzshL'
+    assert su.SLP1_ALPHABET == su.SLP1_VOWELS + su.SLP1_MARKS + su.SLP1_CONSONANTS
+
+
+def test_strip_slp1_accents():
+    assert su.strip_slp1_accents('a/MSa\\') == 'aMSa'       # udātta + anudātta
+    assert su.strip_slp1_accents('Si^va~') == 'Siva'        # svarita + candrabindu
+
+
+def test_slp1_norm_headword_key():
+    assert su.slp1_norm('agni2') == 'agni'                  # trailing homonym index
+    assert su.slp1_norm('a/MSa') == 'aMSa'                  # accent stripped
+    assert su.slp1_norm('Siva') == 'Siva'                   # case PRESERVED (S = ś, phonemic)
+    assert su.slp1_norm('  deva  ') == 'deva'
+    assert su.slp1_norm('') == '' and su.slp1_norm(None) == ''
+
+
+def test_slp1_form_key_folds_like_form_key():
+    assert su.slp1_form_key('aMSaH') == su.slp1_form_key('anSa')   # anusvāra==homorganic n, visarga dropped
+    assert su.slp1_form_key('rAmaH') == 'rāma'
+    assert su.slp1_form_key('kfzRa') == su.form_key(su.from_slp1('kfzRa'))
+
+
 if __name__ == '__main__':
     import traceback
     funcs = [v for k, v in sorted(globals().items()) if k.startswith('test_') and callable(v)]
