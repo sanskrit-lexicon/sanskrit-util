@@ -1,0 +1,6 @@
+# Keep the repo LF everywhere — vectors.json and the source ports are byte-compared in tests.
+* text=auto eol=lf
+*.json text eol=lf
+*.py   text eol=lf
+*.mjs  text eol=lf
+*.md   text eol=lf
