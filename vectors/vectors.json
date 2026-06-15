@@ -489,6 +489,68 @@
    "out": "api"
   }
  ],
+ "deva_to_slp1": [
+  {
+   "in": "",
+   "out": ""
+  },
+  {
+   "in": "धर्म",
+   "out": "Darma"
+  },
+  {
+   "in": "कृष्ण",
+   "out": "kfzRa"
+  },
+  {
+   "in": "सञ्जय",
+   "out": "saYjaya"
+  },
+  {
+   "in": "गच्छति",
+   "out": "gacCati"
+  },
+  {
+   "in": "अग्नि",
+   "out": "agni"
+  },
+  {
+   "in": "राजन्",
+   "out": "rAjan"
+  },
+  {
+   "in": "सुखं",
+   "out": "suKaM"
+  },
+  {
+   "in": "विद्या",
+   "out": "vidyA"
+  },
+  {
+   "in": "अऽपि",
+   "out": "api"
+  },
+  {
+   "in": "ळ",
+   "out": "La"
+  },
+  {
+   "in": "खेळ",
+   "out": "KeLa"
+  },
+  {
+   "in": "अग्निमीळे",
+   "out": "agnimILe"
+  },
+  {
+   "in": "ऌ",
+   "out": "x"
+  },
+  {
+   "in": "कॢप्त",
+   "out": "kxpta"
+  }
+ ],
  "iast_to_devanagari": [
   {
    "in": "",

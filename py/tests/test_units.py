@@ -52,6 +52,32 @@ def test_norm_is_devanagari_aware():
     assert su.norm('धर्म') == 'dharma'                      # transliterates first
 
 
+def test_deva_to_slp1_basic():
+    assert su.deva_to_slp1('अग्नि') == 'agni'
+    assert su.deva_to_slp1('धर्म') == 'Darma'               # virāma conjunct + inherent 'a'
+    assert su.deva_to_slp1('कृष्ण') == 'kfzRa'
+    assert su.deva_to_slp1('अऽपि') == 'api'                 # avagraha dropped
+
+
+def test_deva_to_slp1_retroflex_lla_not_vocalic_l():
+    # ळ (U+0933, retroflex ḻa) -> 'L', NOT 'x'. The IAST round-trip to_slp1(deva_to_iast(·))
+    # gets this WRONG (ळ and vocalic ḷ both render as IAST ḷ/U+1E37 -> 'x'); deva_to_slp1 must not.
+    assert su.deva_to_slp1('ळ') == 'La'
+    assert su.deva_to_slp1('अग्निमीळे') == 'agnimILe'        # RV 1.1.1 incipit
+    assert su.to_slp1(su.deva_to_iast('ळ')) == 'xa'         # documents the collision deva_to_slp1 fixes
+    # vocalic ḷ (ऌ vowel / ◌ॢ mātrā) stays 'x' — the two must remain distinct
+    assert su.deva_to_slp1('ऌ') == 'x'
+    assert su.deva_to_slp1('कॢप्त') == 'kxpta'
+    assert su.deva_to_slp1('ळ') != su.deva_to_slp1('ऌ')
+
+
+def test_deva_to_slp1_is_from_slp1_roundtrip_partner():
+    # from_slp1 ∘ deva_to_slp1 yields proper IAST: ळ -> ḻ (U+1E3B, line-below), the distinct glyph
+    # SLP1 reserves for retroflex ḻa, while ऌ -> ḷ (U+1E37, dot-below) for vocalic ḷ.
+    assert su.from_slp1(su.deva_to_slp1('ळ')) == 'ḻa'      # U+1E3B + a
+    assert su.from_slp1(su.deva_to_slp1('ऌ')) == 'ḷ'       # U+1E37
+
+
 def test_nfold_folds_nasals_only_as_fallback():
     assert su.nfold('saṃ') == su.nfold('san')              # anusvāra reaches homorganic
     assert su.norm('am') != su.norm('an')                  # exact key keeps am/an distinct
@@ -63,7 +89,7 @@ def test_normalize_sanskrit_is_lossy_ascii():
 
 
 def test_empty_and_none_safe():
-    for f in (su.to_slp1, su.from_slp1, su.deva_to_iast, su.iast_to_devanagari,
+    for f in (su.to_slp1, su.from_slp1, su.deva_to_iast, su.deva_to_slp1, su.iast_to_devanagari,
               su.norm, su.nfold, su.form_key, su.normalize_sanskrit):
         assert f('') == ''
         assert f(None) == ''
