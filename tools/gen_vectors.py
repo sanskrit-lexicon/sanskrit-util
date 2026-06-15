@@ -36,6 +36,12 @@ STR_INPUTS = [
 ]
 # SLP1 inputs for from_slp1
 SLP1_INPUTS = ['', 'Siva', 'kfzRa', 'jYAna', 'saMskftam', 'EkSvarya', 'OzaDa', 'aMSa', 'BAva', 'rAjan']
+# SLP1 inputs for the SLP1-side helpers: accents (/ \ ^ ~), trailing homonym digits, whitespace,
+# avagraha, the Vedic L, case (S=ś), visarga/anusvāra for the compare key.
+SLP1_NORM_INPUTS = [
+    '', 'agni', 'agni2', 'aMSa', 'a/MSa', 'aMSa3', 'kf/zRa', 'Si^va', 'a~Nga', 'rAma\\',
+    '  agni  ', 'deva 2', "aDo'MSukaM", 'mfL', 'saMskftam2', 'BAvaH', 'Siva', 'aMSaH', 'anSa',
+]
 # gaṇa-number lists for to_roman
 NUM_INPUTS = [[], [1], [1, 2, 3], [4, 9, 10], [11], [0, 1, 10, 99], [5, 5, 6]]
 
@@ -51,6 +57,9 @@ def build():
     v['nfold'] = [{'in': s, 'out': su.nfold(s)} for s in STR_INPUTS]
     v['form_key'] = [{'in': s, 'out': su.form_key(s)} for s in STR_INPUTS]
     v['normalize_sanskrit'] = [{'in': s, 'out': su.normalize_sanskrit(s)} for s in STR_INPUTS]
+    v['strip_slp1_accents'] = [{'in': s, 'out': su.strip_slp1_accents(s)} for s in SLP1_NORM_INPUTS]
+    v['slp1_norm'] = [{'in': s, 'out': su.slp1_norm(s)} for s in SLP1_NORM_INPUTS]
+    v['slp1_form_key'] = [{'in': s, 'out': su.slp1_form_key(s)} for s in SLP1_NORM_INPUTS]
     return v
 
 

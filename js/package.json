@@ -9,7 +9,7 @@
   },
   "files": ["index.mjs"],
   "scripts": {
-    "test": "node test/vectors.test.mjs"
+    "test": "node test/vectors.test.mjs && node test/units.test.mjs"
   },
   "keywords": ["sanskrit", "iast", "slp1", "devanagari", "transliteration", "cdsl", "lexicography"],
   "license": "MIT",

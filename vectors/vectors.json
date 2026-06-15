@@ -1438,5 +1438,239 @@
    "in": "अऽपि",
    "out": "अऽपि"
   }
+ ],
+ "strip_slp1_accents": [
+  {
+   "in": "",
+   "out": ""
+  },
+  {
+   "in": "agni",
+   "out": "agni"
+  },
+  {
+   "in": "agni2",
+   "out": "agni2"
+  },
+  {
+   "in": "aMSa",
+   "out": "aMSa"
+  },
+  {
+   "in": "a/MSa",
+   "out": "aMSa"
+  },
+  {
+   "in": "aMSa3",
+   "out": "aMSa3"
+  },
+  {
+   "in": "kf/zRa",
+   "out": "kfzRa"
+  },
+  {
+   "in": "Si^va",
+   "out": "Siva"
+  },
+  {
+   "in": "a~Nga",
+   "out": "aNga"
+  },
+  {
+   "in": "rAma\\",
+   "out": "rAma"
+  },
+  {
+   "in": "  agni  ",
+   "out": "  agni  "
+  },
+  {
+   "in": "deva 2",
+   "out": "deva 2"
+  },
+  {
+   "in": "aDo'MSukaM",
+   "out": "aDo'MSukaM"
+  },
+  {
+   "in": "mfL",
+   "out": "mfL"
+  },
+  {
+   "in": "saMskftam2",
+   "out": "saMskftam2"
+  },
+  {
+   "in": "BAvaH",
+   "out": "BAvaH"
+  },
+  {
+   "in": "Siva",
+   "out": "Siva"
+  },
+  {
+   "in": "aMSaH",
+   "out": "aMSaH"
+  },
+  {
+   "in": "anSa",
+   "out": "anSa"
+  }
+ ],
+ "slp1_norm": [
+  {
+   "in": "",
+   "out": ""
+  },
+  {
+   "in": "agni",
+   "out": "agni"
+  },
+  {
+   "in": "agni2",
+   "out": "agni"
+  },
+  {
+   "in": "aMSa",
+   "out": "aMSa"
+  },
+  {
+   "in": "a/MSa",
+   "out": "aMSa"
+  },
+  {
+   "in": "aMSa3",
+   "out": "aMSa"
+  },
+  {
+   "in": "kf/zRa",
+   "out": "kfzRa"
+  },
+  {
+   "in": "Si^va",
+   "out": "Siva"
+  },
+  {
+   "in": "a~Nga",
+   "out": "aNga"
+  },
+  {
+   "in": "rAma\\",
+   "out": "rAma"
+  },
+  {
+   "in": "  agni  ",
+   "out": "agni"
+  },
+  {
+   "in": "deva 2",
+   "out": "deva"
+  },
+  {
+   "in": "aDo'MSukaM",
+   "out": "aDo'MSukaM"
+  },
+  {
+   "in": "mfL",
+   "out": "mfL"
+  },
+  {
+   "in": "saMskftam2",
+   "out": "saMskftam"
+  },
+  {
+   "in": "BAvaH",
+   "out": "BAvaH"
+  },
+  {
+   "in": "Siva",
+   "out": "Siva"
+  },
+  {
+   "in": "aMSaH",
+   "out": "aMSaH"
+  },
+  {
+   "in": "anSa",
+   "out": "anSa"
+  }
+ ],
+ "slp1_form_key": [
+  {
+   "in": "",
+   "out": ""
+  },
+  {
+   "in": "agni",
+   "out": "agni"
+  },
+  {
+   "in": "agni2",
+   "out": "agni2"
+  },
+  {
+   "in": "aMSa",
+   "out": "anśa"
+  },
+  {
+   "in": "a/MSa",
+   "out": "anśa"
+  },
+  {
+   "in": "aMSa3",
+   "out": "anśa3"
+  },
+  {
+   "in": "kf/zRa",
+   "out": "kṛṣna"
+  },
+  {
+   "in": "Si^va",
+   "out": "śiva"
+  },
+  {
+   "in": "a~Nga",
+   "out": "anga"
+  },
+  {
+   "in": "rAma\\",
+   "out": "rāma"
+  },
+  {
+   "in": "  agni  ",
+   "out": "agni"
+  },
+  {
+   "in": "deva 2",
+   "out": "deva 2"
+  },
+  {
+   "in": "aDo'MSukaM",
+   "out": "adho'nśukan"
+  },
+  {
+   "in": "mfL",
+   "out": "mṛḻ"
+  },
+  {
+   "in": "saMskftam2",
+   "out": "sanskṛtam2"
+  },
+  {
+   "in": "BAvaH",
+   "out": "bhāva"
+  },
+  {
+   "in": "Siva",
+   "out": "śiva"
+  },
+  {
+   "in": "aMSaH",
+   "out": "anśa"
+  },
+  {
+   "in": "anSa",
+   "out": "anśa"
+  }
  ]
 }

@@ -18,6 +18,13 @@ nfold(s)                 norm() + every nasal folded to 'n' (recall fallback)
 form_key(s)              length-PRESERVING comparison key (ā≠a) for verb/PPP form matching
 normalize_sanskrit(s)    LOSSY ASCII-folding search key (ā→a, ś→s, ṃ→m …) — v3-explorer style
 
+SLP1-side helpers (the CDSL dictionaries are SLP1-native, so they cannot be keyed via the
+IAST helpers above without a transcode):
+SLP1_VOWELS / SLP1_MARKS / SLP1_CONSONANTS / SLP1_ALPHABET   valid SLP1 character classes (str)
+strip_slp1_accents(slp1) drop the SLP1 accent/candrabindu marks (/ \\ ^ ~)
+slp1_norm(slp1)          CDSL SLP1 HEADWORD key: strip accents + trailing homonym digits; case kept
+slp1_form_key(slp1)      length-preserving COMPARE key for SLP1 forms (= form_key ∘ from_slp1)
+
 Pick the right key:
   - norm / nfold        : reversible, diacritic-insensitive (search & index lookup)
   - form_key            : compare *generated* forms vs *recorded* forms (length matters)
@@ -31,6 +38,9 @@ __version__ = "0.1.0"
 __all__ = [
     "to_slp1", "from_slp1", "to_roman", "deva_to_iast", "iast_to_devanagari",
     "norm", "nfold", "form_key", "normalize_sanskrit",
+    # SLP1-side API (the CDSL dictionaries are SLP1-native)
+    "SLP1_VOWELS", "SLP1_MARKS", "SLP1_CONSONANTS", "SLP1_ALPHABET",
+    "strip_slp1_accents", "slp1_norm", "slp1_form_key",
 ]
 
 # ---- IAST -> SLP1 (longest-key-first; aspirates + diphthongs are digraphs) ----
@@ -158,6 +168,13 @@ def iast_to_devanagari(text):
 # ---- normalization keys ----------------------------------------------------
 _DEVA_RE = re.compile('[ऀ-ॿ]')
 
+# Whitespace stripped/collapsed IDENTICALLY to the JS port. JS String.trim() and JS \s strip the
+# BOM/ZWNBSP U+FEFF (which sneaks in when a file is read without utf-8-sig — the CDSL BOM pitfall),
+# while Python str.strip()/\s do not (and conversely Python strips U+0085 NEL, JS does not). Pin an
+# explicit class so norm()/form_key()/slp1_norm() yield the SAME key in both languages.
+_WS_CHARS = '\t\n\x0b\x0c\r \x85\xa0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000\ufeff'
+_WS_RUN = re.compile('[' + re.escape(_WS_CHARS) + ']+')
+
 
 def norm(s):
     """EXACT diacritic-insensitive lookup key: (Devanāgarī->IAST if present), NFD, drop all
@@ -167,7 +184,7 @@ def norm(s):
         s = deva_to_iast(s)
     s = unicodedata.normalize('NFD', s)
     s = ''.join(c for c in s if unicodedata.category(c) != 'Mn')
-    return unicodedata.normalize('NFC', s).lower().strip()
+    return unicodedata.normalize('NFC', s).lower().strip(_WS_CHARS)
 
 
 def nfold(s):
@@ -188,7 +205,7 @@ _FK_VOWELS = set('aāiīuūṛṝḷḹeēoō')
 
 def form_key(s):
     """Length-preserving fold for comparing Sanskrit word forms. See module note above."""
-    s = (s or '').strip().lower()
+    s = (s or '').strip(_WS_CHARS).lower()
     if s in ('-', '–', '—'):                    # warnemyr 'no recorded form' placeholder -> blank
         return ''
     s = re.sub('ḥ$', '', s)                     # nom-sg visarga
@@ -225,3 +242,41 @@ def normalize_sanskrit(text):
     s = re.sub('[̀-ͯ]', '', s)
     s = _NS_RE.sub(lambda m: _NS_MAP.get(m.group(0), m.group(0)), s)
     return s.lower()
+
+
+# ---- SLP1-side API ---------------------------------------------------------
+# The CDSL dictionaries store headwords in SLP1, where case is PHONEMIC (S=ś≠s,
+# T=th≠t, …) — so the IAST helpers above can't key them without a transcode, and
+# every CDSL repo had re-rolled its own SLP1 alphabet + headword normalizer.
+# SLP1 character classes (strings; build a set() if you need membership tests).
+SLP1_VOWELS = 'aAiIuUfFxXeEoO'      # f/F = vocalic ṛ/ṝ, x/X = vocalic ḷ/ḹ, E = ai, O = au
+SLP1_MARKS = 'MH~'                  # anusvāra, visarga, candrabindu
+SLP1_CONSONANTS = 'kKgGNcCjJYwWqQRtTdDnpPbBmyrlvSzshL'   # L = Vedic retroflex ḻa
+SLP1_ALPHABET = SLP1_VOWELS + SLP1_MARKS + SLP1_CONSONANTS   # valid SLP1 letters (avagraha ' excluded)
+
+_SLP1_ACCENTS = re.compile(r'[/\\^~]')   # udātta / anudātta / svarita / candrabindu
+_SLP1_TRAILING_NUM = re.compile(r'\d+$')
+# whitespace collapse uses the unified _WS_RUN / _WS_CHARS (defined with norm()) so SLP1 keys
+# match the JS port on the BOM/NEL edge cases too.
+
+
+def strip_slp1_accents(slp1):
+    """Remove the SLP1 accent/candrabindu marks (/ \\ ^ ~) — the marks the CDSL headword
+    convention drops before aligning lemmas across dictionaries."""
+    return _SLP1_ACCENTS.sub('', slp1 or '')
+
+
+def slp1_norm(slp1):
+    """Canonical CDSL SLP1 HEADWORD key: strip accent marks, drop the trailing homonym-index
+    digits, collapse whitespace. SLP1 case is PRESERVED (phonemic). This is the shared form of
+    the per-repo normalize_lemma / normalizeSlp1Lemma headword normalizers."""
+    s = strip_slp1_accents(slp1 or '')
+    s = _SLP1_TRAILING_NUM.sub('', s)
+    return _WS_RUN.sub(' ', s).strip(_WS_CHARS)
+
+
+def slp1_form_key(slp1):
+    """Length-preserving COMPARE key for SLP1 word forms (vidyut/DCS/dict cross-checks):
+    SLP1 -> IAST -> form_key, so anusvāra folds to its homorganic nasal and the nom-sg visarga
+    drops while vowel length and ś/retroflex survive. Unlike slp1_norm() it keeps homonym digits."""
+    return form_key(from_slp1(strip_slp1_accents(slp1 or '')))

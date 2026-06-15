@@ -34,6 +34,18 @@ full cross-repo dedup map.
 | `form_key(s)` | **length-preserving** compare key (`ā`≠`a`) — generated-vs-recorded forms |
 | `normalize_sanskrit(s)` | **lossy** ASCII fold (`ā`→`a`, `ś`→`s`, `ṃ`→`m`) — v3-explorer parity |
 
+### SLP1-side API (the CDSL dictionaries are SLP1-native)
+
+The functions above are IAST/Devanāgarī-centric, but CDSL dictionary headwords are stored in
+**SLP1**, where case is *phonemic* (`S`=ś ≠ `s`, `T`=th ≠ `t`). These work on SLP1 directly:
+
+| Symbol | Does |
+|---|---|
+| `SLP1_VOWELS` `SLP1_MARKS` `SLP1_CONSONANTS` `SLP1_ALPHABET` | valid SLP1 character classes (strings; `set(...)` for membership) |
+| `strip_slp1_accents(slp1)` | drop the SLP1 accent/candrabindu marks `/ \ ^ ~` |
+| `slp1_norm(slp1)` | **headword key**: strip accents + trailing homonym digits, collapse space; **case preserved** |
+| `slp1_form_key(slp1)` | **length-preserving compare key** for SLP1 forms = `form_key(from_slp1(…))` |
+
 ### Which key do I want?
 
 - **Search / index lookup** → `norm` (and `nfold` as a fallback alias). Reversible-ish,
@@ -43,6 +55,10 @@ full cross-repo dedup map.
   visarga is stripped; pitch accents on vowels drop but `ś` and the retroflex dots survive.
 - **A crude ASCII bucket** (you explicitly want no diacritics at all) → `normalize_sanskrit`.
   This is *lossy* and not the same as `norm`; prefer `norm` unless you really need bare ASCII.
+- **A CDSL SLP1 headword key** (align `<k1>` across dictionaries) → `slp1_norm`. Strips accents
+  and the trailing homonym index, keeps SLP1 case. The shared form of the per-repo
+  `normalize_lemma` / `normalizeSlp1Lemma` headword normalizers. Use `slp1_form_key` to compare
+  SLP1 *forms* (folds nasals/visarga like `form_key`).
 
 ## Use it
 
