@@ -34,7 +34,10 @@ jobs:
           python tools/gen_vectors.py
           git diff --exit-code -- vectors/vectors.json
 
-      - name: JS tests (vectors + units; JS == Python)
+      - name: Browser global build is current (regenerate, expect no diff)
+        run: node js/build-global.mjs --check
+
+      - name: JS tests (vectors + units + global build; all == Python)
         working-directory: js
         run: npm test
 
