@@ -12,6 +12,7 @@ to_slp1(iast)            IAST -> SLP1
 from_slp1(slp1)          SLP1 -> IAST
 to_roman(nums)           [1,2,...] gaṇa numbers -> ['I','II',...]
 deva_to_iast(s)          Devanāgarī -> IAST
+deva_to_slp1(s)          Devanāgarī -> SLP1 (direct; ळ -> L, round-trip partner of from_slp1)
 iast_to_devanagari(s)    IAST -> Devanāgarī (approximate, display only)
 norm(s)                  EXACT diacritic-insensitive lookup key (Devanāgarī-aware)
 nfold(s)                 norm() + every nasal folded to 'n' (recall fallback)
@@ -36,7 +37,7 @@ import unicodedata
 __version__ = "0.1.0"
 
 __all__ = [
-    "to_slp1", "from_slp1", "to_roman", "deva_to_iast", "iast_to_devanagari",
+    "to_slp1", "from_slp1", "to_roman", "deva_to_iast", "deva_to_slp1", "iast_to_devanagari",
     "norm", "nfold", "form_key", "normalize_sanskrit",
     # SLP1-side API (the CDSL dictionaries are SLP1-native)
     "SLP1_VOWELS", "SLP1_MARKS", "SLP1_CONSONANTS", "SLP1_ALPHABET",
@@ -133,6 +134,52 @@ def deva_to_iast(s):
             out.append(_DV_VOWEL[ch])
         elif ch in _DV_MARK:
             out.append(_DV_MARK[ch])
+        elif ch == 'ऽ':
+            pass                             # avagraha — drop
+        else:
+            out.append(ch)
+        i += 1
+    return ''.join(out)
+
+
+# ---- Devanāgarī -> SLP1 (direct; the ळ→L vs x decision is made HERE) ----------------
+# Why not just to_slp1(deva_to_iast(s)): deva_to_iast collapses ळ (U+0933, retroflex ḻa) onto
+# vocalic ḷ — both render as IAST ḷ (U+1E37) — so to_slp1 would map the result to 'x' (vocalic
+# ḷ), losing the distinction. SLP1 keeps them apart (ळ = 'L', the Vedic retroflex; ऌ = 'x'), and
+# that can't be recovered after the IAST step. So transcode Devanāgarī → SLP1 directly: derive the
+# maps from the IAST maps once (so they track to_slp1 exactly) and override ळ → 'L'. deva_to_slp1
+# is therefore the round-trip partner of from_slp1 ('L' → ḻ), where to_slp1∘deva_to_iast is not.
+_DV_VOWEL_SLP1 = {k: to_slp1(v) for k, v in _DV_VOWEL.items()}
+_DV_MATRA_SLP1 = {k: to_slp1(v) for k, v in _DV_MATRA.items()}
+_DV_CONS_SLP1 = {k: to_slp1(v) for k, v in _DV_CONS.items()}
+_DV_CONS_SLP1['ळ'] = 'L'        # retroflex ḻa — NOT 'x' (vocalic ḷ, from ऌ); see note above
+_DV_MARK_SLP1 = {k: to_slp1(v) for k, v in _DV_MARK.items()}
+
+
+def deva_to_slp1(s):
+    """Devanāgarī -> SLP1, direct (inherent 'a' supplied after a bare consonant unless a virāma or
+    mātrā follows; avagraha ऽ dropped; danda/other non-Devanāgarī chars pass through). Unlike
+    to_slp1(deva_to_iast(s)), ळ (U+0933) maps to 'L' (retroflex ḻa), not 'x' (vocalic ḷ) — so this
+    is the round-trip partner of from_slp1. Same traversal as deva_to_iast (kept in lock-step)."""
+    s = s or ''
+    out = []
+    i = 0
+    n = len(s)
+    while i < n:
+        ch = s[i]
+        if ch in _DV_CONS_SLP1:
+            out.append(_DV_CONS_SLP1[ch])
+            nx = s[i + 1] if i + 1 < n else ''
+            if nx == _VIRAMA:
+                i += 1                       # bare consonant (conjunct)
+            elif nx in _DV_MATRA_SLP1:
+                out.append(_DV_MATRA_SLP1[nx]); i += 1
+            else:
+                out.append('a')             # inherent vowel
+        elif ch in _DV_VOWEL_SLP1:
+            out.append(_DV_VOWEL_SLP1[ch])
+        elif ch in _DV_MARK_SLP1:
+            out.append(_DV_MARK_SLP1[ch])
         elif ch == 'ऽ':
             pass                             # avagraha — drop
         else:
