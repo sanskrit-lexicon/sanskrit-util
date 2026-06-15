@@ -1,0 +1,42 @@
+name: CI
+
+# Runs the cross-language test suite so the README/CHANGELOG claim "JS == Python, asserted on
+# every commit" is actually enforced: Python unit + golden-vector tests, the JS port asserting the
+# same vectors, a freshness check that vectors.json is regenerable, and the adversarial cross-check.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install package (editable) + pytest
+        run: |
+          pip install -e ./py
+          pip install pytest
+
+      - name: Python tests (pitfall units + golden vectors)
+        run: python -m pytest py/tests -q
+
+      - name: vectors.json is current (regenerate, expect no diff)
+        run: |
+          python tools/gen_vectors.py
+          git diff --exit-code -- vectors/vectors.json
+
+      - name: JS tests (vectors + units; JS == Python)
+        working-directory: js
+        run: npm test
+
+      - name: Cross-language check (Python == JS on exotic/BOM/whitespace inputs)
+        run: python tools/crosscheck.py
