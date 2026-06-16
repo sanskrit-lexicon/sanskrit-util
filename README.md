@@ -17,7 +17,7 @@ A file-name census across the GitHub root found `transcoder.py` in **62 copies /
 and a dozen independently hand-rolled `to_slp1` / `norm` / `form_key` / `slug` / `hwnorm`
 functions. Every one re-derives the same SLP1 table and re-hits the same Unicode traps
 (`ś` = `s` + U+0301 collides with the pitch accent; NFD-then-strip destroys vowel length and
-retroflex dots). This package ends that. See [`../SHARED_CODE.md`](../SHARED_CODE.md) for the
+retroflex dots). This package ends that. See `SHARED_CODE.md` at the GitHub-root layout for the
 full cross-repo dedup map.
 
 ## API (identical in Python and JS)
@@ -96,7 +96,7 @@ CI fails via `--check` if it goes stale) and is behaviour-identical to the ESM b
 ### In a sibling repo without publishing (this GitHub-root layout)
 Drop a 12-line re-export shim named `sanskrit_util.py` that loads
 `../../sanskrit-util/py/sanskrit_util/__init__.py` by relative path — see the working example at
-[`../WhitneyRoots/scripts/sanskrit_util.py`](../WhitneyRoots/scripts/sanskrit_util.py).
+[`WhitneyRoots/scripts/sanskrit_util.py`](https://github.com/gasyoun/WhitneyRoots/blob/main/scripts/sanskrit_util.py).
 
 ## Test
 
