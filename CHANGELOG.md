@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.2.0 — 2026-06-30
+
 ### Added — SLP1-side API
 The original 0.1.0 surface was IAST/Devanāgarī-centric, but the CDSL dictionaries are
 **SLP1-native** (case is phonemic there), so every dict repo had re-rolled its own SLP1
