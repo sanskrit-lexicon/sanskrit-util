@@ -124,6 +124,27 @@ def test_slp1_form_key_folds_like_form_key():
     assert su.slp1_form_key('kfzRa') == su.form_key(su.from_slp1('kfzRa'))
 
 
+def test_slp1_simplify_retroflex_nasal():
+    # guṇa = 'guRa' in MW standard SLP1; R must fold to 'n', not stay as 'r'
+    assert su.slp1_simplify('guRa') == 'guna'
+    assert su.slp1_simplify('pariRAma') == 'parinama'
+
+
+def test_slp1_simplify_aspirates_and_nasals():
+    assert su.slp1_simplify('DarmaH') == 'dharma'   # D=dh, H=ḥ stripped
+    assert su.slp1_simplify('jYAnam') == 'jnanam'   # j stays, Y=ñ→n, A=ā→a
+
+
+def test_slp1_simplify_diphthongs():
+    assert su.slp1_simplify('karmERa') == 'karmaina'  # E=ai, R=ṇ→n
+    assert su.slp1_simplify('guROH') == 'gunau'        # R=ṇ→n, O=au, H stripped
+
+
+def test_slp1_simplify_none_and_empty():
+    assert su.slp1_simplify('') == ''
+    assert su.slp1_simplify(None) == ''
+
+
 if __name__ == '__main__':
     import traceback
     funcs = [v for k, v in sorted(globals().items()) if k.startswith('test_') and callable(v)]

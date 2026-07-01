@@ -25,6 +25,7 @@ SLP1_VOWELS / SLP1_MARKS / SLP1_CONSONANTS / SLP1_ALPHABET   valid SLP1 characte
 strip_slp1_accents(slp1) drop the SLP1 accent/candrabindu marks (/ \\ ^ ~)
 slp1_norm(slp1)          CDSL SLP1 HEADWORD key: strip accents + trailing homonym digits; case kept
 slp1_form_key(slp1)      length-preserving COMPARE key for SLP1 forms (= form_key ∘ from_slp1)
+slp1_simplify(slp1)      fuzzy-match key: fold all SLP1 distinctions to plain ASCII (R→n, K→kh, …)
 
 Pick the right key:
   - norm / nfold        : reversible, diacritic-insensitive (search & index lookup)
@@ -42,6 +43,8 @@ __all__ = [
     # SLP1-side API (the CDSL dictionaries are SLP1-native)
     "SLP1_VOWELS", "SLP1_MARKS", "SLP1_CONSONANTS", "SLP1_ALPHABET",
     "strip_slp1_accents", "slp1_norm", "slp1_form_key",
+    # MW fuzzy-match simplification
+    "slp1_simplify",
 ]
 
 # ---- IAST -> SLP1 (longest-key-first; aspirates + diphthongs are digraphs) ----
@@ -327,3 +330,37 @@ def slp1_form_key(slp1):
     SLP1 -> IAST -> form_key, so anusvāra folds to its homorganic nasal and the nom-sg visarga
     drops while vowel length and ś/retroflex survive. Unlike slp1_norm() it keeps homonym digits."""
     return form_key(from_slp1(strip_slp1_accents(slp1 or '')))
+
+
+def slp1_simplify(slp1: str) -> str:
+    """Fuzzy-match key: fold all SLP1 distinctions to plain ASCII.
+
+    Designed for building and querying MW headword indexes (e.g. mw_en_tm.json).
+    Works identically on both index side (MW headword keys) and query side
+    (indic_transliteration / to_slp1 output) because both use **standard SLP1**
+    where ``R=ṇ`` (retroflex nasal).
+
+    ⚠️ Encoding trap: mw_en_tm.json uses standard SLP1, NOT an older Cologne
+    convention. guṇa = ``guRa`` in MW. Forgetting ``R→n`` maps guṇa to gūna
+    ("voided as ordure"). This function handles it.
+
+    Typical pattern::
+
+        idx = {slp1_simplify(k): slp1_k for slp1_k in mw_data}
+        hit = idx.get(slp1_simplify(query_token))
+    """
+    s = slp1 or ''
+    s = (s.replace('K', 'kh').replace('G', 'gh')
+          .replace('C', 'ch').replace('J', 'jh')
+          .replace('T', 'th').replace('D', 'dh')
+          .replace('P', 'ph').replace('B', 'bh'))
+    s = s.replace('S', 's').replace('z', 's')
+    s = s.replace('Y', 'n').replace('N', 'n').replace('R', 'n')   # R=ṇ is the critical case
+    s = s.replace('A', 'a').replace('I', 'i').replace('U', 'u')
+    s = s.replace('E', 'ai').replace('O', 'au')
+    s = s.replace('f', 'r').replace('F', 'r').replace('x', 'l').replace('X', 'l')
+    s = s.replace('M', 'm').replace('H', '')
+    s = s.replace('W', 'th').replace('Q', 'dh')
+    s = s.replace('w', 't').replace('q', 'd')
+    s = s.replace('L', 'l')                                        # Vedic retroflex ḻa
+    return s.lower()
