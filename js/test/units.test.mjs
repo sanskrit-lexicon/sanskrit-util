@@ -42,4 +42,39 @@ assert.equal(su.from_slp1(su.deva_to_slp1('ळ')), 'ḻa');     // round-trip pa
 assert.equal(su.deva_to_slp1(''), '');
 assert.equal(su.deva_to_slp1(null), '');
 
+// ṁ (U+1E41, m-with-dot-above) -> M — the named SamudraManthanam sanscript-drop blocker
+assert.equal(su.to_slp1('sa' + 'ṁ'), 'saM');
+assert.equal(su.to_slp1('saṁskṛta'), 'saMskfta');
+assert.equal(su.to_slp1('saṁskṛta'), su.to_slp1('saṃskṛta'));
+assert.equal(su.form_key('saṁskṛta'), su.form_key('saṃskṛta'));
+
+// slp1_to_devanagari: real transcode (virāma conjuncts + mātrās), round-trip partner of deva_to_slp1
+assert.equal(su.slp1_to_devanagari('Darma'), 'धर्म');
+assert.equal(su.slp1_to_devanagari('agni'), 'अग्नि');
+assert.equal(su.slp1_to_devanagari('kfzRa'), 'कृष्ण');
+assert.equal(su.slp1_to_devanagari('rAmaH'), 'रामः');
+assert.equal(su.slp1_to_devanagari('aMSa'), 'अंश');
+assert.equal(su.slp1_to_devanagari('La'), 'ळ');
+assert.equal(su.slp1_to_devanagari('k'), 'क्');                 // trailing bare consonant -> virāma
+for (const s of ['agni', 'Darma', 'kfzRa', 'saMskftam', 'jYAna', 'budDa', 'aMSaH', 'agnimILe', 'La']) {
+  assert.equal(su.deva_to_slp1(su.slp1_to_devanagari(s)), s);   // lossless for canonical SLP1
+}
+// documented NOT round-trip stable (matches deva_to_slp1): candrabindu -> anusvāra, avagraha dropped
+assert.equal(su.slp1_to_devanagari('a~'), 'अँ');
+assert.equal(su.deva_to_slp1('अँ'), 'aM');
+assert.equal(su.slp1_to_devanagari("ta'"), 'तऽ');
+assert.equal(su.deva_to_slp1('तऽ'), 'ta');
+assert.equal(su.slp1_to_devanagari(''), '');
+assert.equal(su.slp1_to_devanagari(null), '');
+
+// slp1_simplify: fuzzy-match key, folds ALL SLP1 distinctions to plain ASCII
+assert.equal(su.slp1_simplify('guRa'), 'guna');                 // R=ṇ -> n (NOT 'gūna'!) the trap
+assert.equal(su.slp1_simplify('kfzRa'), 'krsna');
+assert.equal(su.slp1_simplify('EkSvarya'), 'aiksvarya');
+assert.equal(su.slp1_simplify('BAva'), 'bhava');
+assert.equal(su.slp1_simplify('agniH'), 'agni');
+assert.equal(su.slp1_simplify('Siva'), su.slp1_simplify('siva'));
+assert.equal(su.slp1_simplify(''), '');
+assert.equal(su.slp1_simplify(null), '');
+
 console.log('OK: sanskrit-util SLP1 unit tests passed (JS == Python literals)');

@@ -90,7 +90,8 @@ def test_normalize_sanskrit_is_lossy_ascii():
 
 def test_empty_and_none_safe():
     for f in (su.to_slp1, su.from_slp1, su.deva_to_iast, su.deva_to_slp1, su.iast_to_devanagari,
-              su.norm, su.nfold, su.form_key, su.normalize_sanskrit):
+              su.norm, su.nfold, su.form_key, su.normalize_sanskrit,
+              su.slp1_to_devanagari, su.slp1_simplify):
         assert f('') == ''
         assert f(None) == ''
     assert su.to_roman([]) == []
@@ -122,6 +123,47 @@ def test_slp1_form_key_folds_like_form_key():
     assert su.slp1_form_key('aMSaH') == su.slp1_form_key('anSa')   # anusvāra==homorganic n, visarga dropped
     assert su.slp1_form_key('rAmaH') == 'rāma'
     assert su.slp1_form_key('kfzRa') == su.form_key(su.from_slp1('kfzRa'))
+
+
+def test_manuscript_m_to_M():
+    # ṁ (U+1E41, m-with-dot-above) -> M — the named SamudraManthanam sanscript-drop blocker.
+    assert su.to_slp1('sa' + 'ṁ') == 'saM'
+    assert su.to_slp1('saṁskṛta') == 'saMskfta'                    # == the ṃ (U+1E43) spelling
+    assert su.to_slp1('saṁskṛta') == su.to_slp1('saṃskṛta')
+    assert su.form_key('saṁskṛta') == su.form_key('saṃskṛta')      # NFD path folds both to n too
+
+
+def test_slp1_to_devanagari_basic():
+    assert su.slp1_to_devanagari('Darma') == 'धर्म'                # virāma conjunct + inherent 'a'
+    assert su.slp1_to_devanagari('agni') == 'अग्नि'
+    assert su.slp1_to_devanagari('kfzRa') == 'कृष्ण'
+    assert su.slp1_to_devanagari('rAmaH') == 'रामः'               # visarga
+    assert su.slp1_to_devanagari('aMSa') == 'अंश'                 # anusvāra
+    assert su.slp1_to_devanagari('La') == 'ळ'                     # Vedic retroflex ḻa
+    assert su.slp1_to_devanagari('k') == 'क्'                     # trailing bare consonant -> virāma
+
+
+def test_slp1_to_devanagari_roundtrips_deva_to_slp1():
+    # the pair is lossless for canonical SLP1 (exhaustively checked in tools/gen_vectors.py over
+    # the alphabet + 1000 real MW headwords); assert the contract on a spread here.
+    for s in ['agni', 'Darma', 'kfzRa', 'saMskftam', 'jYAna', 'budDa', 'aMSaH', 'agnimILe', 'La']:
+        assert su.deva_to_slp1(su.slp1_to_devanagari(s)) == s
+    # documented NOT round-trip stable (matches deva_to_slp1): candrabindu folds to anusvāra,
+    # avagraha is dropped — pin the one-way behaviour so a regression is visible.
+    assert su.slp1_to_devanagari('a~') == 'अँ'                    # candrabindu rendered...
+    assert su.deva_to_slp1('अँ') == 'aM'                          # ...but folds back to anusvāra
+    assert su.slp1_to_devanagari("ta'") == 'तऽ'                   # avagraha rendered...
+    assert su.deva_to_slp1('तऽ') == 'ta'                          # ...but deva_to_slp1 drops it
+
+
+def test_slp1_simplify_folds_all_to_ascii():
+    assert su.slp1_simplify('guRa') == 'guna'                     # R=ṇ -> n (NOT 'gūna'!) the trap
+    assert su.slp1_simplify('kfzRa') == 'krsna'                   # f->r, z->s, R->n
+    assert su.slp1_simplify('EkSvarya') == 'aiksvarya'            # E->ai, S->s
+    assert su.slp1_simplify('BAva') == 'bhava'                    # B->bh, A->a
+    assert su.slp1_simplify('agniH') == 'agni'                    # visarga dropped
+    # lossy extreme: distinctions slp1_norm / slp1_form_key keep are gone here
+    assert su.slp1_simplify('Siva') == su.slp1_simplify('siva')
 
 
 if __name__ == '__main__':

@@ -27,6 +27,9 @@ STR_INPUTS = [
     '', ' ', 'agni', 'rama', 'śiva', 'Śiva', 'KṚṢṆA', 'kṛṣṇa', 'rājan', 'saṃskṛta',
     'jñāna', 'aiśvarya', 'auṣadha', 'ṭīkā', 'ḍamaru', 'buddha', 'kāṅkṣ', 'aṃśa',
     'saṃ', 'am', 'an', 'kram', 'gacchan', '  Agni  ', 'vāc', 'sañjaya',
+    # ṁ (U+1E41, m-with-dot-above) -> M on the IAST->SLP1 side: the named blocker for dropping
+    # sanscript from SamudraManthanam. NFD/form_key must also treat it like anusvāra ṃ.
+    'saṁskṛta', 'ṁ',
     # accent / visarga / placeholder edge cases for form_key
     'krānta', 'krāṃta', 'kranta', 'rāmaḥ', 'devá'.replace('á', 'a' + A),
     'agniḥ'.replace('i', 'i' + A), 'śas', 'ā' + A, 'sá'.replace('á', 'a' + A) + 's',
@@ -49,6 +52,20 @@ SLP1_NORM_INPUTS = [
     '', 'agni', 'agni2', 'aMSa', 'a/MSa', 'aMSa3', 'kf/zRa', 'Si^va', 'a~Nga', 'rAma\\',
     '  agni  ', 'deva 2', "aDo'MSukaM", 'mfL', 'saMskftam2', 'BAvaH', 'Siva', 'aMSaH', 'anSa',
 ]
+# SLP1 inputs for slp1_to_devanagari — alphabet coverage + conjuncts, inherent 'a', mātrās,
+# independent vowels, marks (M/H anusvāra/visarga), the Vedic L, avagraha ('), and the two
+# documented not-round-trip-stable cases (candrabindu ~, avagraha) so their output is pinned.
+SLP1_TO_DEVA_INPUTS = [
+    '', 'agni', 'Darma', 'kfzRa', 'saMskftam', 'rAmaH', 'budDa', 'jYAna', 'aMSa', 'La',
+    'agnimILe', 'sarva', 'veda', 'k', 'kya', 'tsya', 'a', 'A',
+    'i', 'I', 'f', 'F', 'x', 'X', 'e', 'E', 'o', 'O', 'M', 'H', "ta'", 'a~', 'aMga',
+]
+# SLP1 inputs for slp1_simplify — the fuzzy-match key; guRa/kaRa pin the critical R->n (guṇa,
+# NOT gūna); the rest exercise every fold branch (aspirates, sibilants, nasals, long/vocalic).
+SLP1_SIMPLIFY_INPUTS = [
+    '', 'guRa', 'kaRa', 'kfzRa', 'aMSa', 'BAva', 'jYAna', 'EkSvarya', 'OzaDa', 'saMskftam',
+    'DarmakzetraM', 'buDa', 'pfTivI', 'agniH', 'La', 'WIkA', 'QAmara',
+]
 # gaṇa-number lists for to_roman
 NUM_INPUTS = [[], [1], [1, 2, 3], [4, 9, 10], [11], [0, 1, 10, 99], [5, 5, 6]]
 
@@ -68,6 +85,8 @@ def build():
     v['strip_slp1_accents'] = [{'in': s, 'out': su.strip_slp1_accents(s)} for s in SLP1_NORM_INPUTS]
     v['slp1_norm'] = [{'in': s, 'out': su.slp1_norm(s)} for s in SLP1_NORM_INPUTS]
     v['slp1_form_key'] = [{'in': s, 'out': su.slp1_form_key(s)} for s in SLP1_NORM_INPUTS]
+    v['slp1_to_devanagari'] = [{'in': s, 'out': su.slp1_to_devanagari(s)} for s in SLP1_TO_DEVA_INPUTS]
+    v['slp1_simplify'] = [{'in': s, 'out': su.slp1_simplify(s)} for s in SLP1_SIMPLIFY_INPUTS]
     return v
 
 
@@ -109,6 +128,49 @@ def regression(donor):
     return fails
 
 
+def slp1_set_regression():
+    """Lock the SLP1 character-class constants against the INDEPENDENT donor definition in
+    SanskritSpellCheck/detectors/slp1util.py. The donor now imports these from sanskrit-util at
+    runtime, so comparing the live module would be tautological — instead extract the hardcoded
+    literals from the donor's `except ImportError:` fallback branch (its own source of truth) and
+    compare verbatim. Returns [] if the donor sibling is absent (skipped), else a list of failures."""
+    p = os.path.abspath(os.path.join(ROOT, '..', 'SanskritSpellCheck', 'detectors', 'slp1util.py'))
+    if not os.path.exists(p):
+        return None
+    src = open(p, encoding='utf-8').read()
+    import re as _re
+    donor = {}
+    for name, key in (('VOWELS', 'SLP1_VOWELS'), ('MARKS', 'SLP1_MARKS'), ('CONSONANTS', 'SLP1_CONSONANTS')):
+        m = _re.search(name + r'\s*=\s*set\("([^"]*)"\)', src)   # the fallback-branch literal
+        if m:
+            donor[key] = m.group(1)
+    fails = []
+    for key, lit in donor.items():
+        if set(getattr(su, key)) != set(lit):
+            fails.append((key, getattr(su, key), lit))
+    return fails
+
+
+def roundtrip_check():
+    """Property test: for canonical SLP1, deva_to_slp1(slp1_to_devanagari(s)) == s. Runs over the
+    full alphabet (minus candrabindu ~ / avagraha, which are documented as not round-trip stable)
+    plus the real-lemma sample in vectors/slp1_roundtrip_sample.txt (1000 MW <k1> headwords)."""
+    alpha = su.SLP1_VOWELS + 'MH' + su.SLP1_CONSONANTS
+    fails = [c for c in alpha if su.deva_to_slp1(su.slp1_to_devanagari(c)) != c]
+    sample_path = os.path.join(ROOT, 'vectors', 'slp1_roundtrip_sample.txt')
+    n = 0
+    if os.path.exists(sample_path):
+        with open(sample_path, encoding='utf-8') as f:
+            for line in f:
+                w = line.rstrip('\n')
+                if not w or w.startswith('#'):
+                    continue
+                n += 1
+                if su.deva_to_slp1(su.slp1_to_devanagari(w)) != w:
+                    fails.append(w)
+    return fails, len(alpha), n
+
+
 def main():
     vectors = build()
     out = os.path.join(ROOT, 'vectors', 'vectors.json')
@@ -118,21 +180,46 @@ def main():
     total = sum(len(x) for x in vectors.values())
     print(f'wrote {out}: {total} vectors across {len(vectors)} functions')
 
+    rc = 0
+
+    # SLP1 set constants locked against the SanskritSpellCheck donor's independent literals
+    set_fails = slp1_set_regression()
+    if set_fails is None:
+        print('SLP1-set donor NOT FOUND (SanskritSpellCheck/detectors/slp1util.py) — skipped')
+    elif set_fails:
+        print(f'SLP1-SET MISMATCH vs donor ({len(set_fails)}):')
+        for key, got, lit in set_fails:
+            print(f'  {key}: pkg={got!r} donor={lit!r}')
+        rc = 1
+    else:
+        print('SLP1-set OK: SLP1_VOWELS/MARKS/CONSONANTS set-equal to slp1util.py donor literals')
+
+    # SLP1 <-> Devanāgarī round-trip property test (alphabet + real MW headwords)
+    rt_fails, nalpha, nlemmas = roundtrip_check()
+    if rt_fails:
+        print(f'ROUND-TRIP FAIL ({len(rt_fails)}): deva_to_slp1(slp1_to_devanagari(s)) != s')
+        for s in rt_fails[:20]:
+            print(f'  {s!r} -> {su.slp1_to_devanagari(s)!r} -> {su.deva_to_slp1(su.slp1_to_devanagari(s))!r}')
+        rc = 1
+    else:
+        print(f'round-trip OK: {nalpha} alphabet chars + {nlemmas} real MW headwords survive SLP1->Deva->SLP1')
+
+    # WhitneyRoots donor regression on the six donor-origin functions
     donor = load_donor()
     if donor is None:
         print('DONOR NOT FOUND (WhitneyRoots/scripts/sanskrit_util.py) — skipped regression')
-        return 0
-    if donor == 'SHIM':
+    elif donor == 'SHIM':
         print('donor is now the re-export shim — regression already locked at extraction; skipped')
-        return 0
-    fails = regression(donor)
-    if fails:
-        print(f'REGRESSION MISMATCH vs donor ({len(fails)}):')
-        for fn, s in fails[:20]:
-            print(f'  {fn}({s!r}): pkg={getattr(su, fn)(s)!r} donor={getattr(donor, fn)(s)!r}')
-        return 1
-    print('regression OK: package reproduces donor on all 6 donor-origin functions')
-    return 0
+    else:
+        fails = regression(donor)
+        if fails:
+            print(f'REGRESSION MISMATCH vs donor ({len(fails)}):')
+            for fn, s in fails[:20]:
+                print(f'  {fn}({s!r}): pkg={getattr(su, fn)(s)!r} donor={getattr(donor, fn)(s)!r}')
+            rc = 1
+        else:
+            print('regression OK: package reproduces donor on all 6 donor-origin functions')
+    return rc
 
 
 if __name__ == '__main__':
