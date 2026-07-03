@@ -25,6 +25,9 @@ SLP1_VOWELS / SLP1_MARKS / SLP1_CONSONANTS / SLP1_ALPHABET   valid SLP1 characte
 strip_slp1_accents(slp1) drop the SLP1 accent/candrabindu marks (/ \\ ^ ~)
 slp1_norm(slp1)          CDSL SLP1 HEADWORD key: strip accents + trailing homonym digits; case kept
 slp1_form_key(slp1)      length-preserving COMPARE key for SLP1 forms (= form_key ∘ from_slp1)
+slp1_to_devanagari(slp1) SLP1 -> Devanāgarī (real transcode: virāma conjuncts + mātrās; the
+                         round-trip partner of deva_to_slp1)
+slp1_simplify(slp1)      fuzzy-match key: fold all SLP1 distinctions to plain ASCII (R→n, K→kh, …)
 
 Pick the right key:
   - norm / nfold        : reversible, diacritic-insensitive (search & index lookup)
@@ -34,14 +37,16 @@ Pick the right key:
 import re
 import unicodedata
 
-__version__ = "0.1.0"
+__version__ = "0.3.0"
 
 __all__ = [
     "to_slp1", "from_slp1", "to_roman", "deva_to_iast", "deva_to_slp1", "iast_to_devanagari",
     "norm", "nfold", "form_key", "normalize_sanskrit",
     # SLP1-side API (the CDSL dictionaries are SLP1-native)
     "SLP1_VOWELS", "SLP1_MARKS", "SLP1_CONSONANTS", "SLP1_ALPHABET",
-    "strip_slp1_accents", "slp1_norm", "slp1_form_key",
+    "strip_slp1_accents", "slp1_norm", "slp1_form_key", "slp1_to_devanagari",
+    # MW fuzzy-match simplification
+    "slp1_simplify",
 ]
 
 # ---- IAST -> SLP1 (longest-key-first; aspirates + diphthongs are digraphs) ----
@@ -188,6 +193,61 @@ def deva_to_slp1(s):
     return ''.join(out)
 
 
+# ---- SLP1 -> Devanāgarī (real transcode: virāma conjuncts + mātrās) -----------------
+# The round-trip partner of deva_to_slp1: for canonical SLP1, deva_to_slp1(slp1_to_devanagari(s))
+# == s (proved on the full alphabet + 1000 real MW headwords by the round-trip property test).
+# Unlike iast_to_devanagari (a display-only replace with no orthographic shaping), this supplies
+# the virāma between clustered consonants and picks independent-vowel vs mātrā by position, so the
+# output is well-formed Devanāgarī. The vowel/mātrā/consonant maps are INVERTED from the same
+# Devanāgarī→SLP1 maps deva_to_slp1 uses (so the two stay in lock-step); only the 3 marks are given
+# explicitly (M→anusvāra, H→visarga, ~→candrabindu) because both anusvāra and candrabindu map back
+# to 'M' on the Devanāgarī→SLP1 side and cannot be inverted unambiguously.
+#
+# Not round-trip stable (documented, matching deva_to_slp1): candrabindu (~ → ँ → 'M' anusvāra) and
+# avagraha (' → ऽ, which deva_to_slp1 drops). SLP1 accents (/ \ ^) pass through unchanged.
+_SLP1_TO_DV_VOWEL = {v: k for k, v in _DV_VOWEL_SLP1.items()}       # 'A'->'आ', 'e'->'ए', 'E'->'ऐ', …
+_SLP1_TO_DV_MATRA = {v: k for k, v in _DV_MATRA_SLP1.items()}       # 'A'->'ा', 'e'->'े', 'E'->'ै', …
+_SLP1_TO_DV_MATRA['a'] = ''                                        # inherent 'a' takes no sign
+_SLP1_TO_DV_CONS = {v: k for k, v in _DV_CONS_SLP1.items()}        # 'k'->'क', 'L'->'ळ', …
+_SLP1_TO_DV_MARK = {'M': 'ं', 'H': 'ः', '~': 'ँ'}                  # anusvāra / visarga / candrabindu
+_SLP1_VOWEL_SET = set(_SLP1_TO_DV_VOWEL)
+_SLP1_CONS_SET = set(_SLP1_TO_DV_CONS)
+
+
+def slp1_to_devanagari(slp1):
+    """SLP1 -> Devanāgarī, a real transcode (not a display replace): supplies the virāma between
+    clustered consonants and renders each vowel as an independent sign or a mātrā by position, so
+    the result is well-formed Devanāgarī and is the round-trip partner of deva_to_slp1. Avagraha
+    (') -> ऽ; SLP1 accents (/ \\ ^) pass through. See module note for the (documented) candrabindu /
+    avagraha round-trip asymmetries."""
+    s = slp1 or ''
+    out = []
+    pending_cons = False        # a consonant sign was emitted and still awaits its vowel/virāma
+    for ch in s:
+        if ch in _SLP1_CONS_SET:
+            if pending_cons:
+                out.append(_VIRAMA)                 # previous consonant had no vowel -> conjunct
+            out.append(_SLP1_TO_DV_CONS[ch])
+            pending_cons = True
+        elif ch in _SLP1_VOWEL_SET:
+            if pending_cons:
+                out.append(_SLP1_TO_DV_MATRA[ch])   # attach as mātrā ('' for inherent 'a')
+                pending_cons = False
+            else:
+                out.append(_SLP1_TO_DV_VOWEL[ch])   # independent vowel sign
+        else:                                       # mark, avagraha, accent, digit, space, other
+            if pending_cons:
+                out.append(_VIRAMA)                 # close the bare consonant first
+                pending_cons = False
+            if ch == "'":
+                out.append('ऽ')                     # avagraha
+            else:
+                out.append(_SLP1_TO_DV_MARK.get(ch, ch))
+    if pending_cons:
+        out.append(_VIRAMA)                         # trailing bare consonant
+    return ''.join(out)
+
+
 # ---- IAST -> Devanāgarī (approximate display transcode; port of linguistics.js) ----
 _IAST_TO_DEVA = {
     'a': 'अ', 'ā': 'आ', 'i': 'इ', 'ī': 'ई', 'u': 'उ', 'ū': 'ऊ', 'ṛ': 'ऋ', 'ṝ': 'ॠ',
@@ -327,3 +387,36 @@ def slp1_form_key(slp1):
     SLP1 -> IAST -> form_key, so anusvāra folds to its homorganic nasal and the nom-sg visarga
     drops while vowel length and ś/retroflex survive. Unlike slp1_norm() it keeps homonym digits."""
     return form_key(from_slp1(strip_slp1_accents(slp1 or '')))
+
+
+def slp1_simplify(slp1):
+    """Fuzzy-match key: fold ALL SLP1 distinctions to plain ASCII — the lossy extreme of the SLP1
+    key family (slp1_norm keeps case+everything; slp1_form_key keeps length+ś+dots; this keeps
+    almost nothing). Designed for building and querying MW headword indexes (e.g. mw_en_tm.json).
+
+    Works identically on both index side (MW headword keys) and query side (indic_transliteration /
+    to_slp1 output) because both use **standard SLP1** where ``R=ṇ`` (retroflex nasal).
+
+    ⚠️ Encoding trap: mw_en_tm.json uses standard SLP1, NOT an older Cologne convention. guṇa =
+    ``guRa`` in MW. Forgetting ``R→n`` maps guṇa to gūna ("voided as ordure"). This handles it.
+
+    Typical pattern::
+
+        idx = {slp1_simplify(k): slp1_k for slp1_k in mw_data}
+        hit = idx.get(slp1_simplify(query_token))
+    """
+    s = slp1 or ''
+    s = (s.replace('K', 'kh').replace('G', 'gh')
+          .replace('C', 'ch').replace('J', 'jh')
+          .replace('T', 'th').replace('D', 'dh')
+          .replace('P', 'ph').replace('B', 'bh'))
+    s = s.replace('S', 's').replace('z', 's')
+    s = s.replace('Y', 'n').replace('N', 'n').replace('R', 'n')   # R=ṇ is the critical case
+    s = s.replace('A', 'a').replace('I', 'i').replace('U', 'u')
+    s = s.replace('E', 'ai').replace('O', 'au')
+    s = s.replace('f', 'r').replace('F', 'r').replace('x', 'l').replace('X', 'l')
+    s = s.replace('M', 'm').replace('H', '')
+    s = s.replace('W', 'th').replace('Q', 'dh')
+    s = s.replace('w', 't').replace('q', 'd')
+    s = s.replace('L', 'l')                                        # Vedic retroflex ḻa
+    return s.lower()

@@ -105,6 +105,14 @@
    "out": "saYjaya"
   },
   {
+   "in": "saṁskṛta",
+   "out": "saMskfta"
+  },
+  {
+   "in": "ṁ",
+   "out": "M"
+  },
+  {
    "in": "krānta",
    "out": "krAnta"
   },
@@ -405,6 +413,14 @@
    "out": "sañjaya"
   },
   {
+   "in": "saṁskṛta",
+   "out": "saṁskṛta"
+  },
+  {
+   "in": "ṁ",
+   "out": "ṁ"
+  },
+  {
    "in": "krānta",
    "out": "krānta"
   },
@@ -657,6 +673,14 @@
    "out": "सअञजअयअ"
   },
   {
+   "in": "saṁskṛta",
+   "out": "सअṁसकऋतअ"
+  },
+  {
+   "in": "ṁ",
+   "out": "ṁ"
+  },
+  {
    "in": "krānta",
    "out": "करआनतअ"
   },
@@ -845,6 +869,14 @@
   {
    "in": "sañjaya",
    "out": "sanjaya"
+  },
+  {
+   "in": "saṁskṛta",
+   "out": "samskrta"
+  },
+  {
+   "in": "ṁ",
+   "out": "m"
   },
   {
    "in": "krānta",
@@ -1037,6 +1069,14 @@
    "out": "sanjaya"
   },
   {
+   "in": "saṁskṛta",
+   "out": "sanskrta"
+  },
+  {
+   "in": "ṁ",
+   "out": "n"
+  },
+  {
    "in": "krānta",
    "out": "kranta"
   },
@@ -1227,6 +1267,14 @@
    "out": "sanjaya"
   },
   {
+   "in": "saṁskṛta",
+   "out": "sanskṛta"
+  },
+  {
+   "in": "ṁ",
+   "out": "n"
+  },
+  {
    "in": "krānta",
    "out": "krānta"
   },
@@ -1415,6 +1463,14 @@
   {
    "in": "sañjaya",
    "out": "sanjaya"
+  },
+  {
+   "in": "saṁskṛta",
+   "out": "samskrta"
+  },
+  {
+   "in": "ṁ",
+   "out": "m"
   },
   {
    "in": "krānta",
@@ -1733,6 +1789,210 @@
   {
    "in": "anSa",
    "out": "anśa"
+  }
+ ],
+ "slp1_to_devanagari": [
+  {
+   "in": "",
+   "out": ""
+  },
+  {
+   "in": "agni",
+   "out": "अग्नि"
+  },
+  {
+   "in": "Darma",
+   "out": "धर्म"
+  },
+  {
+   "in": "kfzRa",
+   "out": "कृष्ण"
+  },
+  {
+   "in": "saMskftam",
+   "out": "संस्कृतम्"
+  },
+  {
+   "in": "rAmaH",
+   "out": "रामः"
+  },
+  {
+   "in": "budDa",
+   "out": "बुद्ध"
+  },
+  {
+   "in": "jYAna",
+   "out": "ज्ञान"
+  },
+  {
+   "in": "aMSa",
+   "out": "अंश"
+  },
+  {
+   "in": "La",
+   "out": "ळ"
+  },
+  {
+   "in": "agnimILe",
+   "out": "अग्निमीळे"
+  },
+  {
+   "in": "sarva",
+   "out": "सर्व"
+  },
+  {
+   "in": "veda",
+   "out": "वेद"
+  },
+  {
+   "in": "k",
+   "out": "क्"
+  },
+  {
+   "in": "kya",
+   "out": "क्य"
+  },
+  {
+   "in": "tsya",
+   "out": "त्स्य"
+  },
+  {
+   "in": "a",
+   "out": "अ"
+  },
+  {
+   "in": "A",
+   "out": "आ"
+  },
+  {
+   "in": "i",
+   "out": "इ"
+  },
+  {
+   "in": "I",
+   "out": "ई"
+  },
+  {
+   "in": "f",
+   "out": "ऋ"
+  },
+  {
+   "in": "F",
+   "out": "ॠ"
+  },
+  {
+   "in": "x",
+   "out": "ऌ"
+  },
+  {
+   "in": "X",
+   "out": "ॡ"
+  },
+  {
+   "in": "e",
+   "out": "ए"
+  },
+  {
+   "in": "E",
+   "out": "ऐ"
+  },
+  {
+   "in": "o",
+   "out": "ओ"
+  },
+  {
+   "in": "O",
+   "out": "औ"
+  },
+  {
+   "in": "M",
+   "out": "ं"
+  },
+  {
+   "in": "H",
+   "out": "ः"
+  },
+  {
+   "in": "ta'",
+   "out": "तऽ"
+  },
+  {
+   "in": "a~",
+   "out": "अँ"
+  },
+  {
+   "in": "aMga",
+   "out": "अंग"
+  }
+ ],
+ "slp1_simplify": [
+  {
+   "in": "",
+   "out": ""
+  },
+  {
+   "in": "guRa",
+   "out": "guna"
+  },
+  {
+   "in": "kaRa",
+   "out": "kana"
+  },
+  {
+   "in": "kfzRa",
+   "out": "krsna"
+  },
+  {
+   "in": "aMSa",
+   "out": "amsa"
+  },
+  {
+   "in": "BAva",
+   "out": "bhava"
+  },
+  {
+   "in": "jYAna",
+   "out": "jnana"
+  },
+  {
+   "in": "EkSvarya",
+   "out": "aiksvarya"
+  },
+  {
+   "in": "OzaDa",
+   "out": "ausadha"
+  },
+  {
+   "in": "saMskftam",
+   "out": "samskrtam"
+  },
+  {
+   "in": "DarmakzetraM",
+   "out": "dharmaksetram"
+  },
+  {
+   "in": "buDa",
+   "out": "budha"
+  },
+  {
+   "in": "pfTivI",
+   "out": "prthivi"
+  },
+  {
+   "in": "agniH",
+   "out": "agni"
+  },
+  {
+   "in": "La",
+   "out": "la"
+  },
+  {
+   "in": "WIkA",
+   "out": "thika"
+  },
+  {
+   "in": "QAmara",
+   "out": "dhamara"
   }
  ]
 }
