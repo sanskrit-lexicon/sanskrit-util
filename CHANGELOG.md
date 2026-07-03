@@ -2,6 +2,47 @@
 
 ## Unreleased
 
+## 0.3.0 — 2026-07-03
+
+First real SLP1-side release from `main`. Completes the SLP1 surface (roadmap Cross-Pollination
+Wave-1 / D1): the CDSL-native (SLP1-keyed) consumers can now migrate off their per-repo helpers.
+
+> **Note on `v0.2.0`:** a `v0.2.0` tag was pushed to origin pointing at an off-`main` commit
+> (`11dd18b`) that was never merged or released; it carried the SLP1 API + `deva_to_slp1` (below)
+> plus a Python-only `slp1_simplify`. This `0.3.0` supersedes it — it merges that work into `main`
+> **and** gives `slp1_simplify` its missing JS port / golden vectors / docs, so the whole SLP1
+> surface is finally cross-language and released properly. (The stray `v0.2.0` tag is left for the
+> maintainer to retarget or delete.)
+
+### Added — `slp1_to_devanagari` (SLP1 → Devanāgarī, real round-trip partner of `deva_to_slp1`)
+A **real** transcode (not a display-only replace like `iast_to_devanagari`): it supplies the
+virāma between clustered consonants and renders each vowel as an independent sign or a mātrā by
+position, so the output is well-formed Devanāgarī. It is the round-trip partner of `deva_to_slp1`:
+`deva_to_slp1(slp1_to_devanagari(s)) == s` for canonical SLP1, proved by a new **property test** in
+`tools/gen_vectors.py` over the full alphabet **plus 1000 real MW `<k1>` headwords**
+(`vectors/slp1_roundtrip_sample.txt`). The vowel/mātrā/consonant maps are inverted from the same
+Devanāgarī→SLP1 maps `deva_to_slp1` uses (kept in lock-step); the 3 marks (M→anusvāra, H→visarga,
+~→candrabindu) are explicit because anusvāra and candrabindu both map back to `M`. Candrabindu
+(`~`→ँ→`M`) and avagraha (`'`→ऽ, dropped) are documented as **not** round-trip stable, matching
+`deva_to_slp1`'s own behaviour. This closes the "_Still deferred:_ a real SLP1→Devanāgarī
+round-trip" note from the previous SLP1 batch.
+
+### Added — `slp1_simplify` (lossy MW fuzzy-match key), now cross-language
+Fold **every** SLP1 distinction to plain ASCII — the lossy extreme of the SLP1 key family
+(`slp1_norm` keeps case+everything but accents/digits; `slp1_form_key` keeps length + `ś` +
+retroflex dots; `slp1_simplify` keeps almost nothing). For building/querying MW headword indexes
+(`mw_en_tm.json`). Critical `R`→`n` (`guṇa` = `guRa` → `guna`, not `gūna`). Was Python-only on an
+unmerged branch; this ships the matching **JS port**, golden vectors, and README/`Which key` docs.
+
+### `ṁ` (U+1E41) → `M` on the IAST→SLP1 side
+Locked with golden vectors + unit tests in both languages (`to_slp1('saṁskṛta') == 'saMskfta'`,
+and `form_key` folds it like anusvāra `ṃ`). This is the named blocker for dropping `sanscript` from
+SamudraManthanam's IAST→SLP1 path — `to_slp1` already handled it; it is now regression-covered.
+
+Golden vectors grow 418 → **482** across **15** functions (`JS == Python` still asserted every
+commit; the browser global build re-checked non-stale). Purely additive — existing exports and
+their behaviour are unchanged.
+
 ### Added — SLP1-side API
 The original 0.1.0 surface was IAST/Devanāgarī-centric, but the CDSL dictionaries are
 **SLP1-native** (case is phonemic there), so every dict repo had re-rolled its own SLP1
@@ -30,8 +71,9 @@ directly: `ळ`→`L` (the round-trip partner of `from_slp1('L')`→`ḻ`) while
 vectors **403 → 418** across **13** functions; +3 Python and matching JS unit tests lock the
 `ळ`/`ऌ` distinction cross-language. Purely additive — existing exports unchanged.
 
-_Still deferred:_ a real SLP1→Devanāgarī round-trip, and proper virāma/conjunct shaping for
-`iast_to_devanagari` (still approximate, display-only) — these need their own change.
+_Since resolved:_ the real SLP1→Devanāgarī round-trip landed in **0.3.0** above
+(`slp1_to_devanagari`). Still deferred: proper virāma/conjunct shaping for `iast_to_devanagari`
+(still approximate, display-only) — a separate change.
 
 ## 0.1.0 — 2026-06-14
 

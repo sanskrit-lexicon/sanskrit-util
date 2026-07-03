@@ -46,6 +46,8 @@ The functions above are IAST/Devanāgarī-centric, but CDSL dictionary headwords
 | `strip_slp1_accents(slp1)` | drop the SLP1 accent/candrabindu marks `/ \ ^ ~` |
 | `slp1_norm(slp1)` | **headword key**: strip accents + trailing homonym digits, collapse space; **case preserved** |
 | `slp1_form_key(slp1)` | **length-preserving compare key** for SLP1 forms = `form_key(from_slp1(…))` |
+| `slp1_to_devanagari(slp1)` | SLP1 → Devanāgarī (**real** transcode: virāma conjuncts + mātrās) — round-trip partner of `deva_to_slp1` |
+| `slp1_simplify(slp1)` | **lossy** fuzzy-match key: fold every SLP1 distinction to plain ASCII (`R`→`n`, `K`→`kh`, `S`→`s`) — MW index building |
 
 ### Which key do I want?
 
@@ -60,6 +62,19 @@ The functions above are IAST/Devanāgarī-centric, but CDSL dictionary headwords
   and the trailing homonym index, keeps SLP1 case. The shared form of the per-repo
   `normalize_lemma` / `normalizeSlp1Lemma` headword normalizers. Use `slp1_form_key` to compare
   SLP1 *forms* (folds nasals/visarga like `form_key`).
+- **A fuzzy MW-index bucket** (match a query token against MW headwords ignoring every
+  vowel-length / aspiration / retroflex / sibilant distinction) → `slp1_simplify`. This is the
+  **lossy extreme** of the SLP1 key family (`slp1_norm` keeps everything but accents/digits;
+  `slp1_form_key` keeps length + `ś` + retroflex dots; `slp1_simplify` keeps almost nothing).
+  Critical: MW uses **standard SLP1** where `R`=ṇ, so `guṇa` = `guRa` → `guna` — forgetting
+  `R`→`n` mis-reads it as `gūna`.
+- **Render an SLP1 headword as Devanāgarī** → `slp1_to_devanagari`. A *real* transcode (supplies
+  the virāma between clustered consonants and picks independent-vowel vs mātrā by position), so
+  it is the round-trip partner of `deva_to_slp1`: `deva_to_slp1(slp1_to_devanagari(s)) == s` for
+  canonical SLP1 (proved on the full alphabet + 1000 real MW headwords). Unlike the display-only
+  `iast_to_devanagari`, the output is well-formed. Candrabindu (`~`→ँ) folds back to anusvāra and
+  avagraha (`'`→ऽ) is dropped by `deva_to_slp1`, so those two are not round-trip stable (matching
+  `deva_to_slp1`'s own behaviour).
 
 ## Use it
 
@@ -101,11 +116,19 @@ Drop a 12-line re-export shim named `sanskrit_util.py` that loads
 ## Test
 
 ```bash
-python tools/gen_vectors.py           # regenerate vectors.json + regression-check vs donor
+python tools/gen_vectors.py           # regenerate vectors.json + 3 regression checks (see below)
 python py/tests/test_units.py         # pitfall unit tests
 python py/tests/test_vectors.py       # Python == golden
 node   js/test/vectors.test.mjs       # JS == golden  (== Python)
+node   js/test/units.test.mjs         # JS unit tests (== Python literals)
+node   js/build-global.mjs --check    # browser global build is not stale
 ```
+
+`tools/gen_vectors.py` additionally (a) locks the `SLP1_VOWELS/MARKS/CONSONANTS` constants
+set-equal to the independent literals in the SanskritSpellCheck `slp1util.py` donor, and (b) runs
+the **SLP1 ⇄ Devanāgarī round-trip property test** — `deva_to_slp1(slp1_to_devanagari(s)) == s`
+over the full alphabet plus [`vectors/slp1_roundtrip_sample.txt`](vectors/slp1_roundtrip_sample.txt)
+(1000 real MW `<k1>` headwords). Both are skipped gracefully if the sibling repos are absent.
 
 ## Layout
 
@@ -114,7 +137,9 @@ sanskrit-util/
   py/sanskrit_util/__init__.py   Python implementation (importable as `sanskrit_util`)
   py/tests/                      unit + vector tests
   js/index.mjs                   JS implementation (ESM)
+  js/sanskrit-util.global.js     generated browser global build (window.SanskritUtil)
   js/test/vectors.test.mjs       cross-language vector test
   vectors/vectors.json           golden outputs, shared by both test suites
-  tools/gen_vectors.py           regenerate vectors + donor regression
+  vectors/slp1_roundtrip_sample.txt  1000 real MW headwords for the SLP1⇄Devanāgarī round-trip test
+  tools/gen_vectors.py           regenerate vectors + donor/set/round-trip regressions
 ```
