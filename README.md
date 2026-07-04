@@ -49,6 +49,18 @@ The functions above are IAST/Devanāgarī-centric, but CDSL dictionary headwords
 | `slp1_to_devanagari(slp1)` | SLP1 → Devanāgarī (**real** transcode: virāma conjuncts + mātrās) — round-trip partner of `deva_to_slp1` |
 | `slp1_simplify(slp1)` | **lossy** fuzzy-match key: fold every SLP1 distinction to plain ASCII (`R`→`n`, `K`→`kh`, `S`→`s`) — MW index building |
 
+### CDSL raw-source-line display (SLP1-in-markup → readable IAST)
+
+A raw `csl-orig` line is SLP1 wrapped in CDSL markup, unreadable to a human. These render it to
+IAST for display, honoring each dictionary's encoding. `code` is the csl-orig dict code (`mw`,
+`ap`, `pwg`, `pw`, `wil`, `vcp`, `skd`). SLP1 is a machine key — show IAST to readers; keep raw
+SLP1 behind an opt-in toggle for those who edit source.
+
+| Symbol | Does |
+|---|---|
+| `source_line_to_iast(text, code)` | one raw source line → IAST: MW `<s>…</s>`, PW/PWG/AP/WIL `{#…#}` (meaning `{%…%}` kept), VCP/SKD whole-line prose; strips tags, `[Page…]`, the `¦` separator. `{#aBAga#}¦, <lex>f.</lex>` → `abhāga, f.` |
+| `source_text_to_iast(text, code)` | multi-line snippet → IAST, line by line (preserves breaks) |
+
 ### Which key do I want?
 
 - **Search / index lookup** → `norm` (and `nfold` as a fallback alias). Reversible-ish,

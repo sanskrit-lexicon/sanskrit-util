@@ -37,7 +37,7 @@ Pick the right key:
 import re
 import unicodedata
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 __all__ = [
     "to_slp1", "from_slp1", "to_roman", "deva_to_iast", "deva_to_slp1", "iast_to_devanagari",
@@ -47,6 +47,8 @@ __all__ = [
     "strip_slp1_accents", "slp1_norm", "slp1_form_key", "slp1_to_devanagari",
     # MW fuzzy-match simplification
     "slp1_simplify",
+    # CDSL raw-source-line display renderer (SLP1-in-markup -> readable IAST)
+    "source_line_to_iast", "source_text_to_iast",
 ]
 
 # ---- IAST -> SLP1 (longest-key-first; aspirates + diphthongs are digraphs) ----
@@ -420,3 +422,48 @@ def slp1_simplify(slp1):
     s = s.replace('w', 't').replace('q', 'd')
     s = s.replace('L', 'l')                                        # Vedic retroflex ḻa
     return s.lower()
+
+
+# ---- CDSL raw source line -> readable IAST (display layer over from_slp1) ----
+# A raw csl-orig line is SLP1 inside CDSL markup, unreadable to a human. These
+# render it to IAST honoring each dictionary's encoding: MW <s>…</s>;
+# PW/PWG/AP/WIL {#…#} (with the meaning language in {%…%}, left as-is);
+# VCP/SKD whole-line SLP1 prose. The markup shell (tags, [Page…] markers, the ¦
+# headword separator) is stripped. `code` is the csl-orig dict code
+# (mw, ap, pwg, pw, wil, vcp, skd). Non-SLP1 spans — glosses, <ls> citations,
+# grammar abbreviations like "f." — are preserved.
+_PROSE_SLP1_DICTS = frozenset({'vcp', 'skd'})
+
+
+def _strip_cdsl_markup(text):
+    text = re.sub(r'<info[^>]*/?>', '', text, flags=re.I)  # metadata self-closing tags
+    text = re.sub(r'\[Page[^\]]*\]', '', text)             # VCP/SKD page markers
+    return re.sub(r'<[^>]+>', '', text)                    # any remaining tag shell
+
+
+def _clean_cdsl(text):
+    text = text.replace('¦', ' ')                    # ¦ headword/body separator
+    text = re.sub(r'\s+([,.;:!?])', r'\1', text)          # pull punctuation back
+    return re.sub(r'\s+', ' ', text).strip()
+
+
+def source_line_to_iast(text, code):
+    """One raw csl-orig source line -> readable IAST. `code` is the dict code."""
+    if text is None:
+        return ''
+    c = (code or '').lower()
+    if c in _PROSE_SLP1_DICTS:
+        s = re.sub(r"[A-Za-z~']+", lambda m: from_slp1(m.group(0)), str(text))
+        return _clean_cdsl(_strip_cdsl_markup(s))
+    s = str(text)
+    s = re.sub(r'\{[#@]([^#@]*)[#@]\}', lambda m: from_slp1(m.group(1)), s)   # {#…#}, {@…@}
+    s = re.sub(r'(?i)<s\d?>([^<]*)</s\d?>', lambda m: from_slp1(m.group(1)), s)  # MW <s>…</s>
+    s = re.sub(r'\{%([^%]*)%\}', lambda m: m.group(1), s)                     # meaning: unwrap, keep
+    return _clean_cdsl(_strip_cdsl_markup(s))
+
+
+def source_text_to_iast(text, code):
+    """Multi-line snippet -> IAST, line by line (preserves line breaks)."""
+    if text is None:
+        return ''
+    return '\n'.join(source_line_to_iast(line, code) for line in str(text).split('\n'))

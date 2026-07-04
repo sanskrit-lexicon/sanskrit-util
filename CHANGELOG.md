@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+## 0.4.0 — 2026-07-04
+
+### Added — `source_line_to_iast` / `source_text_to_iast` (CDSL raw source line → readable IAST)
+
+A display layer over `from_slp1`: a raw `csl-orig` line is SLP1 inside CDSL markup
+(`{#aBAga#}¦, <lex>f.</lex> {#A#} <ls>…</ls>`) and unreadable to a human. These render it to IAST,
+honoring each dictionary's own encoding — MW `<s>…</s>`; PW/PWG/AP/WIL `{#…#}` (with the meaning
+language in `{%…%}` left as-is); VCP/SKD whole-line SLP1 prose — and strip the markup shell (tags,
+`[Page…]` markers, the `¦` headword separator). `code` is the csl-orig dict code. Example:
+`{#aBAga#}¦, <lex>f.</lex> {#A#}` → `abhāga, f. ā`. Python and JS byte-identical, locked by new
+unit tests in both suites. First extracted in `csl-atlas` (PRs #205/#206/#209); upstreamed here so
+every CDSL reader/web frontend renders source entries the same way instead of re-parsing markup.
+SLP1 is a machine key — the guidance is IAST for readers, raw SLP1 behind an opt-in toggle.
+
 ## 0.3.0 — 2026-07-03
 
 First real SLP1-side release from `main`. Completes the SLP1 surface (roadmap Cross-Pollination
