@@ -166,6 +166,23 @@ def test_slp1_simplify_folds_all_to_ascii():
     assert su.slp1_simplify('Siva') == su.slp1_simplify('siva')
 
 
+def test_source_line_to_iast_per_dict_markup():
+    # Same literals as js/test/units.test.mjs — locks JS == Python.
+    assert su.source_line_to_iast('{#aBAga#}¦, <lex>f.</lex> {#A#} <ls>TB. 6,7,5</ls>.<info n="x"/>', 'pw') \
+        == 'abhāga, f. ā TB. 6,7,5.'                               # PW/PWG/AP/WIL: {#…#}
+    assert su.source_line_to_iast('{#aBAga#}¦ {%ohne Antheil%}. <ls>RV. 1,2,3</ls>', 'pwg') \
+        == 'abhāga ohne Antheil. RV. 1,2,3'                        # meaning {%…%} kept as-is
+    assert su.source_line_to_iast('<hom>1.</hom> <s>aBAga</s> ¦ <lex>mfn.</lex> without a share', 'mw') \
+        == '1. abhāga mfn. without a share'                        # MW: <s>…</s>
+    assert su.source_line_to_iast('aBAga¦ pu0 na BAgaH aBAve na0 ta0 . 1 BAgABAve .', 'vcp') \
+        == 'abhāga pu0 na bhāgaḥ abhāve na0 ta0. 1 bhāgābhāve.'    # VCP/SKD: whole-line prose
+    assert su.source_line_to_iast('abdaH¦, puM, (abati sImAnaM rakzati aba', 'skd') \
+        == 'abdaḥ, puṃ, (abati sīmānaṃ rakṣati aba'
+    assert su.source_line_to_iast('', 'mw') == ''
+    assert su.source_line_to_iast(None, 'mw') == ''
+    assert su.source_text_to_iast('{#aBAga#}¦\n{#A#}', 'pw') == 'abhāga\nā'  # multi-line
+
+
 if __name__ == '__main__':
     import traceback
     funcs = [v for k, v in sorted(globals().items()) if k.startswith('test_') and callable(v)]

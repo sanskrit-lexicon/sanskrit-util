@@ -77,4 +77,19 @@ assert.equal(su.slp1_simplify('Siva'), su.slp1_simplify('siva'));
 assert.equal(su.slp1_simplify(''), '');
 assert.equal(su.slp1_simplify(null), '');
 
+// source_line_to_iast: CDSL raw source line -> readable IAST, per-dict markup
+assert.equal(su.source_line_to_iast('{#aBAga#}¦, <lex>f.</lex> {#A#} <ls>TB. 6,7,5</ls>.<info n="x"/>', 'pw'),
+  'abhāga, f. ā TB. 6,7,5.');                                    // PW/PWG/AP/WIL: {#…#}
+assert.equal(su.source_line_to_iast('{#aBAga#}¦ {%ohne Antheil%}. <ls>RV. 1,2,3</ls>', 'pwg'),
+  'abhāga ohne Antheil. RV. 1,2,3');                             // meaning {%…%} kept as-is
+assert.equal(su.source_line_to_iast('<hom>1.</hom> <s>aBAga</s> ¦ <lex>mfn.</lex> without a share', 'mw'),
+  '1. abhāga mfn. without a share');                             // MW: <s>…</s>
+assert.equal(su.source_line_to_iast('aBAga¦ pu0 na BAgaH aBAve na0 ta0 . 1 BAgABAve .', 'vcp'),
+  'abhāga pu0 na bhāgaḥ abhāve na0 ta0. 1 bhāgābhāve.');         // VCP/SKD: whole-line prose
+assert.equal(su.source_line_to_iast('abdaH¦, puM, (abati sImAnaM rakzati aba', 'skd'),
+  'abdaḥ, puṃ, (abati sīmānaṃ rakṣati aba');
+assert.equal(su.source_line_to_iast('', 'mw'), '');
+assert.equal(su.source_line_to_iast(null, 'mw'), '');
+assert.equal(su.source_text_to_iast('{#aBAga#}¦\n{#A#}', 'pw'), 'abhāga\nā');  // multi-line preserves breaks
+
 console.log('OK: sanskrit-util SLP1 unit tests passed (JS == Python literals)');
