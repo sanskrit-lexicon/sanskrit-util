@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Added — `tools/epistemic/build_epistemic_dashboard.py` — the epistemic dashboard generator (H356)
+
+Parses whichever of the seven registries live in `--dir` into one `epistemic.json`
+(per-layer rows, importance 🔴🟠🟡, ⚙️ auto / ✍️ human origin split, STALENESS flag summary,
+grand totals). Feeds a self-contained dashboard: published on the Sanskrit-data side
+(<https://gasyoun.github.io/SanskritLexicography/epistemic/>), local-only on the private
+Uprava side. The Sanskrit-data repo vendors a byte-identical copy into its `epistemic_dashboard/`
+so CI self-builds. No `Date.now()` in any derived count.
+
 ### Added — `tools/epistemic/` — seven builders for the epistemic sibling registries (H356)
 
 Seven scripts that seed / generate the epistemic sibling registries that sit next to each

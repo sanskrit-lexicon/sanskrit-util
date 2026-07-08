@@ -23,6 +23,17 @@ code; re-vendor to any consumer on a version bump via
 | [`seed_dead_ends.py`](seed_dead_ends.py) | DEAD_ENDS | medium | QUESTIONS_LOG refuted rows + SERVER_OUTAGES permanent-dead hosts |
 | [`scan_assumptions.py`](scan_assumptions.py) | ASSUMPTIONS | low | `# ASSUMES:` / `# INVARIANT:` / builder-`assert` tag grep |
 | (glossary) | GLOSSARY | none | hand-curated; token-frequency assist only |
+| [`build_epistemic_dashboard.py`](build_epistemic_dashboard.py) | (all 7) | full | `epistemic.json` for the dashboard — per-layer row/importance/origin counts + STALENESS flags |
+
+### The dashboard
+
+[`build_epistemic_dashboard.py`](build_epistemic_dashboard.py) parses whichever of the seven
+registries exist in `--dir` into one `epistemic.json`. It feeds a small self-contained
+dashboard published on the **Sanskrit-data** side (public Pages,
+<https://gasyoun.github.io/SanskritLexicography/epistemic/>) and generated locally on the
+**infra** side (Uprava is private — local-only, no Pages). The Sanskrit-data side vendors a
+byte-identical copy of this script into its `epistemic_dashboard/` so CI self-builds; re-vendor
+on version bump via `/cologne-sanskrit-util-sync`.
 
 ## Conventions (all builders)
 
