@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Added — `tools/epistemic/` — seven builders for the epistemic sibling registries (H356)
+
+Seven scripts that seed / generate the epistemic sibling registries that sit next to each
+`FINDINGS.md` (ASSUMPTIONS · CONTRADICTIONS · GAPS · DEAD_ENDS · RECIPES · STALENESS · GLOSSARY),
+mirrored across the `SanskritLexicography` (Sanskrit-data) and `Uprava` (infra/process) sides.
+Housed here so both sides run the same code; re-vendor via `/cologne-sanskrit-util-sync`.
+`derive_staleness.py` fully generates the STALENESS decay table from a FINDINGS file (date passed
+in via `--today`, never `Date.now()`, so re-runs are byte-identical); `seed_recipes.py` /
+`seed_gaps.py` / `seed_contradictions.py` / `seed_dead_ends.py` / `scan_assumptions.py` emit
+`⚙️ auto` candidate rows a human confirms or deletes. `seed_contradictions.py` reuses `form_key`
+when the package is importable. See [`tools/epistemic/README.md`](tools/epistemic/README.md).
+
 ## 0.4.0 — 2026-07-04
 
 ### Added — `source_line_to_iast` / `source_text_to_iast` (CDSL raw source line → readable IAST)
