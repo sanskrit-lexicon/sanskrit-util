@@ -7,7 +7,7 @@
 Parses whichever of the seven registries live in `--dir` into one `epistemic.json`
 (per-layer rows, importance 🔴🟠🟡, ⚙️ auto / ✍️ human origin split, STALENESS flag summary,
 grand totals). Feeds a self-contained dashboard: published on the Sanskrit-data side
-(<https://gasyoun.github.io/SanskritLexicography/epistemic/>), local-only on the private
+(<https://gasyoun.github.io/SanskritLexicography/episteme/>), local-only on the private
 Uprava side. The Sanskrit-data repo vendors a byte-identical copy into its `epistemic_dashboard/`
 so CI self-builds. No `Date.now()` in any derived count.
 
