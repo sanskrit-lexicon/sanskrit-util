@@ -30,7 +30,7 @@ code; re-vendor to any consumer on a version bump via
 [`build_epistemic_dashboard.py`](build_epistemic_dashboard.py) parses whichever of the seven
 registries exist in `--dir` into one `epistemic.json`. It feeds a small self-contained
 dashboard published on the **Sanskrit-data** side (public Pages,
-<https://gasyoun.github.io/SanskritLexicography/epistemic/>) and generated locally on the
+<https://gasyoun.github.io/SanskritLexicography/episteme/>) and generated locally on the
 **infra** side (Uprava is private — local-only, no Pages). The Sanskrit-data side vendors a
 byte-identical copy of this script into its `epistemic_dashboard/` so CI self-builds; re-vendor
 on version bump via `/cologne-sanskrit-util-sync`.
