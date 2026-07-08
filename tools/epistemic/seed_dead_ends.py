@@ -24,6 +24,10 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
 
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _provenance import linkify_repo_segment  # clickable repo tags in Source lines
+
 REFUTED = re.compile(r"refut", re.I)
 PERMANENT = re.compile(r"\b(permanent|permanently|dead|walled|hard[- ]?down|do not retry)\b", re.I)
 QID = re.compile(r"\b([QTR]\d{4}-\d{2})\b")            # Q2607-08 / T2607-01 / R2606-01
@@ -91,7 +95,7 @@ def main():
             print("Failed because: <the concrete failure mode from the refuted row>")
             print(f"Evidence: QUESTIONS_LOG {qid} (refuted).")
             print("Don't retry unless: <the condition that would make it worth revisiting>")
-            print(f"> **Source:** QUESTIONS_LOG {qid} · {args.repo} · {args.today} "
+            print(f"> **Source:** QUESTIONS_LOG {qid} · {linkify_repo_segment(args.repo)} · {args.today} "
                   f"· auto (seed_dead_ends.py)\n")
 
     if args.server_outages:
@@ -104,7 +108,7 @@ def main():
             print("Failed because: <permanent block / dead origin>")
             print("Evidence: SERVER_OUTAGES permanent-blocks row.")
             print("Don't retry unless: <a different IP / the host returns / a mirror exists>")
-            print(f"> **Source:** SERVER_OUTAGES `{host}` · {args.repo} · {args.today} "
+            print(f"> **Source:** SERVER_OUTAGES `{host}` · {linkify_repo_segment(args.repo)} · {args.today} "
                   f"· auto (seed_dead_ends.py)\n")
 
     if not n:

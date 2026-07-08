@@ -24,6 +24,10 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
 
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _provenance import linkify_repo_segment  # clickable repo tags in Source lines
+
 
 def dataset_ids(manifest_obj):
     """Best-effort pull of dataset identifiers from a manifest of unknown exact shape."""
@@ -87,7 +91,7 @@ def main():
         print("Why it matters: <what a measurement of it would unblock>")
         print("Blocker: <data access | no tool | needs a schema-aware parse>")
         print(f"How to close: parse `{ds}`, measure the obvious statistic, append a FINDINGS row.")
-        print(f"> **Source:** manifest `{ds}` · {args.repo} · {args.today} · auto (seed_gaps.py)\n")
+        print(f"> **Source:** manifest `{ds}` · {linkify_repo_segment(args.repo)} · {args.today} · auto (seed_gaps.py)\n")
 
 
 if __name__ == "__main__":
