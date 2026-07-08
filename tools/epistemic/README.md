@@ -24,6 +24,15 @@ code; re-vendor to any consumer on a version bump via
 | [`scan_assumptions.py`](scan_assumptions.py) | ASSUMPTIONS | low | `# ASSUMES:` / `# INVARIANT:` / builder-`assert` tag grep |
 | (glossary) | GLOSSARY | none | hand-curated; token-frequency assist only |
 | [`build_epistemic_dashboard.py`](build_epistemic_dashboard.py) | (all 7) | full | `epistemic.json` for the dashboard — per-layer row/importance/origin counts + STALENESS flags |
+| [`normalize_provenance.py`](normalize_provenance.py) | (all 6 entry) | — | finishing pass: clickable repo tags, bare model version id, commits-by-date link in every `> **Source:**` line (idempotent) |
+| [`_provenance.py`](_provenance.py) | — | — | shared helpers (verified repo→URL map, `repo_link`, `date_link`, `strip_model_tier`) used by the seeders + normalizer |
+
+### The lifecycle — read [`PROTOCOL.md`](PROTOCOL.md)
+
+[`PROTOCOL.md`](PROTOCOL.md) is the algorithm for moving a row along: **confirm** an `⚙️ auto`
+candidate to `✍️ human` (or delete it), **graduate** a vouched row into `FINDINGS` /
+`CROSS_REPO_DECISIONS`, or **delete** it — with the per-layer exit conditions. The registries are
+staging areas, not archives; that doc is how they stay live.
 
 ### The dashboard
 

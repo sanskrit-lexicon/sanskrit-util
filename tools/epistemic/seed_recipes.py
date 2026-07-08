@@ -22,6 +22,10 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
 
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _provenance import linkify_repo_segment  # clickable repo tags in Source lines
+
 CMD = re.compile(r"`([^`]*\.(?:py|sh)[^`]*)`|`(curl [^`]+)`")
 # a FINDINGS finding boundary, either layout
 FINDING = re.compile(r"^(?:### §(\d+)\.|(?:🔴|🟠|🟡)\s*\*\*§(\d+)\.)", re.M)
@@ -94,7 +98,7 @@ def main():
             print(f"Command: `{builder}`")
             print(f"Expected: <the row count / number the manifest records for `{ds}`>")
             print("Env/runtime: <python ver, offline?, ~cost>")
-            print(f"> **Source:** manifest `{ds}` · {args.repo} · {args.today} "
+            print(f"> **Source:** manifest `{ds}` · {linkify_repo_segment(args.repo)} · {args.today} "
                   f"· auto (seed_recipes.py)\n")
 
     if args.findings:
@@ -110,7 +114,7 @@ def main():
             print(f"Command: `{cmd}`")
             print(f"Expected: <the number FINDINGS §{num} reports>")
             print("Env/runtime: <where it must run>")
-            print(f"> **Source:** FINDINGS §{num} · {args.repo} · {args.today} "
+            print(f"> **Source:** FINDINGS §{num} · {linkify_repo_segment(args.repo)} · {args.today} "
                   f"· auto (seed_recipes.py)\n")
 
     if not n:

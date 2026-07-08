@@ -22,6 +22,10 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
 
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _provenance import linkify_repo_segment  # clickable repo tags in Source lines
+
 try:  # length-preserving, scheme-safe key — the canonical helper
     from sanskrit_util import form_key as _form_key  # type: ignore
 except Exception:  # pragma: no cover - fallback when the package isn't importable
@@ -88,7 +92,7 @@ def main():
         print(f"| {args.b_label} | `{bv}` | `{args.b}` |")
         print("Status: 🔴 unresolved — <confirm it's a real disagreement, not a keying artifact>")
         print("Blocks: <the join / merge that can't proceed>")
-        print(f"> **Source:** `{args.a}` vs `{args.b}` · {args.repo} · {args.today} "
+        print(f"> **Source:** `{args.a}` vs `{args.b}` · {linkify_repo_segment(args.repo)} · {args.today} "
               f"· auto (seed_contradictions.py)\n")
     if len(mism) > args.limit:
         print(f"<!-- +{len(mism) - args.limit} more mismatches suppressed by --limit -->")

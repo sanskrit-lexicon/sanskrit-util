@@ -22,6 +22,10 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
 
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _provenance import linkify_repo_segment  # clickable repo tags in Source lines
+
 TAG = re.compile(r"#\s*(ASSUMES|INVARIANT)\s*:\s*(.+?)\s*$", re.I)
 ASSERT = re.compile(r"^\s*assert\s+(.+?)\s*$")
 BUILDER = re.compile(r"(build|promote|derive|crosswalk|merge|seed|gen_|import)", re.I)
@@ -80,7 +84,7 @@ def main():
         print(f"Relied on by: `{rel}` (via `{kind}` at line {lineno}) — trace its consumers.")
         print("Verified?: ❌ never (auto-flagged premise)")
         print("Test to confirm: <fill in — the check that would validate or refute this>")
-        print(f"> **Source:** `{rel}:{lineno}` · {args.repo} · {args.today} · auto (scan_assumptions.py)\n")
+        print(f"> **Source:** `{rel}:{lineno}` · {linkify_repo_segment(args.repo)} · {args.today} · auto (scan_assumptions.py)\n")
 
 
 if __name__ == "__main__":
