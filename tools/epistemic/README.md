@@ -1,0 +1,58 @@
+# tools/epistemic — auto-derivation builders for the seven epistemic sibling registries
+
+_Created: 08-07-2026 · Last updated: 08-07-2026_
+
+Seven builders that seed / generate the **epistemic sibling registries** minted under
+[H356](https://github.com/gasyoun/Uprava/blob/main/handoffs/H356-Opus_csl-corrections_epistemic-sibling-registries_08.07.26.md).
+Each registry occupies one epistemic slot that `FINDINGS.md` (measured-fact-only) structurally
+cannot hold. The registries are **mirrored across two sides** — a Sanskrit-data copy next to
+[`SanskritLexicography/FINDINGS.md`](https://github.com/gasyoun/SanskritLexicography/blob/master/FINDINGS.md)
+and an infra/process copy next to
+[`Uprava/FINDINGS.md`](https://github.com/gasyoun/Uprava/blob/main/FINDINGS.md).
+
+These builders live here (in `sanskrit-util`, the shared toolkit) so both sides run the **same**
+code; re-vendor to any consumer on a version bump via
+[`/cologne-sanskrit-util-sync`](https://github.com/gasyoun/github-spine/blob/main/SHARED_CODE.md).
+
+| Script | Layer | Automation | What it emits |
+|--------|-------|-----------|---------------|
+| [`derive_staleness.py`](derive_staleness.py) | STALENESS | **full** (regenerate, never hand-edit) | the whole confidence-decay table over a FINDINGS file |
+| [`seed_recipes.py`](seed_recipes.py) | RECIPES | high | recipe stubs from manifest builders + FINDINGS command-citations |
+| [`seed_gaps.py`](seed_gaps.py) | GAPS | high | set-difference candidates (manifest datasets with no FINDINGS row) |
+| [`seed_contradictions.py`](seed_contradictions.py) | CONTRADICTIONS | medium | crosswalk-mismatch candidates (two TSVs, shared key, differing value) |
+| [`seed_dead_ends.py`](seed_dead_ends.py) | DEAD_ENDS | medium | QUESTIONS_LOG refuted rows + SERVER_OUTAGES permanent-dead hosts |
+| [`scan_assumptions.py`](scan_assumptions.py) | ASSUMPTIONS | low | `# ASSUMES:` / `# INVARIANT:` / builder-`assert` tag grep |
+| (glossary) | GLOSSARY | none | hand-curated; token-frequency assist only |
+
+## Conventions (all builders)
+
+- `sys.stdout/stderr.reconfigure(encoding='utf-8')`; write files with `encoding='utf-8'` (**no BOM**).
+- **No `Date.now()` / no system clock in the derivation math** — `--today DD-MM-YYYY` is passed
+  in, so a re-run on the same inputs is byte-identical and diffable (this is what makes
+  `derive_staleness.py` a regenerate-not-edit artifact).
+- Auto-emitted rows carry the `⚙️ auto` origin marker and are **candidates** until a human
+  confirms (⚙️→✍️), fills the blanks, or deletes them. `STALENESS` is the exception — it is
+  fully generated and not hand-edited.
+- Every row of every registry opens with the shared FINDINGS traffic-light dot
+  (🔴 3 · 🟠 2 · 🟡 1); what the dot rates varies by layer (blast radius, impact, value,
+  re-attempt cost) but the three-tier scale never changes.
+
+## Examples
+
+```sh
+# STALENESS — regenerate both sides (run on every FINDINGS change)
+python derive_staleness.py --findings ../../SanskritLexicography/FINDINGS.md \
+  --today 08-07-2026 --side sanskrit \
+  --repo-url https://github.com/gasyoun/SanskritLexicography/blob/master \
+  --out ../../SanskritLexicography/STALENESS.md
+
+# GAPS — which kosha datasets have no FINDINGS row yet?
+python seed_gaps.py --manifest ../../kosha/data/manifest/datasets.json \
+  --findings ../../SanskritLexicography/FINDINGS.md --today 08-07-2026
+
+# DEAD_ENDS — harvest refuted hypotheses + dead hosts
+python seed_dead_ends.py --questions-log ../../Uprava/QUESTIONS_LOG.md \
+  --server-outages ../../Uprava/SERVER_OUTAGES.md --today 08-07-2026
+```
+
+_Dr. Mārcis Gasūns_
