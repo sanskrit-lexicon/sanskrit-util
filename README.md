@@ -1,12 +1,20 @@
 # sanskrit-util
 
+_Created: 15-06-2026 · Last updated: 11-07-2026_
+
 One **canonical** implementation of the Sanskrit string helpers that were being re-typed in
 ~20+ Sanskrit-Lexicon / CDSL repos: IAST ⇄ SLP1 ⇄ Devanāgarī transcoding plus the
 normalization keys used for search, indexing and form comparison.
 
+**Current release: v0.4.0** (2026-07-04) — see the
+[GitHub releases](https://github.com/sanskrit-lexicon/sanskrit-util/releases) and
+[`CHANGELOG.md`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/CHANGELOG.md).
+Python and JS carry the same version (`py/pyproject.toml`, `js/package.json`,
+`__version__`); npm name is `@sanskrit-lexicon/sanskrit-util`.
+
 Python and JavaScript ports are **behaviour-identical**, proved on every commit by a shared
-golden-vector set ([`vectors/vectors.json`](vectors/vectors.json)) that both test suites
-assert against. The Python functions are extracted verbatim from
+golden-vector set ([`vectors/vectors.json`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/vectors/vectors.json))
+that both test suites assert against. The Python functions are extracted verbatim from
 `WhitneyRoots/scripts/sanskrit_util.py` (regression-locked against that donor); the JS-origin
 helpers (`deva_to_iast`, `iast_to_devanagari`, `normalize_sanskrit`) come from WhitneyRoots
 `reader.js` / `src/utils/linguistics.js`.
@@ -17,8 +25,27 @@ A file-name census across the GitHub root found `transcoder.py` in **62 copies /
 and a dozen independently hand-rolled `to_slp1` / `norm` / `form_key` / `slug` / `hwnorm`
 functions. Every one re-derives the same SLP1 table and re-hits the same Unicode traps
 (`ś` = `s` + U+0301 collides with the pitch accent; NFD-then-strip destroys vowel length and
-retroflex dots). This package ends that. See [`../SHARED_CODE.md`](../SHARED_CODE.md) for the
-full cross-repo dedup map.
+retroflex dots). This package ends that. See
+[`SHARED_CODE.md`](https://github.com/gasyoun/github-spine/blob/main/SHARED_CODE.md) §1–2 for
+the full cross-repo dedup map.
+
+## Who consumes it
+
+This is the most-vendored shared package in the org. The **authoritative, always-current
+consumer list** (with the exact version each repo vendors and the sync PR links) is
+[`SHARED_CODE.md`](https://github.com/gasyoun/github-spine/blob/main/SHARED_CODE.md) §1–2 —
+consult it rather than trusting a count here. As of v0.4.0 the registered consumers include:
+
+- [WhitneyRoots](https://github.com/sanskrit-lexicon/WhitneyRoots) — the original **donor**, now
+  a shim re-exporting the package.
+- [csl-apidev](https://github.com/sanskrit-lexicon/csl-apidev) — vendored global build, re-synced to v0.4.0.
+- [csl-guides](https://github.com/sanskrit-lexicon/csl-guides) — vendored `.js` copy for SLP1→IAST display.
+- [csl-atlas](https://github.com/sanskrit-lexicon/csl-atlas) — normalizers delegate to the package + a vendored copy.
+- [SanskritSpellCheck](https://github.com/sanskrit-lexicon/SanskritSpellCheck) — SLP1 alphabet/sets delegated via a shim.
+
+After a version bump, re-vendor into every consumer with the
+[`/cologne-sanskrit-util-sync`](https://github.com/gasyoun/github-spine/blob/main/SHARED_CODE.md)
+batch skill (detect stale copies, re-copy, byte-diff verify, one PR per consumer).
 
 ## API (identical in Python and JS)
 
@@ -29,11 +56,18 @@ full cross-repo dedup map.
 | `to_roman(nums)` | `[1,4,10]` gaṇa numbers → `['I','IV','X']` |
 | `deva_to_iast(s)` | Devanāgarī → IAST (inherent-`a` + virāma aware) |
 | `deva_to_slp1(s)` | Devanāgarī → SLP1 (direct; `ळ`→`L`, not `x`) — round-trip partner of `from_slp1` |
-| `iast_to_devanagari(s)` | IAST → Devanāgarī (**approximate, display only** — no conjunct shaping) |
+| `iast_to_devanagari(s)` | IAST → Devanāgarī — **⚠️ BROKEN, do not call** (see the warning below); use `slp1_to_devanagari(to_slp1(s))` instead |
 | `norm(s)` | **exact** diacritic-insensitive key — Devanāgarī-aware; lookup/index |
 | `nfold(s)` | `norm()` + every nasal folded to `n` — recall fallback only |
 | `form_key(s)` | **length-preserving** compare key (`ā`≠`a`) — generated-vs-recorded forms |
 | `normalize_sanskrit(s)` | **lossy** ASCII fold (`ā`→`a`, `ś`→`s`, `ṃ`→`m`) — v3-explorer parity |
+
+> **⚠️ `iast_to_devanagari` is broken — never call it.** Measured 10-07-2026 (v0.4.0): it
+> applies neither mātrās nor virāma and emits an independent vowel for every vowel, so it is
+> wrong on all basic words — `ka`→`कअ`, `rāma`→`रआमअ`, `dharma`→`धअरमअ`, `kṣa`→`कषअ`. The
+> composed path **`slp1_to_devanagari(to_slp1(s))` is correct** — use it everywhere for
+> IAST→Devanāgarī until this function is fixed or removed. There is also no Cyrillic support in
+> the package.
 
 ### SLP1-side API (the CDSL dictionaries are SLP1-native)
 
@@ -83,10 +117,11 @@ SLP1 behind an opt-in toggle for those who edit source.
 - **Render an SLP1 headword as Devanāgarī** → `slp1_to_devanagari`. A *real* transcode (supplies
   the virāma between clustered consonants and picks independent-vowel vs mātrā by position), so
   it is the round-trip partner of `deva_to_slp1`: `deva_to_slp1(slp1_to_devanagari(s)) == s` for
-  canonical SLP1 (proved on the full alphabet + 1000 real MW headwords). Unlike the display-only
-  `iast_to_devanagari`, the output is well-formed. Candrabindu (`~`→ँ) folds back to anusvāra and
-  avagraha (`'`→ऽ) is dropped by `deva_to_slp1`, so those two are not round-trip stable (matching
-  `deva_to_slp1`'s own behaviour).
+  canonical SLP1 (proved on the full alphabet + 1000 real MW headwords). This is also the correct
+  IAST→Devanāgarī path: `slp1_to_devanagari(to_slp1(iast))` (the standalone `iast_to_devanagari`
+  is broken — see above). Candrabindu (`~`→ँ) folds back to anusvāra and avagraha (`'`→ऽ) is
+  dropped by `deva_to_slp1`, so those two are not round-trip stable (matching `deva_to_slp1`'s
+  own behaviour).
 
 ## Use it
 
@@ -109,7 +144,7 @@ to_slp1('aiśvarya'); // 'ESvarya'
 
 ### Browser, no bundler (plain `<script>`)
 For static pages that load plain scripts (no ES-module `import`), use the global build
-[`js/sanskrit-util.global.js`](js/sanskrit-util.global.js) — it exposes `window.SanskritUtil`:
+[`js/sanskrit-util.global.js`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/js/sanskrit-util.global.js) — it exposes `window.SanskritUtil`:
 ```html
 <script src="sanskrit-util.global.js"></script>
 <script>
@@ -123,7 +158,7 @@ CI fails via `--check` if it goes stale) and is behaviour-identical to the ESM b
 ### In a sibling repo without publishing (this GitHub-root layout)
 Drop a 12-line re-export shim named `sanskrit_util.py` that loads
 `../../sanskrit-util/py/sanskrit_util/__init__.py` by relative path — see the working example at
-[`../WhitneyRoots/scripts/sanskrit_util.py`](../WhitneyRoots/scripts/sanskrit_util.py).
+[`WhitneyRoots/scripts/sanskrit_util.py`](https://github.com/sanskrit-lexicon/WhitneyRoots/blob/main/scripts/sanskrit_util.py).
 
 ## Test
 
@@ -133,13 +168,14 @@ python py/tests/test_units.py         # pitfall unit tests
 python py/tests/test_vectors.py       # Python == golden
 node   js/test/vectors.test.mjs       # JS == golden  (== Python)
 node   js/test/units.test.mjs         # JS unit tests (== Python literals)
+node   js/test/global.test.mjs        # window.SanskritUtil global build == ESM
 node   js/build-global.mjs --check    # browser global build is not stale
 ```
 
 `tools/gen_vectors.py` additionally (a) locks the `SLP1_VOWELS/MARKS/CONSONANTS` constants
 set-equal to the independent literals in the SanskritSpellCheck `slp1util.py` donor, and (b) runs
 the **SLP1 ⇄ Devanāgarī round-trip property test** — `deva_to_slp1(slp1_to_devanagari(s)) == s`
-over the full alphabet plus [`vectors/slp1_roundtrip_sample.txt`](vectors/slp1_roundtrip_sample.txt)
+over the full alphabet plus [`vectors/slp1_roundtrip_sample.txt`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/vectors/slp1_roundtrip_sample.txt)
 (1000 real MW `<k1>` headwords). Both are skipped gracefully if the sibling repos are absent.
 
 ## Layout
@@ -150,8 +186,17 @@ sanskrit-util/
   py/tests/                      unit + vector tests
   js/index.mjs                   JS implementation (ESM)
   js/sanskrit-util.global.js     generated browser global build (window.SanskritUtil)
-  js/test/vectors.test.mjs       cross-language vector test
+  js/build-global.mjs            regenerates the global build from index.mjs (--check in CI)
+  js/test/                       cross-language vector + unit + global-build tests
   vectors/vectors.json           golden outputs, shared by both test suites
   vectors/slp1_roundtrip_sample.txt  1000 real MW headwords for the SLP1⇄Devanāgarī round-trip test
   tools/gen_vectors.py           regenerate vectors + donor/set/round-trip regressions
+  tools/crosscheck.py + crosscheck_js.mjs  cross-language behaviour crosscheck
+  tools/epistemic/               builders for the epistemic sibling registries (H356; re-vendored across repos)
 ```
+
+The `tools/epistemic/` subtree (seven registry builders + a dashboard generator) is housed here so
+the `SanskritLexicography` and `Uprava` sides run the same code; see
+[`tools/epistemic/README.md`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/epistemic/README.md).
+
+_Dr. Mārcis Gasūns_
