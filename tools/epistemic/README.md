@@ -3,7 +3,7 @@
 _Created: 08-07-2026 · Last updated: 08-07-2026_
 
 Seven builders that seed / generate the **epistemic sibling registries** minted under
-[H356](https://github.com/gasyoun/Uprava/blob/main/handoffs/H356-Opus_csl-corrections_epistemic-sibling-registries_08.07.26.md).
+[H356](https://github.com/gasyoun/Uprava/blob/main/handoffs/archive/H356-Opus_csl-corrections_epistemic-sibling-registries_08.07.26.md).
 Each registry occupies one epistemic slot that `FINDINGS.md` (measured-fact-only) structurally
 cannot hold. The registries are **mirrored across two sides** — a Sanskrit-data copy next to
 [`SanskritLexicography/FINDINGS.md`](https://github.com/gasyoun/SanskritLexicography/blob/master/FINDINGS.md)
