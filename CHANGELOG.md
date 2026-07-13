@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-07-08
+
 ### Added — `tools/epistemic/build_epistemic_dashboard.py` — the epistemic dashboard generator (H356)
 
 Parses whichever of the seven registries live in `--dir` into one `epistemic.json`
