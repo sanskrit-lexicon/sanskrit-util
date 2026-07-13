@@ -1,6 +1,9 @@
 # Changelog
 
-## Unreleased
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
 
 ### Added — `tools/epistemic/build_epistemic_dashboard.py` — the epistemic dashboard generator (H356)
 
@@ -23,7 +26,7 @@ in via `--today`, never `Date.now()`, so re-runs are byte-identical); `seed_reci
 `⚙️ auto` candidate rows a human confirms or deletes. `seed_contradictions.py` reuses `form_key`
 when the package is importable. See [`tools/epistemic/README.md`](tools/epistemic/README.md).
 
-## 0.4.0 — 2026-07-04
+## [0.4.0] - 2026-07-04
 
 ### Added — `source_line_to_iast` / `source_text_to_iast` (CDSL raw source line → readable IAST)
 
@@ -37,7 +40,7 @@ unit tests in both suites. First extracted in `csl-atlas` (PRs #205/#206/#209); 
 every CDSL reader/web frontend renders source entries the same way instead of re-parsing markup.
 SLP1 is a machine key — the guidance is IAST for readers, raw SLP1 behind an opt-in toggle.
 
-## 0.3.0 — 2026-07-03
+## [0.3.0] - 2026-07-03
 
 First real SLP1-side release from `main`. Completes the SLP1 surface (roadmap Cross-Pollination
 Wave-1 / D1): the CDSL-native (SLP1-keyed) consumers can now migrate off their per-repo helpers.
@@ -110,7 +113,7 @@ _Since resolved:_ the real SLP1→Devanāgarī round-trip landed in **0.3.0** ab
 (`slp1_to_devanagari`). Still deferred: proper virāma/conjunct shaping for `iast_to_devanagari`
 (still approximate, display-only) — a separate change.
 
-## 0.1.0 — 2026-06-14
+## [0.1.0] - 2026-06-14
 
 Initial extraction. Consolidates the Sanskrit string helpers that were duplicated across the
 CDSL / Sanskrit-Lexicon repos into one Python + JS package.
