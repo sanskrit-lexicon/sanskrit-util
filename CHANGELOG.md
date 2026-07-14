@@ -1,6 +1,33 @@
 # Changelog
 
-## Unreleased
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [0.6.0] - 2026-07-14
+
+### Added — `csl_pyutil` package: `render_review_sheet()` HTML emitter (H925)
+
+New sibling package [`csl_pyutil/`](csl_pyutil/) (own `pyproject.toml`, own version
+track `0.1.0`, no shared code with `sanskrit_util`) — generic, non-Sanskrit-specific
+CDSL/Sanskrit-Lexicon tooling. First (and so far only) export:
+`render_review_sheet(items, *, sheet_id, title, ...)`, extracting the interactive
+approve/reject/defer HTML review-sheet the `/review-sheet` Claude Code skill
+previously hand-wrote from scratch on every invocation into one deterministic,
+tested emitter (12 pytest cases; browser-verified end to end with Playwright —
+voting, keyboard shortcuts a/r/d, `localStorage` persistence across reload, the
+download button producing valid decisions JSON, light+dark theme — no console
+errors). Same exported decisions-JSON shape as before, so
+[`Uprava/tools/review_decisions_watcher.py`](https://github.com/gasyoun/Uprava/blob/main/tools/review_decisions_watcher.py)
+needs no changes. `~/.claude/commands/review-sheet.md` updated to call it instead
+of hand-writing HTML. Closes the "lift into `sanskrit-util` or a `csl-pyutil`"
+placeholder that [`SHARED_CODE.md`](https://github.com/gasyoun/github-spine/blob/main/SHARED_CODE.md)
+had carried since before this repo existed — `csl-pyutil` is now real, living here
+rather than as a new repo (H925 originally named a standalone `csl-pyutil` repo;
+this repo's existing publish/CI infrastructure made that unnecessary).
+
+## [0.5.0] - 2026-07-08
 
 ### Added — `tools/epistemic/build_epistemic_dashboard.py` — the epistemic dashboard generator (H356)
 
@@ -23,7 +50,7 @@ in via `--today`, never `Date.now()`, so re-runs are byte-identical); `seed_reci
 `⚙️ auto` candidate rows a human confirms or deletes. `seed_contradictions.py` reuses `form_key`
 when the package is importable. See [`tools/epistemic/README.md`](tools/epistemic/README.md).
 
-## 0.4.0 — 2026-07-04
+## [0.4.0] - 2026-07-04
 
 ### Added — `source_line_to_iast` / `source_text_to_iast` (CDSL raw source line → readable IAST)
 
@@ -37,7 +64,7 @@ unit tests in both suites. First extracted in `csl-atlas` (PRs #205/#206/#209); 
 every CDSL reader/web frontend renders source entries the same way instead of re-parsing markup.
 SLP1 is a machine key — the guidance is IAST for readers, raw SLP1 behind an opt-in toggle.
 
-## 0.3.0 — 2026-07-03
+## [0.3.0] - 2026-07-03
 
 First real SLP1-side release from `main`. Completes the SLP1 surface (roadmap Cross-Pollination
 Wave-1 / D1): the CDSL-native (SLP1-keyed) consumers can now migrate off their per-repo helpers.
@@ -110,7 +137,7 @@ _Since resolved:_ the real SLP1→Devanāgarī round-trip landed in **0.3.0** ab
 (`slp1_to_devanagari`). Still deferred: proper virāma/conjunct shaping for `iast_to_devanagari`
 (still approximate, display-only) — a separate change.
 
-## 0.1.0 — 2026-06-14
+## [0.1.0] - 2026-06-14
 
 Initial extraction. Consolidates the Sanskrit string helpers that were duplicated across the
 CDSL / Sanskrit-Lexicon repos into one Python + JS package.

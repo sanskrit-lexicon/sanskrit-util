@@ -19,6 +19,16 @@ that both test suites assert against. The Python functions are extracted verbati
 helpers (`deva_to_iast`, `iast_to_devanagari`, `normalize_sanskrit`) come from WhitneyRoots
 `reader.js` / `src/utils/linguistics.js`.
 
+## Also in this repo: `csl_pyutil` (unrelated scope)
+
+This repo also hosts [`csl_pyutil`](csl_pyutil/), a **separate, independently-versioned**
+Python package for generic (non-Sanskrit) CDSL/Sanskrit-Lexicon tooling — currently just
+`render_review_sheet()`, the shared emitter behind the org's `/review-sheet` skill (H925).
+It shares no code, no version number, and no CI job with `sanskrit_util` above; it lives
+here because this repo already has the publish/CI infrastructure a small shared package
+needs, not because it's Sanskrit-linguistics-related. See
+[`csl_pyutil/README.md`](csl_pyutil/README.md).
+
 ## Why this exists
 
 A file-name census across the GitHub root found `transcoder.py` in **62 copies / 7 versions**
