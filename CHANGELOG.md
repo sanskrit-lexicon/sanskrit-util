@@ -5,6 +5,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-07-14
+
+### Removed — `csl_pyutil` package (superseded by a standalone repo, H925)
+
+The `csl_pyutil/` package added in v0.6.0 below is **removed** — its own H925
+handoff got filled in with a more complete spec (by a concurrent session)
+partway through that work, requiring a standalone repo (explicitly not this
+one — "thematic mismatch", the exact concern that motivated this sibling-
+package compromise in the first place) and a byte-identical port from the
+real donor (`build_h180_review_sheets.py`) rather than an independent
+reimplementation. Real home now:
+[sanskrit-lexicon/csl-pyutil](https://github.com/sanskrit-lexicon/csl-pyutil).
+Both packages were briefly named `csl-pyutil` on PyPI-style naming, which
+would have conflicted at install time — removing this one resolves that.
+
 ## [0.6.0] - 2026-07-14
 
 ### Added — `csl_pyutil` package: `render_review_sheet()` HTML emitter (H925)
