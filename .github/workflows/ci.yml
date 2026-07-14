@@ -43,3 +43,21 @@ jobs:
 
       - name: Cross-language check (Python == JS on exotic/BOM/whitespace inputs)
         run: python tools/crosscheck.py
+
+  csl-pyutil:
+    # Separate job: csl_pyutil is a sibling package, not the Sanskrit
+    # string-helpers package the job above proves — no JS side, no golden
+    # vectors, unrelated scope.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+
+      - name: Install csl_pyutil (editable) + pytest
+        run: pip install -e ./csl_pyutil pytest
+
+      - name: csl_pyutil tests
+        run: python -m pytest csl_pyutil/tests -q

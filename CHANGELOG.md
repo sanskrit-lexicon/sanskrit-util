@@ -5,6 +5,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-07-14
+
+### Added — `csl_pyutil` package: `render_review_sheet()` HTML emitter (H925)
+
+New sibling package [`csl_pyutil/`](csl_pyutil/) (own `pyproject.toml`, own version
+track `0.1.0`, no shared code with `sanskrit_util`) — generic, non-Sanskrit-specific
+CDSL/Sanskrit-Lexicon tooling. First (and so far only) export:
+`render_review_sheet(items, *, sheet_id, title, ...)`, extracting the interactive
+approve/reject/defer HTML review-sheet the `/review-sheet` Claude Code skill
+previously hand-wrote from scratch on every invocation into one deterministic,
+tested emitter (12 pytest cases; browser-verified end to end with Playwright —
+voting, keyboard shortcuts a/r/d, `localStorage` persistence across reload, the
+download button producing valid decisions JSON, light+dark theme — no console
+errors). Same exported decisions-JSON shape as before, so
+[`Uprava/tools/review_decisions_watcher.py`](https://github.com/gasyoun/Uprava/blob/main/tools/review_decisions_watcher.py)
+needs no changes. `~/.claude/commands/review-sheet.md` updated to call it instead
+of hand-writing HTML. Closes the "lift into `sanskrit-util` or a `csl-pyutil`"
+placeholder that [`SHARED_CODE.md`](https://github.com/gasyoun/github-spine/blob/main/SHARED_CODE.md)
+had carried since before this repo existed — `csl-pyutil` is now real, living here
+rather than as a new repo (H925 originally named a standalone `csl-pyutil` repo;
+this repo's existing publish/CI infrastructure made that unnecessary).
+
 ## [0.5.0] - 2026-07-08
 
 ### Added — `tools/epistemic/build_epistemic_dashboard.py` — the epistemic dashboard generator (H356)
