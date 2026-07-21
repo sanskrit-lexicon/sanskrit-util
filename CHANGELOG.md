@@ -5,6 +5,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `iast_to_devanagari` re-implemented as the `to_slp1` -> `slp1_to_devanagari`
+  composition — the previous naive character-substitution was wrong on 9 of 9
+  basic words (bare `ka` -> `कअ` instead of `क`); now correct on all 9 plus the
+  D1 `ṁ` round-trip vector (H1394).
+
 ## [0.7.0] - 2026-07-14
 
 ### Removed — `csl_pyutil` package (superseded by a standalone repo, H925)

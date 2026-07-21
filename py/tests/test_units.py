@@ -133,6 +133,28 @@ def test_manuscript_m_to_M():
     assert su.form_key('saṁskṛta') == su.form_key('saṃskṛta')      # NFD path folds both to n too
 
 
+def test_iast_to_devanagari_fixed_h1394():
+    # Regresses the H1394 fix: iast_to_devanagari re-implemented as the to_slp1 ->
+    # slp1_to_devanagari composition. The previous naive longest-key-first character
+    # substitution never applied virāma/mātrā and was wrong on all 9 of these words
+    # (e.g. 'ka' -> 'कअ' instead of 'क').
+    cases = {
+        'ka': 'क',
+        'kṣa': 'क्ष',
+        'rāma': 'राम',
+        'agni': 'अग्नि',
+        'tvam': 'त्वम्',
+        'śrī': 'श्री',
+        'buddha': 'बुद्ध',
+        'dharma': 'धर्म',
+        'saṃskṛta': 'संस्कृत',
+    }
+    for iast, deva in cases.items():
+        assert su.iast_to_devanagari(iast) == deva
+    # D1 ṁ round-trip check: ṁ (U+1E41) must render the same anusvāra as ṃ (U+1E43)
+    assert su.iast_to_devanagari('ṁ') == su.iast_to_devanagari('ṃ') == 'ं'
+
+
 def test_slp1_to_devanagari_basic():
     assert su.slp1_to_devanagari('Darma') == 'धर्म'                # virāma conjunct + inherent 'a'
     assert su.slp1_to_devanagari('agni') == 'अग्नि'

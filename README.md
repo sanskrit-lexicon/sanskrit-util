@@ -56,18 +56,17 @@ batch skill (detect stale copies, re-copy, byte-diff verify, one PR per consumer
 | `to_roman(nums)` | `[1,4,10]` gaṇa numbers → `['I','IV','X']` |
 | `deva_to_iast(s)` | Devanāgarī → IAST (inherent-`a` + virāma aware) |
 | `deva_to_slp1(s)` | Devanāgarī → SLP1 (direct; `ळ`→`L`, not `x`) — round-trip partner of `from_slp1` |
-| `iast_to_devanagari(s)` | IAST → Devanāgarī — **⚠️ BROKEN, do not call** (see the warning below); use `slp1_to_devanagari(to_slp1(s))` instead |
+| `iast_to_devanagari(s)` | IAST → Devanāgarī — real transcode (virāma/mātrā aware), implemented as `slp1_to_devanagari(to_slp1(s))` |
 | `norm(s)` | **exact** diacritic-insensitive key — Devanāgarī-aware; lookup/index |
 | `nfold(s)` | `norm()` + every nasal folded to `n` — recall fallback only |
 | `form_key(s)` | **length-preserving** compare key (`ā`≠`a`) — generated-vs-recorded forms |
 | `normalize_sanskrit(s)` | **lossy** ASCII fold (`ā`→`a`, `ś`→`s`, `ṃ`→`m`) — v3-explorer parity |
 
-> **⚠️ `iast_to_devanagari` is broken — never call it.** Measured 10-07-2026 (v0.4.0): it
-> applies neither mātrās nor virāma and emits an independent vowel for every vowel, so it is
-> wrong on all basic words — `ka`→`कअ`, `rāma`→`रआमअ`, `dharma`→`धअरमअ`, `kṣa`→`कषअ`. The
-> composed path **`slp1_to_devanagari(to_slp1(s))` is correct** — use it everywhere for
-> IAST→Devanāgarī until this function is fixed or removed. There is also no Cyrillic support in
-> the package.
+> **`iast_to_devanagari` was broken until H1394 (fixed 21-07-2026).** It used to apply neither
+> mātrās nor virāma and emit an independent vowel for every vowel, so it was wrong on all basic
+> words — `ka`→`कअ`, `rāma`→`रआमअ`, `dharma`→`धअरमअ`, `kṣa`→`कषअ`. It is now re-implemented as
+> the `slp1_to_devanagari(to_slp1(s))` composition and is correct (regression-locked in
+> `vectors/vectors.json` and the unit tests). There is still no Cyrillic support in the package.
 
 ### SLP1-side API (the CDSL dictionaries are SLP1-native)
 

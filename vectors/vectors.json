@@ -41,6 +41,30 @@
    "out": "saMskfta"
   },
   {
+   "in": "ka",
+   "out": "ka"
+  },
+  {
+   "in": "kṣa",
+   "out": "kza"
+  },
+  {
+   "in": "rāma",
+   "out": "rAma"
+  },
+  {
+   "in": "tvam",
+   "out": "tvam"
+  },
+  {
+   "in": "śrī",
+   "out": "SrI"
+  },
+  {
+   "in": "dharma",
+   "out": "Darma"
+  },
+  {
    "in": "jñāna",
    "out": "jYAna"
   },
@@ -349,6 +373,30 @@
    "out": "saṃskṛta"
   },
   {
+   "in": "ka",
+   "out": "ka"
+  },
+  {
+   "in": "kṣa",
+   "out": "kṣa"
+  },
+  {
+   "in": "rāma",
+   "out": "rāma"
+  },
+  {
+   "in": "tvam",
+   "out": "tvam"
+  },
+  {
+   "in": "śrī",
+   "out": "śrī"
+  },
+  {
+   "in": "dharma",
+   "out": "dharma"
+  },
+  {
    "in": "jñāna",
    "out": "jñāna"
   },
@@ -578,135 +626,159 @@
   },
   {
    "in": "agni",
-   "out": "अगनइ"
+   "out": "अग्नि"
   },
   {
    "in": "rama",
-   "out": "रअमअ"
+   "out": "रम"
   },
   {
    "in": "śiva",
-   "out": "शइवअ"
+   "out": "शिव"
   },
   {
    "in": "Śiva",
-   "out": "शइवअ"
+   "out": "शिव"
   },
   {
    "in": "KṚṢṆA",
-   "out": "कऋषणअ"
+   "out": "कृष्ण"
   },
   {
    "in": "kṛṣṇa",
-   "out": "कऋषणअ"
+   "out": "कृष्ण"
   },
   {
    "in": "rājan",
-   "out": "रआजअन"
+   "out": "राजन्"
   },
   {
    "in": "saṃskṛta",
-   "out": "सअंसकऋतअ"
+   "out": "संस्कृत"
+  },
+  {
+   "in": "ka",
+   "out": "क"
+  },
+  {
+   "in": "kṣa",
+   "out": "क्ष"
+  },
+  {
+   "in": "rāma",
+   "out": "राम"
+  },
+  {
+   "in": "tvam",
+   "out": "त्वम्"
+  },
+  {
+   "in": "śrī",
+   "out": "श्री"
+  },
+  {
+   "in": "dharma",
+   "out": "धर्म"
   },
   {
    "in": "jñāna",
-   "out": "जञआनअ"
+   "out": "ज्ञान"
   },
   {
    "in": "aiśvarya",
-   "out": "ऐशवअरयअ"
+   "out": "ऐश्वर्य"
   },
   {
    "in": "auṣadha",
-   "out": "औषअधअ"
+   "out": "औषध"
   },
   {
    "in": "ṭīkā",
-   "out": "टईकआ"
+   "out": "टीका"
   },
   {
    "in": "ḍamaru",
-   "out": "डअमअरउ"
+   "out": "डमरु"
   },
   {
    "in": "buddha",
-   "out": "बउदधअ"
+   "out": "बुद्ध"
   },
   {
    "in": "kāṅkṣ",
-   "out": "कआङकष"
+   "out": "काङ्क्ष्"
   },
   {
    "in": "aṃśa",
-   "out": "अंशअ"
+   "out": "अंश"
   },
   {
    "in": "saṃ",
-   "out": "सअं"
+   "out": "सं"
   },
   {
    "in": "am",
-   "out": "अम"
+   "out": "अम्"
   },
   {
    "in": "an",
-   "out": "अन"
+   "out": "अन्"
   },
   {
    "in": "kram",
-   "out": "करअम"
+   "out": "क्रम्"
   },
   {
    "in": "gacchan",
-   "out": "गअचछअन"
+   "out": "गच्छन्"
   },
   {
    "in": "  Agni  ",
-   "out": "  अगनइ  "
+   "out": "  अग्नि  "
   },
   {
    "in": "vāc",
-   "out": "वआच"
+   "out": "वाच्"
   },
   {
    "in": "sañjaya",
-   "out": "सअञजअयअ"
+   "out": "सञ्जय"
   },
   {
    "in": "saṁskṛta",
-   "out": "सअṁसकऋतअ"
+   "out": "संस्कृत"
   },
   {
    "in": "ṁ",
-   "out": "ṁ"
+   "out": "ं"
   },
   {
    "in": "krānta",
-   "out": "करआनतअ"
+   "out": "क्रान्त"
   },
   {
    "in": "krāṃta",
-   "out": "करआंतअ"
+   "out": "क्रांत"
   },
   {
    "in": "kranta",
-   "out": "करअनतअ"
+   "out": "क्रन्त"
   },
   {
    "in": "rāmaḥ",
-   "out": "रआमअः"
+   "out": "रामः"
   },
   {
    "in": "devá",
-   "out": "दएवअ́"
+   "out": "देव́"
   },
   {
    "in": "agníḥ",
-   "out": "अगनइ́ः"
+   "out": "अग्नि́ः"
   },
   {
    "in": "śas",
-   "out": "शअस"
+   "out": "शस्"
   },
   {
    "in": "ā́",
@@ -714,7 +786,7 @@
   },
   {
    "in": "sás",
-   "out": "सअ́स"
+   "out": "स́स्"
   },
   {
    "in": "-",
@@ -805,6 +877,30 @@
   {
    "in": "saṃskṛta",
    "out": "samskrta"
+  },
+  {
+   "in": "ka",
+   "out": "ka"
+  },
+  {
+   "in": "kṣa",
+   "out": "ksa"
+  },
+  {
+   "in": "rāma",
+   "out": "rama"
+  },
+  {
+   "in": "tvam",
+   "out": "tvam"
+  },
+  {
+   "in": "śrī",
+   "out": "sri"
+  },
+  {
+   "in": "dharma",
+   "out": "dharma"
   },
   {
    "in": "jñāna",
@@ -1005,6 +1101,30 @@
    "out": "sanskrta"
   },
   {
+   "in": "ka",
+   "out": "ka"
+  },
+  {
+   "in": "kṣa",
+   "out": "ksa"
+  },
+  {
+   "in": "rāma",
+   "out": "rana"
+  },
+  {
+   "in": "tvam",
+   "out": "tvan"
+  },
+  {
+   "in": "śrī",
+   "out": "sri"
+  },
+  {
+   "in": "dharma",
+   "out": "dharna"
+  },
+  {
    "in": "jñāna",
    "out": "jnana"
   },
@@ -1203,6 +1323,30 @@
    "out": "sanskṛta"
   },
   {
+   "in": "ka",
+   "out": "ka"
+  },
+  {
+   "in": "kṣa",
+   "out": "kṣa"
+  },
+  {
+   "in": "rāma",
+   "out": "rāma"
+  },
+  {
+   "in": "tvam",
+   "out": "tvam"
+  },
+  {
+   "in": "śrī",
+   "out": "śrī"
+  },
+  {
+   "in": "dharma",
+   "out": "dharma"
+  },
+  {
    "in": "jñāna",
    "out": "jnāna"
   },
@@ -1399,6 +1543,30 @@
   {
    "in": "saṃskṛta",
    "out": "samskrta"
+  },
+  {
+   "in": "ka",
+   "out": "ka"
+  },
+  {
+   "in": "kṣa",
+   "out": "ksa"
+  },
+  {
+   "in": "rāma",
+   "out": "rama"
+  },
+  {
+   "in": "tvam",
+   "out": "tvam"
+  },
+  {
+   "in": "śrī",
+   "out": "sri"
+  },
+  {
+   "in": "dharma",
+   "out": "dharma"
   },
   {
    "in": "jñāna",
