@@ -48,6 +48,22 @@ assert.equal(su.to_slp1('saṁskṛta'), 'saMskfta');
 assert.equal(su.to_slp1('saṁskṛta'), su.to_slp1('saṃskṛta'));
 assert.equal(su.form_key('saṁskṛta'), su.form_key('saṃskṛta'));
 
+// H1394: iast_to_devanagari re-implemented as the to_slp1 -> slp1_to_devanagari composition.
+// The previous naive longest-key-first character substitution never applied virāma/mātrā and
+// was wrong on all 9 of these words (e.g. 'ka' -> 'कअ' instead of 'क').
+assert.equal(su.iast_to_devanagari('ka'), 'क');
+assert.equal(su.iast_to_devanagari('kṣa'), 'क्ष');
+assert.equal(su.iast_to_devanagari('rāma'), 'राम');
+assert.equal(su.iast_to_devanagari('agni'), 'अग्नि');
+assert.equal(su.iast_to_devanagari('tvam'), 'त्वम्');
+assert.equal(su.iast_to_devanagari('śrī'), 'श्री');
+assert.equal(su.iast_to_devanagari('buddha'), 'बुद्ध');
+assert.equal(su.iast_to_devanagari('dharma'), 'धर्म');
+assert.equal(su.iast_to_devanagari('saṃskṛta'), 'संस्कृत');
+// D1 ṁ round-trip check: ṁ (U+1E41) must render the same anusvāra as ṃ (U+1E43)
+assert.equal(su.iast_to_devanagari('ṁ'), su.iast_to_devanagari('ṃ'));
+assert.equal(su.iast_to_devanagari('ṁ'), 'ं');
+
 // slp1_to_devanagari: real transcode (virāma conjuncts + mātrās), round-trip partner of deva_to_slp1
 assert.equal(su.slp1_to_devanagari('Darma'), 'धर्म');
 assert.equal(su.slp1_to_devanagari('agni'), 'अग्नि');

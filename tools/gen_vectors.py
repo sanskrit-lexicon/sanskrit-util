@@ -25,6 +25,10 @@ A = '́'   # combining acute  (pitch accent on a vowel; also the codepoint insid
 G = '̀'   # combining grave
 STR_INPUTS = [
     '', ' ', 'agni', 'rama', 'śiva', 'Śiva', 'KṚṢṆA', 'kṛṣṇa', 'rājan', 'saṃskṛta',
+    # H1394 iast_to_devanagari regression set (9 basic words wrong under the old naive
+    # substitution; the rest of this word already appear above/below): ka, kṣa, rāma, tvam,
+    # śrī, dharma (agni, buddha, saṃskṛta already present; saṁskṛta/ṁ added further below).
+    'ka', 'kṣa', 'rāma', 'tvam', 'śrī', 'dharma',
     'jñāna', 'aiśvarya', 'auṣadha', 'ṭīkā', 'ḍamaru', 'buddha', 'kāṅkṣ', 'aṃśa',
     'saṃ', 'am', 'an', 'kram', 'gacchan', '  Agni  ', 'vāc', 'sañjaya',
     # ṁ (U+1E41, m-with-dot-above) -> M on the IAST->SLP1 side: the named blocker for dropping

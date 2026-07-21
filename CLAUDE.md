@@ -67,9 +67,11 @@ cd js && npm test                     # full JS suite (as CI runs it)
   lowercase `r`/`s`/`t`). `slp1_simplify` deliberately folds these for fuzzy
   matching; every other SLP1 function preserves case. Forgetting `R`→`n` in a
   fuzzy match misreads `guṇa` (`guRa`) as `gūna`.
-- **`iast_to_devanagari` is display-only** (no conjunct/virāma shaping) —
-  `slp1_to_devanagari` is the real transcode and the round-trip partner of
-  `deva_to_slp1`; don't use the IAST one where round-trip correctness matters.
+- **`iast_to_devanagari` is now a real transcode** (H1394, 21-07-2026): implemented
+  as `slp1_to_devanagari(to_slp1(s))`, so it is virāma/mātrā aware and shares
+  `slp1_to_devanagari`'s round-trip properties. It was previously a naive
+  character-substitution wrong on 9 of 9 basic words — if you see a comment or
+  doc elsewhere still calling it "display-only" or "broken", that's stale.
 - **Consumption in a sibling repo without publishing:** drop a small re-export
   shim named `sanskrit_util.py` that loads this package's `py/sanskrit_util/__init__.py`
   by relative path — see the working example at
