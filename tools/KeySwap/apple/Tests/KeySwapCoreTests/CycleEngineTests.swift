@@ -30,4 +30,22 @@ final class CycleEngineTests: XCTestCase {
         XCTAssertFalse(c)
         XCTAssertEqual(t, "xyz")
     }
+
+    func testSmartDigraphs() {
+        let (t, ok) = SmartTables.default.apply(to: "ramaa")
+        XCTAssertTrue(ok)
+        XCTAssertTrue(t.hasSuffix("ā"))
+        let (t2, ok2) = SmartTables.default.apply(to: "ash")
+        XCTAssertTrue(ok2)
+        XCTAssertTrue(t2.hasSuffix("ś"))
+    }
+
+    func testLongPressMenu() throws {
+        let eng = try CycleEngine.parse(text: "n > ṇ > ṅ > ñ\n")
+        XCTAssertEqual(eng.longPressMenu(for: "n"), ["n", "ṇ", "ṅ", "ñ"])
+    }
+
+    func testVersion() {
+        XCTAssertEqual(KeySwapVersion.current, "2.0.0")
+    }
 }

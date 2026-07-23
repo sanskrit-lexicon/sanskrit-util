@@ -4,7 +4,7 @@ import Carbon.HIToolbox
 import KeySwapCore
 import SwiftUI
 
-/// Menu-bar Mac app: system-wide `=` cycle via CGEvent tap (Accessibility permission).
+/// KeySwap 2.0 menu-bar Mac app: system-wide `=` cycle + smart digraphs (Accessibility).
 @main
 struct KeySwapMacApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
@@ -22,9 +22,13 @@ final class AppModel: ObservableObject {
     @Published var profile: KeySwapProfile = .iastClassic
     @Published var status: String = "Starting…"
     @Published var trusted: Bool = false
+    @Published var smartOn: Bool = true
 
     private(set) var engine: CycleEngine
+    let smart = SmartTables.default
     var lastForm: String = ""
+    /// Previous letter for digraph smart mode (aa, sh, …)
+    var prevLetter: String = ""
 
     init() {
         engine = (try? CycleEngine.parse(text: Self.embeddedClassic))!
@@ -34,21 +38,20 @@ final class AppModel: ObservableObject {
         if let url = Bundle.main.url(forResource: profile.rawValue, withExtension: "txt"),
            let eng = try? CycleEngine.load(url: url) {
             engine = eng
-            status = "Profile: \(profile.displayName)"
+            status = "KeySwap \(KeySwapVersion.current) · \(profile.displayName)"
             return
         }
-        // Fall back to sibling Resources/configs in repo when running from source tree
         let repo = URL(fileURLWithPath: #filePath)
-            .deletingLastPathComponent() // macos
-            .deletingLastPathComponent() // apple
-            .appendingPathComponent("configs", isDirectory: true)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("Resources/configs", isDirectory: true)
             .appendingPathComponent("\(profile.rawValue).txt")
         if let eng = try? CycleEngine.load(url: repo) {
             engine = eng
-            status = "Profile: \(profile.displayName) (repo configs/)"
+            status = "KeySwap \(KeySwapVersion.current) · \(profile.displayName) (repo)"
         } else {
             engine = (try? CycleEngine.parse(text: Self.embeddedClassic))!
-            status = "Profile: embedded classic"
+            status = "KeySwap \(KeySwapVersion.current) · embedded classic"
         }
     }
 
@@ -94,11 +97,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem?.button {
-            button.title = "ā="
-            button.toolTip = "KeySwap — press = after a letter to cycle IAST"
+            button.title = "ā2"
+            button.toolTip = "KeySwap 2.0 — = cycle · smart digraphs · Accessibility"
         }
         let menu = NSMenu()
         menu.addItem(withTitle: "Status…", action: #selector(showStatus), keyEquivalent: "")
+        menu.addItem(withTitle: "Toggle smart digraphs", action: #selector(toggleSmart), keyEquivalent: "s")
         menu.addItem(NSMenuItem.separator())
         for p in KeySwapProfile.allCases {
             let item = NSMenuItem(title: p.displayName, action: #selector(selectProfile(_:)), keyEquivalent: "")
@@ -107,15 +111,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: "Open Accessibility Settings", action: #selector(openAccessibility), keyEquivalent: "")
-        menu.addItem(withTitle: "Quit KeySwap", action: #selector(quit), keyEquivalent: "q")
+        menu.addItem(withTitle: "Quit KeySwap 2.0", action: #selector(quit), keyEquivalent: "q")
         statusItem?.menu = menu
     }
 
     @objc private func showStatus() {
         let alert = NSAlert()
-        alert.messageText = "KeySwap for Mac"
-        alert.informativeText = model.status + "\nAccessibility trusted: \(model.trusted)\n\nType a Latin letter, then press = to cycle diacritics."
+        alert.messageText = "KeySwap \(KeySwapVersion.current) for Mac"
+        alert.informativeText = model.status
+            + "\nAccessibility: \(model.trusted)"
+            + "\nSmart digraphs: \(model.smartOn)"
+            + "\n\nLetter then = to cycle. aa/ii/sh… when smart is on."
         alert.runModal()
+    }
+
+    @objc private func toggleSmart() {
+        model.smartOn.toggle()
+        model.status = "Smart digraphs: \(model.smartOn ? "on" : "off")"
     }
 
     @objc private func selectProfile(_ sender: NSMenuItem) {
@@ -189,9 +201,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return handleTrigger(event: event)
         }
 
-        // Track ANSI letter keys → update lastForm
+        // Track ANSI letter keys → update lastForm; smart digraphs rewrite after key
         if let letter = Self.letter(forKeycode: keycode, shift: flags.contains(.maskShift)) {
+            let pair = model.prevLetter + letter
+            model.prevLetter = letter
             model.lastForm = letter
+            if model.smartOn {
+                let (expanded, ok) = model.smart.apply(to: pair)
+                if ok {
+                    // Swallow this keydown; delete previous letter + insert expansion
+                    DispatchQueue.main.async { [weak self] in
+                        self?.typeReplacement(deleteUTF16: 1, insert: expanded)
+                        self?.model.lastForm = expanded
+                        self?.model.prevLetter = ""
+                    }
+                    return nil
+                }
+            }
+        } else {
+            model.prevLetter = ""
         }
         return Unmanaged.passUnretained(event)
     }
@@ -254,7 +282,10 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
+            Text("KeySwap \(KeySwapVersion.current)")
+                .font(.headline)
             Text(model.status)
+            Toggle("Smart digraphs (aa→ā, sh→ś)", isOn: $model.smartOn)
             Picker("Profile", selection: $model.profile) {
                 ForEach(KeySwapProfile.allCases) { p in
                     Text(p.displayName).tag(p)
@@ -266,6 +297,6 @@ struct SettingsView: View {
                 .foregroundStyle(.secondary)
         }
         .padding()
-        .frame(width: 360, height: 160)
+        .frame(width: 380, height: 200)
     }
 }

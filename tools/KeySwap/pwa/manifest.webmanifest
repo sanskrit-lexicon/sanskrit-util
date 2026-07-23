@@ -1,0 +1,9 @@
+{
+  "name": "KeySwap 2.0 IAST",
+  "short_name": "KeySwap",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#1a1a2e",
+  "description": "Offline IAST diacritic cycler (KeySwap 2.0)"
+}

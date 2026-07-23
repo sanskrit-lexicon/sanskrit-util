@@ -25,7 +25,11 @@ __all__ = [
     "load_config",
     "validate_config_text",
     "parse_chains",
+    "nfc",
 ]
+
+# KeySwap toolkit version (shells / docs should match tools/KeySwap/VERSION)
+KEYSWAP_VERSION = "2.0.0"
 
 
 class ConfigError(ValueError):
@@ -36,8 +40,13 @@ _COMMENT = re.compile(r"^\s*#")
 _BLANK = re.compile(r"^\s*$")
 
 
-def _nfc(s: str) -> str:
+def nfc(s: str) -> str:
+    """NFC-normalize a string (public; used by smart_input / convert helpers)."""
     return unicodedata.normalize("NFC", s)
+
+
+# Back-compat alias
+_nfc = nfc
 
 
 def parse_chains(text: str, *, path: str | None = None) -> list[list[str]]:

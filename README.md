@@ -179,10 +179,10 @@ over the full alphabet plus [`vectors/slp1_roundtrip_sample.txt`](https://github
 
 ## Related tools (optional, not part of the library API)
 
-- **[tools/KeySwap](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/README.md)** —
-  type IAST diacritics on **Windows** (open AutoHotkey script or legacy PE),
-  **iPhone** (custom keyboard), and **Mac** (menu-bar `=` cycler). Shared cycle
-  configs + Python/Swift engines. Does **not** ship in PyPI/npm packages.
+- **[tools/KeySwap 2.0](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/README.md)** —
+  type IAST on **Windows** (AHK cycle/smart/deadkey), **iPhone** (long-press +
+  smart keyboard), **Mac** (menu-bar), and **browser PWA**; convert selection via
+  this library; scholarly config profiles. Does **not** ship in PyPI/npm packages.
 
 ## Layout
 

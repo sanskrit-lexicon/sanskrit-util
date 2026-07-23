@@ -126,6 +126,7 @@ public enum KeySwapProfile: String, CaseIterable, Sendable, Identifiable {
     case iastClassic = "iast-classic"
     case iso15919 = "iso15919"
     case vedicDraft = "vedic-draft"
+    case vedicSvara = "vedic-svara"
     case personalLegacy = "personal-legacy"
 
     public var id: String { rawValue }
@@ -135,6 +136,7 @@ public enum KeySwapProfile: String, CaseIterable, Sendable, Identifiable {
         case .iastClassic: return "IAST classic"
         case .iso15919: return "ISO 15919"
         case .vedicDraft: return "Vedic draft"
+        case .vedicSvara: return "Vedic svara"
         case .personalLegacy: return "Personal legacy"
         }
     }
