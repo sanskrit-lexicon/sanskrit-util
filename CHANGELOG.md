@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Ctrl+Alt+C, PWA Cologne button, Mac menu item. Builds on 2.1 (scheme_bridge,
   convert `--from`, guards, HUD) and 2.0 (smart/long-press/PWA). Not part of
   the PyPI/npm library API.
+- **tools/KeySwap** — peer-tool survey + lean roadmap:
+  [`SIMILARS_COMPARISON.md`](tools/KeySwap/SIMILARS_COMPARISON.md) (Lexilogos,
+  Keyman/Heidelberg, EasyUnicode, SanskritTypist, Sanscript, Aksharamukha, …)
+  with Tier A light-next features and explicit heavy-skips.
 
 ### Fixed
 
