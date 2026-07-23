@@ -5,6 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **tools/KeySwap** `typing_check` / `cologne_search.format_api_error`: map Cologne
+  Simple Search **HTTP 429** to HUD text `rate-limited — try browser (Ctrl+Alt+C)`
+  instead of opaque `api: HTTPError` (H1545).
+
 ## [0.8.0] - 2026-07-23
 
 ### Added

@@ -31,7 +31,7 @@ ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from cologne_search import fetch_results, prepare  # noqa: E402
+from cologne_search import fetch_results, format_api_error, prepare  # noqa: E402
 
 
 @dataclass
@@ -52,6 +52,9 @@ class TypingCheck:
         """One short line for tray ToolTip / status bar."""
         q = self.query[:40] + ("…" if len(self.query) > 40 else "")
         if self.error:
+            # Keep rate-limit message short and actionable (no slp1 clutter)
+            if self.error.startswith("rate-limited"):
+                return f"? {q}  ·  {self.error}"
             return f"? {q}  ·  {self.error}  ·  slp1={self.slp1}"
         if self.known is None:
             return f"· {q}  ·  slp1={self.slp1}  norm={self.normkey}"
@@ -132,7 +135,7 @@ def check_word(
             normkey=q.normkey,
             scheme=q.scheme_resolved,
             dict=dict_code.lower(),
-            error=f"api: {type(e).__name__}",
+            error=format_api_error(e),
         )
 
     return TypingCheck(

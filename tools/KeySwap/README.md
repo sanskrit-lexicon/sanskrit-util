@@ -175,6 +175,7 @@ After edit: **F6** (AHK) or quit tray app and relaunch (vendor PE). Chandrabindu
 | Mac / iPhone / Chromebook | Mac app · iOS keyboard · PWA (not the PE) |
 | Need ISO r̥ / r̥̄ | `configs/iso15919.txt` or add to config |
 | Need speed like Azhagi phonetic | Enable **smart** digraphs; or Keyman/Azhagi for pure phonetic Deva/IAST |
+| Headword check `? rate-limited` / API 429 | Cologne is throttling; use **Ctrl+Alt+C** (browser Simple Search) and retry later |
 
 Full comment analysis: [UPSTREAM_KEYSWAP_ANALYSIS.md](UPSTREAM_KEYSWAP_ANALYSIS.md).
 
