@@ -7,14 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **tools/KeySwap 2.0** (`2.0.0`) — cross-platform IAST typing toolkit: scholarly
-  profiles (`iast-classic`, `iso15919`, `vedic-draft`, `vedic-svara`,
-  `personal-legacy`), Python `cycle_engine` + `smart_input` (digraphs) +
-  `convert_bridge` (IAST↔Devanāgarī via sanskrit-util), Windows AHK v2
-  (cycle/smart/deadkey, hot-reload, clipboard convert), Swift KeySwapCore with
-  iPhone keyboard (long-press + smart) and Mac menu-bar app, offline PWA,
-  classroom layout docs, web-survey backlog (`IMPROVEMENTS_FROM_WEB.md`), vendor
-  PE under `vendor/` with provenance. Not part of the PyPI/npm library API.
+- **tools/KeySwap 2.1** (`2.1.0`) — backlog completion on the IAST typing toolkit:
+  `scheme_bridge` (Harvard-Kyoto / ITRANS / Velthuis → IAST), `convert_bridge
+  --from`, AHK Keyman guard + process allowlist + teaching HUD, MSKLC classroom
+  pack, App Store/PE packaging checklists, Mac clipboard convert, PWA scheme→IAST
+  + HUD. Builds on 2.0 (smart digraphs, long-press iOS, profiles, PWA, AHK modes).
+  Not part of the PyPI/npm library API.
 
 ### Fixed
 

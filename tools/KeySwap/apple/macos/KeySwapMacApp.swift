@@ -110,9 +110,50 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             menu.addItem(item)
         }
         menu.addItem(NSMenuItem.separator())
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(withTitle: "Clipboard → IAST (auto scheme)", action: #selector(clipToIast), keyEquivalent: "i")
+        menu.addItem(withTitle: "Clipboard → Devanāgarī", action: #selector(clipToDeva), keyEquivalent: "=")
+        menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: "Open Accessibility Settings", action: #selector(openAccessibility), keyEquivalent: "")
-        menu.addItem(withTitle: "Quit KeySwap 2.0", action: #selector(quit), keyEquivalent: "q")
+        menu.addItem(withTitle: "Quit KeySwap \(KeySwapVersion.current)", action: #selector(quit), keyEquivalent: "q")
         statusItem?.menu = menu
+    }
+
+    @objc private func clipToIast() { runConvert(to: "iast") }
+    @objc private func clipToDeva() { runConvert(to: "deva") }
+
+    private func runConvert(to: String) {
+        // Prefer repo convert_bridge.py when developing from source tree
+        let script = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("convert_bridge.py")
+        guard FileManager.default.fileExists(atPath: script.path) else {
+            model.status = "convert_bridge.py not found (run from repo checkout)"
+            return
+        }
+        let pb = NSPasteboard.general
+        let src = pb.string(forType: .string) ?? ""
+        let tmpIn = FileManager.default.temporaryDirectory.appendingPathComponent("keyswap_in.txt")
+        let tmpOut = FileManager.default.temporaryDirectory.appendingPathComponent("keyswap_out.txt")
+        try? src.write(to: tmpIn, atomically: true, encoding: .utf8)
+        let proc = Process()
+        proc.executableURL = URL(fileURLWithPath: "/usr/bin/python3")
+        proc.arguments = [script.path, "--from", "auto", "--to", to]
+        proc.standardInput = try? FileHandle(forReadingFrom: tmpIn)
+        FileManager.default.createFile(atPath: tmpOut.path, contents: nil)
+        proc.standardOutput = try? FileHandle(forWritingTo: tmpOut)
+        do {
+            try proc.run()
+            proc.waitUntilExit()
+            let out = (try? String(contentsOf: tmpOut, encoding: .utf8)) ?? ""
+            pb.clearContents()
+            pb.setString(out, forType: .string)
+            model.status = "Clipboard → \(to) (\(out.count) chars)"
+        } catch {
+            model.status = "Convert failed: \(error.localizedDescription)"
+        }
     }
 
     @objc private func showStatus() {

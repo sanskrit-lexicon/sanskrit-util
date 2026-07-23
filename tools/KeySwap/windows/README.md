@@ -1,4 +1,4 @@
-# KeySwap 2.0 for Windows (AutoHotkey v2)
+# KeySwap 2.1 for Windows (AutoHotkey v2)
 
 _Created: 23-07-2026 · Last updated: 23-07-2026_
 
@@ -19,10 +19,17 @@ autohotkey64.exe KeySwap.ahk "..\config.txt" deadkey
 | Mode | Behaviour |
 |------|-----------|
 | `cycle` | Letter then `=` only |
-| `smart` | Digraphs `aa`→ā, `sh`→ś, … **and** `=` cycle |
-| `deadkey` | `'` then letter → ā ī ū ṛ … (classroom-friendly) |
+| `smart` | Digraphs + `=` cycle |
+| `deadkey` | `'` then letter → ā ī ū ṛ … |
 
-Tray menu switches mode live. **F6** or file change reloads config (duplicate bases show a message).
+## 2.1 guards & HUD
+
+| Feature | How |
+|---------|-----|
+| **Keyman conflict** | Tray warning if Keyman processes are running |
+| **Allowlist** | Copy `allowlist.example.txt` → `allowlist.txt` (one `exe` per line) |
+| **Teaching HUD** | Brief ToolTip on cycle/smart (toggle **F7**) |
+| **Hot-reload** | **F6** or config file change |
 
 ## Convert clipboard
 
@@ -31,10 +38,12 @@ Requires Python + repo `py/sanskrit_util`:
 | Hotkey | Action |
 |--------|--------|
 | Ctrl+Alt+= | Clipboard → Devanāgarī |
-| Ctrl+Alt+I | Clipboard → IAST |
+| Ctrl+Alt+I / H | Clipboard auto-scheme → IAST |
+
+Also: `python ..\scheme_bridge.py --from hk "saMskRta"`.
 
 ## Legacy PE
 
-Optional: [`../vendor/keyswap.exe`](../vendor/keyswap.exe) — see provenance docs. Prefer this AHK for 2.0.
+Optional: [`../vendor/`](../vendor/) — see [packaging/VENDOR_PE.md](../packaging/VENDOR_PE.md).
 
 _Dr. Mārcis Gasūns_

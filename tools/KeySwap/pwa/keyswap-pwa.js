@@ -98,14 +98,60 @@ S > Ṣ > Ś
     return null;
   }
 
+  // Minimal scheme → IAST (parity subset of scheme_bridge.py)
+  function applyPairs(text, pairs) {
+    pairs = pairs.slice().sort((a, b) => b[0].length - a[0].length);
+    const map = Object.fromEntries(pairs);
+    const maxLen = pairs.reduce((m, p) => Math.max(m, p[0].length), 1);
+    let i = 0, out = "";
+    while (i < text.length) {
+      let hit = false;
+      for (let L = Math.min(maxLen, text.length - i); L >= 1; L--) {
+        const chunk = text.slice(i, i + L);
+        if (map[chunk] !== undefined) {
+          out += map[chunk];
+          i += L;
+          hit = true;
+          break;
+        }
+      }
+      if (!hit) { out += text[i]; i++; }
+    }
+    return nfc(out);
+  }
+  const HK = [["lRR","ḹ"],["lR","ḷ"],["RR","ṝ"],["R","ṛ"],["A","ā"],["I","ī"],["U","ū"],
+    ["Th","ṭh"],["Dh","ḍh"],["T","ṭ"],["D","ḍ"],["N","ṇ"],["G","ṅ"],["J","ñ"],["z","ś"],["S","ṣ"],["M","ṃ"],["H","ḥ"]];
+  const ITRANS = [["RRI","ṝ"],["RRi","ṛ"],["aa","ā"],["ii","ī"],["uu","ū"],["~N","ṅ"],["~n","ñ"],
+    [".n","ṇ"],[".m","ṃ"],[".h","ḥ"],[".t","ṭ"],[".d","ḍ"],[".r","ṛ"],[".s","ṣ"],["Sh","ṣ"],["sh","ś"],
+    ["Th","ṭh"],["Dh","ḍh"],["T","ṭ"],["D","ḍ"],["N","ṇ"],["M","ṃ"],["H","ḥ"]];
+  const VEL = [["aa","ā"],["ii","ī"],["uu","ū"],[".rr","ṝ"],[".r","ṛ"],['"n',"ṅ"],["~n","ñ"],
+    [".n","ṇ"],[".t","ṭ"],[".d","ḍ"],[".s","ṣ"],['"s',"ś"],[".m","ṃ"],[".h","ḥ"]];
+
+  function schemeToIast(text, scheme) {
+    if (scheme === "hk") return applyPairs(text, HK);
+    if (scheme === "itrans") return applyPairs(text, ITRANS);
+    if (scheme === "velthuis") return applyPairs(text, VEL);
+    // auto
+    if (/[āīūṛṝḷḹṅñṭḍṇśṣṃḥ]/i.test(text)) return text;
+    if (/\.[a-zA-Z]|"n|"s|~n/.test(text)) return applyPairs(text, VEL);
+    if (/~N|aa|ii|uu|RRi|sh/.test(text)) return applyPairs(text, ITRANS);
+    if (/[AIURMGJTDNzSH]/.test(text) && /[a-z]/.test(text)) return applyPairs(text, HK);
+    return applyPairs(text, HK);
+  }
+
   const ta = document.getElementById("t");
   const profileSel = document.getElementById("profile");
   const smartCb = document.getElementById("smart");
   const menu = document.getElementById("menu");
+  const hud = document.getElementById("hud");
   let engine = buildEngine(parseChains(EMBEDDED_CLASSIC));
   const profiles = {
     "iast-classic": EMBEDDED_CLASSIC,
   };
+
+  function setHud(msg) {
+    if (hud) hud.textContent = msg;
+  }
 
   async function tryLoadProfiles() {
     const names = ["iast-classic", "iso15919", "vedic-draft", "vedic-svara", "personal-legacy"];
@@ -153,6 +199,7 @@ S > Ṣ > Ś
     if (next == null) return;
     ta.value = next + ta.value.slice(pos);
     ta.setSelectionRange(next.length, next.length);
+    setHud("smart → " + next.slice(-2));
   }
 
   function doCycle() {
@@ -167,6 +214,7 @@ S > Ṣ > Ś
     ta.value = cycled + after;
     ta.setSelectionRange(cycled.length, cycled.length);
     ta.focus();
+    setHud("cycle → …" + cycled.slice(-3));
   }
 
   ta.addEventListener("keydown", (e) => {
@@ -177,6 +225,16 @@ S > Ṣ > Ś
   });
 
   document.getElementById("cycle").onclick = doCycle;
+  const toIastBtn = document.getElementById("toIast");
+  if (toIastBtn) {
+    toIastBtn.onclick = () => {
+      const scheme = document.getElementById("scheme").value;
+      const before = ta.value;
+      ta.value = schemeToIast(before, scheme);
+      setHud(scheme + " → IAST (" + ta.value.length + " chars)");
+      ta.focus();
+    };
+  }
   document.getElementById("copy").onclick = async () => {
     await navigator.clipboard.writeText(ta.value);
   };

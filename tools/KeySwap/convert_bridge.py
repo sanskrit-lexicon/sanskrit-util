@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""KeySwap 2.0 — convert selection via sanskrit-util (IAST ↔ Devanāgarī).
+"""KeySwap 2.1 — convert selection via sanskrit-util + ASCII schemes.
 
 Usage:
   python convert_bridge.py --to deva "rāma"
   python convert_bridge.py --to iast "राम"
-  python convert_bridge.py --to deva --clipboard   # Windows: read/write clipboard
-  type file.txt | python convert_bridge.py --to iast
+  python convert_bridge.py --from hk --to iast "saMskRta"
+  python convert_bridge.py --from itrans --to deva "raama"
+  python convert_bridge.py --from auto --to iast "saMskRta"
+  python convert_bridge.py --to deva --clipboard
 
-Does not reimplement a transcoder: imports sibling py/sanskrit_util when present.
+Pipeline: optional scheme_bridge (HK/ITRANS/Velthuis) → IAST → sanskrit_util target.
 """
 from __future__ import annotations
 
@@ -17,7 +19,19 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-REPO = ROOT.parents[1]  # sanskrit-util/
+
+
+def _find_repo() -> Path:
+    for p in [ROOT, *ROOT.parents]:
+        if (p / "py" / "sanskrit_util").is_dir() or (p / "py" / "sanskrit_util" / "__init__.py").is_file():
+            return p
+        if (p / "py" / "sanskrit_util.py").is_file():
+            return p
+    # tools/KeySwap → parents: KeySwap, tools, repo
+    return ROOT.parents[1] if len(ROOT.parents) > 1 else ROOT
+
+
+REPO = _find_repo()
 PY_PKG = REPO / "py"
 
 
@@ -34,20 +48,65 @@ def _load_su():
     return su
 
 
-def convert(text: str, to: str) -> str:
-    su = _load_su()
+def _to_iast(text: str, frm: str) -> str:
+    """Normalize any supported input to IAST (or leave Devanāgarī for su path)."""
+    frm = (frm or "auto").lower().strip()
+    if frm in ("deva", "devanagari", "devanāgarī", "dn"):
+        su = _load_su()
+        return su.deva_to_iast(text)
+    if frm in ("iast", "roman", "latn") or (
+        frm == "auto"
+        and any("\u0900" <= c <= "\u097f" for c in text) is False
+        and any(ord(c) > 127 for c in text)
+    ):
+        if any("\u0900" <= c <= "\u097f" for c in text):
+            return _load_su().deva_to_iast(text)
+        if frm in ("iast", "roman", "latn"):
+            return text
+    if frm in ("slp1", "slp"):
+        return _load_su().from_slp1(text)
+
+    # ASCII schemes + auto
+    if str(ROOT) not in sys.path:
+        sys.path.insert(0, str(ROOT))
+    from scheme_bridge import detect_scheme, scheme_to_iast
+
+    if frm in ("auto", "detect"):
+        det = detect_scheme(text)
+        if det == "deva":
+            return _load_su().deva_to_iast(text)
+        if det == "iast":
+            return text
+        return scheme_to_iast(text, det)
+    return scheme_to_iast(text, frm)
+
+
+def convert(text: str, to: str, frm: str = "auto") -> str:
     to = to.lower().strip()
-    if to in ("deva", "devanagari", "devanāgarī", "dn"):
-        return su.iast_to_devanagari(text)
-    if to in ("iast", "roman", "latn"):
-        # If already mostly Latin, leave; if Devanāgarī, convert
-        if any("\u0900" <= c <= "\u097f" for c in text):
+    su = _load_su()
+
+    # Fast path: Devanāgarī source to iast/slp1 without scheme_bridge
+    if any("\u0900" <= c <= "\u097f" for c in text) and frm in (
+        "auto",
+        "detect",
+        "deva",
+        "devanagari",
+    ):
+        if to in ("iast", "roman", "latn"):
             return su.deva_to_iast(text)
-        return text
-    if to in ("slp1", "slp"):
-        if any("\u0900" <= c <= "\u097f" for c in text):
+        if to in ("slp1", "slp"):
             return su.deva_to_slp1(text)
-        return su.to_slp1(text)
+        if to in ("deva", "devanagari", "devanāgarī", "dn"):
+            return text
+
+    iast = _to_iast(text, frm)
+
+    if to in ("iast", "roman", "latn"):
+        return iast
+    if to in ("deva", "devanagari", "devanāgarī", "dn"):
+        return su.iast_to_devanagari(iast)
+    if to in ("slp1", "slp"):
+        return su.to_slp1(iast)
     raise SystemExit(f"unknown --to {to!r} (use deva|iast|slp1)")
 
 
@@ -98,6 +157,12 @@ def _clipboard_set(text: str) -> None:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--to", required=True, help="deva | iast | slp1")
+    ap.add_argument(
+        "--from",
+        dest="frm",
+        default="auto",
+        help="auto | iast | deva | hk | itrans | velthuis | slp1",
+    )
     ap.add_argument("--clipboard", action="store_true", help="Windows clipboard in/out")
     ap.add_argument("text", nargs="*", help="Text args (or stdin if empty)")
     args = ap.parse_args(argv)
@@ -109,10 +174,10 @@ def main(argv: list[str] | None = None) -> int:
     else:
         src = sys.stdin.read()
 
-    out = convert(src, args.to)
+    out = convert(src, args.to, frm=args.frm)
     if args.clipboard:
         _clipboard_set(out)
-        print(f"clipboard → {args.to}: {len(out)} chars", file=sys.stderr)
+        print(f"clipboard {args.frm}→{args.to}: {len(out)} chars", file=sys.stderr)
     else:
         sys.stdout.write(out)
         if not out.endswith("\n") and "\n" in src:

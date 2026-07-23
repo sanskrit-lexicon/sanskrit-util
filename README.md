@@ -179,10 +179,9 @@ over the full alphabet plus [`vectors/slp1_roundtrip_sample.txt`](https://github
 
 ## Related tools (optional, not part of the library API)
 
-- **[tools/KeySwap 2.0](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/README.md)** —
-  type IAST on **Windows** (AHK cycle/smart/deadkey), **iPhone** (long-press +
-  smart keyboard), **Mac** (menu-bar), and **browser PWA**; convert selection via
-  this library; scholarly config profiles. Does **not** ship in PyPI/npm packages.
+- **[tools/KeySwap 2.1](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/README.md)** —
+  type IAST on **Windows** (AHK), **iPhone**, **Mac**, **PWA**; HK/ITRANS/Velthuis
+  → IAST; convert via this library; classroom layout path. Not in PyPI/npm.
 
 ## Layout
 

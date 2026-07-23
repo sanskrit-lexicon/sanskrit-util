@@ -1,7 +1,7 @@
 # KeySwap — web survey: how else to improve
 
 _Created: 23-07-2026 · Last updated: 23-07-2026_  
-_Survey date: 23-07-2026 · Model: Grok 4.5 (`grok-4-1-thinking`) · feeds **KeySwap 2.0**_
+_Survey date: 23-07-2026 · Model: Grok 4.5 (`grok-4-1-thinking`) · feeds **KeySwap 2.x**_
 
 Sources: upstream [Keyswap (Yes Vedanta)](https://www.yesvedanta.com/keyswap/),
 [Lexilogos Sanskrit Latin](https://www.lexilogos.com/keyboard/sanskrit_latin.htm),
@@ -37,30 +37,32 @@ From the vendor site troubleshooting:
 5. Config changes need **full process restart**.  
 6. Mac users were pointed only to **online** Lexilogos.
 
-## Ranked backlog (survey → 2.0)
+## Ranked backlog (survey → 2.0 → 2.1)
 
-| # | Item | Priority | 2.0 status |
-|---|------|----------|------------|
-| 1 | iOS **long-press** alternates | high | **shipped** |
-| 2 | **Smart vowels** `aa`/`ii`/`uu`/`rr`/`ll`/`mm`/`hh` → diacritics | high | **shipped** |
-| 3 | **Convert selection** IAST↔Devanāgarī via sanskrit-util | high | **shipped** (CLI + AHK/Mac hooks) |
-| 4 | **No-hook classroom path** (layout cheatsheet + dead-key mode) | high | **shipped** (docs + AHK dead-key) |
-| 5 | Layout/Keyman **guards** + clearer errors | med-high | **shipped** (AHK) |
-| 6 | **Hot-reload** config | med | **shipped** (AHK file watch; validate CLI) |
-| 7 | Offline **PWA** Lexilogos-style | med | **shipped** |
-| 8 | Real **vedic-svara** profile | med | **shipped** (profile + docs; sample-tested lightly) |
-| 9 | HK/ITRANS paste bridge | med | **partial** (HK-ish ASCII fold via double-letter + convert; full ITRANS deferred) |
-| 10 | Sync/drop stale PE vs 2021 upstream | low | **docs** (prefer open 2.0 shells) |
-| 11 | App Store / notarized binaries | low | backlog |
+| # | Item | Priority | Status |
+|---|------|----------|--------|
+| 1 | iOS **long-press** alternates | high | **shipped** 2.0 |
+| 2 | **Smart vowels** digraphs | high | **shipped** 2.0 |
+| 3 | **Convert selection** IAST↔Devanāgarī | high | **shipped** 2.0 (CLI + AHK + Mac 2.1) |
+| 4 | **No-hook classroom path** | high | **shipped** 2.0 + MSKLC pack 2.1 |
+| 5 | Layout/Keyman **guards** + allowlist | med-high | **shipped** 2.1 (AHK) |
+| 6 | **Hot-reload** config | med | **shipped** 2.0 AHK |
+| 7 | Offline **PWA** Lexilogos-style | med | **shipped** 2.0 + scheme UI 2.1 |
+| 8 | **vedic-svara** profile | med | **shipped** 2.0 |
+| 9 | **HK/ITRANS/Velthuis → IAST** bridge | med | **shipped** 2.1 (`scheme_bridge.py`) |
+| 10 | Sync/drop stale PE policy | low | **shipped** 2.1 (`packaging/VENDOR_PE.md`) |
+| 11 | App Store / notarized binaries | low | **checklist** 2.1 (`packaging/APP_STORE.md`) — needs human certs |
+| 12 | Teaching **HUD** | med | **shipped** 2.1 (AHK ToolTip + PWA `#hud`) |
+| 13 | Per-app **allowlist** | med | **shipped** 2.1 (`windows/allowlist.txt`) |
 
-## Design decisions for 2.0
+## Design decisions
 
-1. **Version identity:** `KeySwap 2.0` = open multi-platform toolkit; vendor PE stays 1.x optional under `vendor/`.  
-2. **Shared semantics** live in Python (`cycle_engine.py`, `smart_input.py`, `convert_bridge.py`) and Swift `KeySwapCore`.  
-3. **sanskrit-util** is the only converter for Devanāgarī↔IAST (no second transcoder).  
-4. **Profiles remain data**; modes (cycle / smart / dead-key / long-press) are shells.  
-5. **Classroom default** = `iast-classic` + no personal-legacy extras.
+1. **Version identity:** open multi-platform toolkit; vendor PE optional under `vendor/`.  
+2. **Shared semantics** in Python + Swift KeySwapCore.  
+3. **sanskrit-util** for Devanāgarī↔IAST↔SLP1; **scheme_bridge** for ASCII schemes → IAST only.  
+4. **Profiles remain data**; modes are shells.  
+5. **Classroom default** = `iast-classic` + system layouts / deadkey.
 
-Implementation details and operator docs: [README.md](README.md), [VERSION](VERSION), [pwa/](pwa/), [layouts/](layouts/).
+See [README.md](README.md), [VERSION](VERSION) (**2.1.0**).
 
 _Dr. Mārcis Gasūns_

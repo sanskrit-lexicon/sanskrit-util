@@ -1,0 +1,11 @@
+# KeySwap 2.1 — optional process allowlist (one exe name per line).
+# Copy to allowlist.txt beside KeySwap.ahk to enable.
+# When present and non-empty, cycle/smart/deadkey only fire in these apps.
+# Empty file or missing file = all apps (default).
+#
+# notepad.exe
+# WINWORD.EXE
+# chrome.exe
+# msedge.exe
+# Code.exe
+# WindowsTerminal.exe
