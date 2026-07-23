@@ -1,0 +1,32 @@
+# Upstream/personal legacy map shipped with the Windows binary (Andre / Yes Vedanta).
+# Kept for parity with vendor/keyswap.exe behaviour. Prefer iast-classic for new work.
+a > ā > á > ā́
+i > ī > í > ī́
+u > ū > ú > ū́
+o > ó
+e > é
+r > ṛ > ṛ́ > ṝ > ṝ́
+l > ḷ
+m > ṃ > ṁ
+h > ḥ
+n > ṇ > ṅ > ñ > ṉ
+t > ṭ
+d > ḍ
+s > ṣ > ś
+c > ç
+k > ï
+z > æ
+x > œ
+A > Ā > Ä
+I > Ī
+U > Ū > Ü
+O > Ō > Ö
+E > Ē
+R > Ṛ > Ṝ
+L > Ḷ > Ḹ
+M > Ṃ > Ṁ
+H > Ḥ
+N > Ṇ > Ṅ > Ñ > Ṉ
+T > Ṭ
+D > Ḍ
+S > Ṣ > Ś

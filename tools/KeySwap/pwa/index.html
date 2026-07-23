@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <title>KeySwap 2.1 — IAST PWA</title>
+  <style>
+    :root { font-family: system-ui, "Segoe UI", sans-serif; color: #e8e8ef; background: #1a1a2e; }
+    body { max-width: 42rem; margin: 1rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.25rem; font-weight: 600; }
+    textarea {
+      width: 100%; min-height: 8rem; font-size: 1.25rem; line-height: 1.5;
+      padding: 0.75rem; border-radius: 8px; border: 1px solid #444;
+      background: #16213e; color: #fff; box-sizing: border-box;
+    }
+    .row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0; }
+    button, select {
+      font: inherit; padding: 0.45rem 0.75rem; border-radius: 6px;
+      border: 1px solid #556; background: #0f3460; color: #fff; cursor: pointer;
+    }
+    button.primary { background: #e94560; border-color: #e94560; }
+    button:active { transform: scale(0.98); }
+    .keys { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 0.5rem; }
+    .keys button { padding: 0.6rem 0; font-size: 1rem; background: #1f4068; }
+    .keys button.wide { grid-column: span 2; }
+    .hint { color: #9ab; font-size: 0.85rem; }
+    .menu {
+      position: fixed; background: #0f3460; border: 1px solid #e94560;
+      border-radius: 8px; padding: 0.25rem; display: none; z-index: 9;
+      box-shadow: 0 8px 24px #0008;
+    }
+    .menu button { display: block; width: 100%; margin: 2px 0; text-align: left; }
+  </style>
+</head>
+<body>
+  <h1>KeySwap 2.1 <span class="hint">offline IAST pad</span></h1>
+  <p class="hint">Type in the box, press <strong>=</strong> to cycle, or long-press a letter key. Smart: aa→ā, sh→ś. HUD shows last change.</p>
+  <textarea id="t" placeholder="Type rāma, saMskRta (HK), raama (ITRANS)…" spellcheck="false"></textarea>
+  <div class="row">
+    <select id="profile" title="Profile"></select>
+    <label><input type="checkbox" id="smart" checked /> smart</label>
+    <button type="button" id="cycle" class="primary">= cycle</button>
+    <button type="button" id="copy">Copy</button>
+    <button type="button" id="clear">Clear</button>
+  </div>
+  <div class="row">
+    <select id="scheme" title="ASCII scheme → IAST">
+      <option value="auto">auto detect</option>
+      <option value="hk">Harvard-Kyoto</option>
+      <option value="itrans">ITRANS</option>
+      <option value="velthuis">Velthuis</option>
+    </select>
+    <button type="button" id="toIast">→ IAST</button>
+    <button type="button" id="cologne" title="Open Cologne Simple Search">Cologne</button>
+    <span id="hud" class="hint">ready</span>
+  </div>
+  <div class="keys" id="keys"></div>
+  <div class="menu" id="menu"></div>
+  <p class="hint">Configs from <code>../configs/*.txt</code> when served from the repo. Scheme convert is client-side (parity with <code>scheme_bridge.py</code>).</p>
+  <script src="keyswap-pwa.js"></script>
+</body>
+</html>

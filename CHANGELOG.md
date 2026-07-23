@@ -5,6 +5,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-07-23
+
+### Added
+
+- **tools/KeySwap 2.3** (`2.3.0`) — typing-tool port for light Cologne headword
+  check: `typing_check.py` (last token → Simple Search API → ✓/✗ HUD), AHK
+  Ctrl+Alt+S, Mac menu; no local dict / no SanskritSpellCheck embed.
+- **tools/KeySwap 2.2** (`2.2.0`) — Cologne Simple Search integration:
+  `cologne_search.py` ports csl-apidev `Dalnorm::normalize` + multi-scheme→SLP1
+  query prep, builds Simple Search UI/API URLs (`--open` / `--api`), AHK
+  Ctrl+Alt+C, PWA Cologne button, Mac menu item. Builds on 2.1 (scheme_bridge,
+  convert `--from`, guards, HUD) and 2.0 (smart/long-press/PWA). Not part of
+  the PyPI/npm library API.
+- **tools/KeySwap** — peer-tool survey + lean roadmap:
+  [`SIMILARS_COMPARISON.md`](tools/KeySwap/SIMILARS_COMPARISON.md) (Lexilogos,
+  Keyman/Heidelberg, EasyUnicode, SanskritTypist, Sanscript, Aksharamukha, …)
+  with Tier A light-next features and explicit heavy-skips.
+- **tools/KeySwap** — upstream page + **80-comment** analysis
+  ([`UPSTREAM_KEYSWAP_ANALYSIS.md`](tools/KeySwap/UPSTREAM_KEYSWAP_ANALYSIS.md));
+  README hero, Word/`=` troubleshooting, config recipes (danda, ॐ, svara),
+  first-60-seconds launch path.
+
 ### Fixed
 
 - `iast_to_devanagari` re-implemented as the `to_slp1` -> `slp1_to_devanagari`

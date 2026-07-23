@@ -1,6 +1,6 @@
 # sanskrit-util
 
-_Created: 15-06-2026 · Last updated: 11-07-2026_
+_Created: 15-06-2026 · Last updated: 23-07-2026_
 
 One **canonical** implementation of the Sanskrit string helpers that were being re-typed in
 ~20+ Sanskrit-Lexicon / CDSL repos: IAST ⇄ SLP1 ⇄ Devanāgarī transcoding plus the
@@ -176,6 +176,12 @@ set-equal to the independent literals in the SanskritSpellCheck `slp1util.py` do
 the **SLP1 ⇄ Devanāgarī round-trip property test** — `deva_to_slp1(slp1_to_devanagari(s)) == s`
 over the full alphabet plus [`vectors/slp1_roundtrip_sample.txt`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/vectors/slp1_roundtrip_sample.txt)
 (1000 real MW `<k1>` headwords). Both are skipped gracefully if the sibling repos are absent.
+
+## Related tools (optional, not part of the library API)
+
+- **[tools/KeySwap 2.2](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/README.md)** —
+  type IAST (Windows/iPhone/Mac/PWA); HK/ITRANS/Velthuis → IAST; **Cologne
+  Simple Search** key prep (`dalnorm` + open/API). Not in PyPI/npm.
 
 ## Layout
 

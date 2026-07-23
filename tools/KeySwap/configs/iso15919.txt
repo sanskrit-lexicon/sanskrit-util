@@ -1,0 +1,28 @@
+# ISO 15919-oriented romanization extras on top of common Sanskrit forms.
+# Includes long mid vowels (ē ō), alveolar ṉ, and retroflex ḻ.
+a > ā
+i > ī
+u > ū
+e > ē
+o > ō
+r > ṛ > ṝ
+l > ḷ > ḹ > ḻ
+m > ṃ > ṁ
+h > ḥ
+n > ṇ > ṅ > ñ > ṉ
+t > ṭ
+d > ḍ
+s > ṣ > ś
+A > Ā
+I > Ī
+U > Ū
+E > Ē
+O > Ō
+R > Ṛ > Ṝ
+L > Ḷ > Ḹ > Ḻ
+M > Ṃ > Ṁ
+H > Ḥ
+N > Ṇ > Ṅ > Ñ > Ṉ
+T > Ṭ
+D > Ḍ
+S > Ṣ > Ś
