@@ -1,22 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""KeySwap typing-tool port: light Cologne headword check for typed text.
+"""KeySwap typing-tool port: Cologne headword check + local offline fallback.
 
-Not a full SanskritSpellCheck detector stack and not a local dictionary.
-Uses the same Simple Search API prep as ``cologne_search.py``:
+Primary path: typed / clipboard → scheme→SLP1 → dalnorm → live Simple Search API.
 
-  typed / clipboard → scheme→SLP1 → dalnorm → live getword_list → known?
-
-Designed for tray/HUD (one-line status) and CLI smoke tests. Network only
-when verifying; no multi-MB data, no Hunspell, no offline headword dump.
+Offline / no-network alternative: a plain SLP1 wordlist
+(``data/local_headwords.txt`` or ``KEYSWAP_WORDLIST`` / ``--wordlist``).
+Not a full SanskritSpellCheck detector stack — existence check only.
 
 Usage:
   python typing_check.py "kṛṣṇa"
   python typing_check.py --hud "rāma"
+  python typing_check.py --local-only --hud "rāma"   # force offline wordlist
   python typing_check.py --dict mw --from hk "rAma"
   echo krsna | python typing_check.py --from auto --hud
 
-Exit codes: 0 = known (or offline keys-only), 1 = unknown / API error, 2 = empty.
+Exit codes: 0 = known (or keys-only offline prep), 1 = unknown / unrecoverable error, 2 = empty.
 """
 from __future__ import annotations
 
@@ -32,6 +31,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from cologne_search import fetch_results, format_api_error, prepare  # noqa: E402
+from local_wordlist import get_wordlist, lookup, wordlist_label  # noqa: E402
 
 
 @dataclass
@@ -39,7 +39,7 @@ class TypingCheck:
     """Result of a single-token headword check for the typing tool."""
 
     query: str
-    known: bool | None  # None = not verified (offline / error)
+    known: bool | None  # None = not verified (keys-only / no local fallback)
     n_hits: int
     top: list[str]
     slp1: str
@@ -47,11 +47,12 @@ class TypingCheck:
     scheme: str
     dict: str
     error: str = ""
+    source: str = ""  # "api" | "local" | "keys" | ""
 
     def hud_line(self, *, max_hits: int = 3) -> str:
         """One short line for tray ToolTip / status bar."""
         q = self.query[:40] + ("…" if len(self.query) > 40 else "")
-        if self.error:
+        if self.error and self.known is None:
             # Keep rate-limit message short and actionable (no slp1 clutter)
             if self.error.startswith("rate-limited"):
                 return f"? {q}  ·  {self.error}"
@@ -59,9 +60,15 @@ class TypingCheck:
         if self.known is None:
             return f"· {q}  ·  slp1={self.slp1}  norm={self.normkey}"
         if self.known:
+            if self.source == "local":
+                return f"✓ {q}  ·  local ({self.dict})  ·  {wordlist_label()}"
             sample = ", ".join(self.top[:max_hits])
             extra = f" +{self.n_hits - max_hits}" if self.n_hits > max_hits else ""
             return f"✓ {q}  ·  {self.dict} {self.n_hits} hit(s): {sample}{extra}"
+        if self.source == "local":
+            if self.error and self.error.startswith("rate-limited"):
+                return f"? {q}  ·  {self.error}"
+            return f"✗ {q}  ·  not in local ({self.dict})  ·  slp1={self.slp1}"
         return f"✗ {q}  ·  not in {self.dict}  ·  slp1={self.slp1}"
 
     def as_dict(self) -> dict:
@@ -85,6 +92,36 @@ def last_token(text: str) -> str:
     return parts[-1] if parts else line.split()[-1] if line.split() else line
 
 
+def _local_result(
+    query: str,
+    q,
+    dict_code: str,
+    *,
+    wordlist: str | Path | None,
+    api_error: str = "",
+) -> TypingCheck | None:
+    """Return a TypingCheck from the local wordlist, or None if no file."""
+    hit = lookup(q.slp1, q.normkey, path=wordlist)
+    if hit is None:
+        return None
+    err = ""
+    if api_error:
+        # Soft note only when we recovered via local after a network failure
+        err = f"offline fallback ({api_error})" if hit else api_error
+    return TypingCheck(
+        query=query,
+        known=hit,
+        n_hits=1 if hit else 0,
+        top=[q.slp1] if hit else [],
+        slp1=q.slp1,
+        normkey=q.normkey,
+        scheme=q.scheme_resolved,
+        dict=dict_code.lower(),
+        error=err if not hit else "",  # known local hits stay clean in HUD
+        source="local",
+    )
+
+
 def check_word(
     text: str,
     *,
@@ -93,8 +130,22 @@ def check_word(
     timeout: float = 12.0,
     verify: bool = True,
     last_word_only: bool = True,
+    local_only: bool = False,
+    use_local: bool = True,
+    wordlist: str | Path | None = None,
 ) -> TypingCheck:
-    """Check one word against Cologne Simple Search (optional live API)."""
+    """Check one word against Cologne Simple Search and/or a local SLP1 wordlist.
+
+    Parameters
+    ----------
+    local_only
+        Skip the network; use only the local wordlist.
+    use_local
+        When True (default), fall back to the local list if the API fails
+        (or if ``local_only``). Set False to keep pure-network behaviour.
+    wordlist
+        Path override; else ``KEYSWAP_WORDLIST`` / ``data/local_headwords.txt``.
+    """
     raw = (text or "").strip()
     query = last_token(raw) if last_word_only else raw
     if not query:
@@ -121,11 +172,13 @@ def check_word(
             normkey=q.normkey,
             scheme=q.scheme_resolved,
             dict=dict_code.lower(),
+            source="keys",
         )
 
-    try:
-        hits = fetch_results(q, timeout=timeout)
-    except Exception as e:  # noqa: BLE001 — surface any network/parse failure to HUD
+    if local_only:
+        local = _local_result(query, q, dict_code, wordlist=wordlist)
+        if local is not None:
+            return local
         return TypingCheck(
             query=query,
             known=None,
@@ -135,7 +188,37 @@ def check_word(
             normkey=q.normkey,
             scheme=q.scheme_resolved,
             dict=dict_code.lower(),
-            error=format_api_error(e),
+            error="no local wordlist (see data/local_headwords.txt)",
+            source="",
+        )
+
+    try:
+        hits = fetch_results(q, timeout=timeout)
+    except Exception as e:  # noqa: BLE001 — surface any network/parse failure to HUD
+        api_err = format_api_error(e)
+        if use_local:
+            local = _local_result(
+                query, q, dict_code, wordlist=wordlist, api_error=api_err
+            )
+            if local is not None:
+                # Prefer a clean local ✓/✗; keep rate-limit hint only if local miss
+                if local.known:
+                    local.error = ""
+                elif api_err.startswith("rate-limited"):
+                    local.error = api_err
+                else:
+                    local.error = f"{api_err}; not in local"
+                return local
+        return TypingCheck(
+            query=query,
+            known=None,
+            n_hits=0,
+            top=[],
+            slp1=q.slp1,
+            normkey=q.normkey,
+            scheme=q.scheme_resolved,
+            dict=dict_code.lower(),
+            error=api_err,
         )
 
     return TypingCheck(
@@ -147,6 +230,7 @@ def check_word(
         normkey=q.normkey,
         scheme=q.scheme_resolved,
         dict=dict_code.lower(),
+        source="api",
     )
 
 
@@ -157,6 +241,21 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--dict", default="mw", help="Cologne dict code (mw, pw, …)")
     ap.add_argument("--timeout", type=float, default=12.0)
     ap.add_argument("--no-verify", action="store_true", help="keys only, no network")
+    ap.add_argument(
+        "--local-only",
+        action="store_true",
+        help="skip Cologne API; use local SLP1 wordlist only",
+    )
+    ap.add_argument(
+        "--no-local",
+        action="store_true",
+        help="do not fall back to local wordlist on API failure",
+    )
+    ap.add_argument(
+        "--wordlist",
+        default=None,
+        help="path to local SLP1 list (default: data/local_headwords.txt or KEYSWAP_WORDLIST)",
+    )
     ap.add_argument("--full-text", action="store_true", help="do not reduce to last token")
     ap.add_argument("--hud", action="store_true", help="print one-line HUD status only")
     ap.add_argument("--json", action="store_true", help="print JSON result")
@@ -171,6 +270,9 @@ def main(argv: list[str] | None = None) -> int:
         timeout=args.timeout,
         verify=not args.no_verify,
         last_word_only=not args.full_text,
+        local_only=args.local_only,
+        use_local=not args.no_local,
+        wordlist=args.wordlist,
     )
 
     if args.hud:
@@ -182,7 +284,12 @@ def main(argv: list[str] | None = None) -> int:
         if result.top:
             for i, h in enumerate(result.top, 1):
                 print(f"  {i}. {h}")
-        print(f"slp1={result.slp1}  normkey={result.normkey}  scheme={result.scheme}")
+        print(
+            f"slp1={result.slp1}  normkey={result.normkey}  "
+            f"scheme={result.scheme}  source={result.source or '-'}"
+        )
+        if get_wordlist(args.wordlist) is not None and result.source == "local":
+            print(f"wordlist={wordlist_label(args.wordlist)}")
 
     if args.open_if_unknown and result.known is False:
         import webbrowser

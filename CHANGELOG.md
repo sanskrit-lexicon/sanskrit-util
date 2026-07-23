@@ -5,6 +5,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **tools/KeySwap 2.4** (`2.4.0`) — offline headword check via local SLP1
+  wordlist (`data/local_headwords.txt` seed ~1k keys): `typing_check` falls
+  back when Cologne API fails or with `--local-only`;
+  `local_wordlist.py` + `build_local_wordlist.py --from-spellcheck` to expand
+  from sibling SanskritSpellCheck `HeadwordLists/MW-unique-key1-*.txt`.
+  Not a full detector stack — existence check only.
+
 ## [0.8.1] - 2026-07-23
 
 ### Fixed

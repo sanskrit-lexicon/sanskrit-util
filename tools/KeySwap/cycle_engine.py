@@ -29,7 +29,7 @@ __all__ = [
 ]
 
 # KeySwap toolkit version (shells / docs should match tools/KeySwap/VERSION)
-KEYSWAP_VERSION = "2.3.0"
+KEYSWAP_VERSION = "2.4.0"
 
 
 class ConfigError(ValueError):

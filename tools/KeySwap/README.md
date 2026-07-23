@@ -1,7 +1,7 @@
-# KeySwap **2.3** — IAST typing + Cologne headword check
+# KeySwap **2.4** — IAST typing + Cologne headword check (+ offline wordlist)
 
 _Created: 23-07-2026 · Last updated: 23-07-2026_  
-_Version: [2.3.0](VERSION)_
+_Version: [2.4.0](VERSION)_
 
 **Add IAST diacritics by cycling a letter** (default trigger `=`), or type smart
 digraphs (`aa`→ā, `sh`→ś). Works in Word, browser, chat — not only one app.
@@ -39,15 +39,25 @@ Legacy PE: [`vendor/keyswap.exe`](vendor/) — unsigned; SmartScreen “More inf
 
 ---
 
-## What’s in 2.3 (typing-tool headword check)
+## What’s in 2.4 (offline local wordlist)
 
 | Feature | Detail |
 |---------|--------|
-| **`typing_check.py`** | Light port for the typing tool: last token → Cologne API → `✓` / `✗` HUD line |
-| **AHK Ctrl+Alt+S** | Clipboard headword check (network; no local dict) |
-| **Mac menu** | Clipboard headword check |
+| **`data/local_headwords.txt`** | Seed SLP1 list (~1k keys) for offline ✓/✗ |
+| **API → local fallback** | If Cologne times out / 429 / no network, check the local file |
+| **`--local-only`** | Force offline (no network) |
+| **`--wordlist PATH` / `KEYSWAP_WORDLIST`** | Point at a larger list (e.g. full MW key1) |
+| **`build_local_wordlist.py`** | Build full list from sibling SanskritSpellCheck `HeadwordLists/` |
 
-Not SanskritSpellCheck detectors and not offline MW — only live Simple Search existence.
+Not a full SanskritSpellCheck detector stack — **existence check only** (word present / not).
+
+### 2.3 (typing-tool headword check)
+
+| Feature | Detail |
+|---------|--------|
+| **`typing_check.py`** | Last token → Cologne API → `✓` / `✗` HUD line |
+| **AHK Ctrl+Alt+S** | Clipboard headword check (API first; local fallback since 2.4) |
+| **Mac menu** | Clipboard headword check |
 
 ### 2.2 (Cologne Simple Search)
 
@@ -112,7 +122,17 @@ python tools/KeySwap/test_cologne_search.py
 # Typing-tool headword check (live API, one-line HUD)
 python tools/KeySwap/typing_check.py "kṛṣṇa" --hud
 python tools/KeySwap/typing_check.py --hud --from hk "rAma"
+
+# Offline / no Internet (local SLP1 wordlist)
+python tools/KeySwap/typing_check.py --local-only --hud "rāma"
+python tools/KeySwap/typing_check.py --local-only --hud --from hk "rAma"
+
+# Expand seed → full MW (~194k keys) if SanskritSpellCheck is a sibling clone
+python tools/KeySwap/build_local_wordlist.py --from-spellcheck
+# or: python tools/KeySwap/build_local_wordlist.py --from-file path/to/MW-unique-key1-….txt
+
 python tools/KeySwap/test_typing_check.py
+python tools/KeySwap/test_local_wordlist.py
 ```
 
 ---
@@ -127,7 +147,7 @@ python tools/KeySwap/test_typing_check.py
 | Ctrl+Alt+= | Clipboard → Devanāgarī |
 | Ctrl+Alt+I / H | Clipboard auto-scheme → IAST |
 | Ctrl+Alt+C | Clipboard → Cologne Simple Search |
-| Ctrl+Alt+S | Clipboard **headword check** (✓/✗ via Cologne API) |
+| Ctrl+Alt+S | Clipboard **headword check** (Cologne API → local wordlist fallback) |
 
 Copy [`windows/allowlist.example.txt`](windows/allowlist.example.txt) → `allowlist.txt` to restrict apps.
 
@@ -175,7 +195,8 @@ After edit: **F6** (AHK) or quit tray app and relaunch (vendor PE). Chandrabindu
 | Mac / iPhone / Chromebook | Mac app · iOS keyboard · PWA (not the PE) |
 | Need ISO r̥ / r̥̄ | `configs/iso15919.txt` or add to config |
 | Need speed like Azhagi phonetic | Enable **smart** digraphs; or Keyman/Azhagi for pure phonetic Deva/IAST |
-| Headword check `? rate-limited` / API 429 | Cologne is throttling; use **Ctrl+Alt+C** (browser Simple Search) and retry later |
+| Headword check `? rate-limited` / API 429 | Cologne is throttling; local seed still ✓/✗ common words; use **Ctrl+Alt+C** in browser; expand list with `build_local_wordlist.py --from-spellcheck` |
+| Headword check offline / no Internet | Works via `data/local_headwords.txt` (seed ~1k). Full MW: `build_local_wordlist.py --from-spellcheck` or set `KEYSWAP_WORDLIST` |
 
 Full comment analysis: [UPSTREAM_KEYSWAP_ANALYSIS.md](UPSTREAM_KEYSWAP_ANALYSIS.md).
 
@@ -185,8 +206,11 @@ Full comment analysis: [UPSTREAM_KEYSWAP_ANALYSIS.md](UPSTREAM_KEYSWAP_ANALYSIS.
 
 ```text
 KeySwap/
-  VERSION  (2.3.0)
-  typing_check.py       # light headword check for typing tool (Cologne API)
+  VERSION  (2.4.0)
+  typing_check.py       # headword check: Cologne API + local fallback
+  local_wordlist.py     # load/lookup SLP1 wordlist
+  build_local_wordlist.py
+  data/local_headwords.txt  # seed offline list (~1k SLP1 keys)
   cologne_search.py     # Cologne Simple Search prep (dalnorm + URLs)
   scheme_bridge.py      # HK/ITRANS/Velthuis → IAST
   convert_bridge.py     # + --from schemes

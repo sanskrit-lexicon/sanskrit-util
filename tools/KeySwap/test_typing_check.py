@@ -54,8 +54,9 @@ class TestCheckMocked(unittest.TestCase):
         self.assertIn("✗", r.hud_line())
 
     def test_api_error(self):
+        # Pin pure API path (local seed would otherwise recover offline)
         with patch("typing_check.fetch_results", side_effect=TimeoutError("x")):
-            r = check_word("rāma", verify=True)
+            r = check_word("rāma", verify=True, use_local=False)
         self.assertIsNone(r.known)
         self.assertIn("timeout", r.error)
 
@@ -66,13 +67,25 @@ class TestCheckMocked(unittest.TestCase):
             url="http://example", code=429, msg="Too Many Requests", hdrs=None, fp=None
         )
         with patch("typing_check.fetch_results", side_effect=err):
-            r = check_word("rāma", verify=True)
+            r = check_word("rāma", verify=True, use_local=False)
         self.assertIsNone(r.known)
         self.assertTrue(r.error.startswith("rate-limited"))
         hud = r.hud_line()
         self.assertIn("rate-limited", hud)
         self.assertIn("Ctrl+Alt+C", hud)
         self.assertNotIn("HTTPError", hud)
+
+    def test_http_429_recovers_via_local(self):
+        import urllib.error
+
+        err = urllib.error.HTTPError(
+            url="http://example", code=429, msg="Too Many Requests", hdrs=None, fp=None
+        )
+        with patch("typing_check.fetch_results", side_effect=err):
+            r = check_word("rāma", verify=True, use_local=True)
+        self.assertTrue(r.known)
+        self.assertEqual(r.source, "local")
+        self.assertIn("✓", r.hud_line())
 
 
 class TestHud(unittest.TestCase):
