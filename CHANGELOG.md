@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-07-23
+
 ### Added
 
 - **tools/KeySwap 2.4** (`2.4.0`) — offline headword check via local SLP1
