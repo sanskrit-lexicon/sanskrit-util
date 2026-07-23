@@ -114,6 +114,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(withTitle: "Clipboard → IAST (auto scheme)", action: #selector(clipToIast), keyEquivalent: "i")
         menu.addItem(withTitle: "Clipboard → Devanāgarī", action: #selector(clipToDeva), keyEquivalent: "=")
         menu.addItem(withTitle: "Clipboard → Cologne Simple Search", action: #selector(clipCologne), keyEquivalent: "c")
+        menu.addItem(withTitle: "Clipboard headword check (Cologne)", action: #selector(clipHeadwordCheck), keyEquivalent: "k")
         menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: "Open Accessibility Settings", action: #selector(openAccessibility), keyEquivalent: "")
         menu.addItem(withTitle: "Quit KeySwap \(KeySwapVersion.current)", action: #selector(quit), keyEquivalent: "q")
@@ -141,6 +142,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             model.status = "Opened Cologne Simple Search"
         } catch {
             model.status = "Cologne open failed: \(error.localizedDescription)"
+        }
+    }
+
+    @objc private func clipHeadwordCheck() {
+        let script = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("typing_check.py")
+        guard FileManager.default.fileExists(atPath: script.path) else {
+            model.status = "typing_check.py not found"
+            return
+        }
+        let src = NSPasteboard.general.string(forType: .string) ?? ""
+        let tmpOut = FileManager.default.temporaryDirectory.appendingPathComponent("keyswap_check.txt")
+        FileManager.default.createFile(atPath: tmpOut.path, contents: nil)
+        let proc = Process()
+        proc.executableURL = URL(fileURLWithPath: "/usr/bin/python3")
+        proc.arguments = [script.path, "--from", "auto", "--dict", "mw", "--hud", "--timeout", "12", src]
+        proc.standardOutput = try? FileHandle(forWritingTo: tmpOut)
+        do {
+            try proc.run()
+            proc.waitUntilExit()
+            let out = (try? String(contentsOf: tmpOut, encoding: .utf8))?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            model.status = out.isEmpty ? "headword check: empty result" : out
+        } catch {
+            model.status = "headword check failed: \(error.localizedDescription)"
         }
     }
 

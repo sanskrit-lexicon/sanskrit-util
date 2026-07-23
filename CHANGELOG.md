@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **tools/KeySwap 2.3** (`2.3.0`) — typing-tool port for light Cologne headword
+  check: `typing_check.py` (last token → Simple Search API → ✓/✗ HUD), AHK
+  Ctrl+Alt+S, Mac menu; no local dict / no SanskritSpellCheck embed.
 - **tools/KeySwap 2.2** (`2.2.0`) — Cologne Simple Search integration:
   `cologne_search.py` ports csl-apidev `Dalnorm::normalize` + multi-scheme→SLP1
   query prep, builds Simple Search UI/API URLs (`--open` / `--api`), AHK

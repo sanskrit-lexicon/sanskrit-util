@@ -10,6 +10,7 @@
 ;   ^!i               clipboard → IAST
 ;   ^!h               clipboard HK/ITRANS/auto → IAST
 ;   ^!c               open Cologne Simple Search for clipboard (auto scheme)
+;   ^!s               light headword check (Cologne API → HUD)
 ;   F6                reload config + allowlist
 ;   F7                toggle teaching HUD
 ;
@@ -56,6 +57,7 @@ Loop Parse bases {
 ^!i:: ConvertClipboard("iast", "auto")
 ^!h:: ConvertClipboard("iast", "auto")  ; scheme auto → IAST
 ^!c:: OpenCologneSearch()
+^!s:: CheckClipboardHeadword()
 F6:: LoadAll()
 F7:: ToggleHud()
 
@@ -326,6 +328,34 @@ OpenCologneSearch() {
     TrayTip("KeySwap", "Opened Cologne Simple Search for clipboard", "Iconi")
 }
 
+; Light typing-tool port: last clipboard token → Cologne headword check (network)
+CheckClipboardHeadword() {
+    py := "python"
+    script := A_ScriptDir "\..\typing_check.py"
+    if !FileExist(script) {
+        MsgBox("Missing typing_check.py", "KeySwap", "Iconx")
+        return
+    }
+    tmpIn := A_Temp "\keyswap_check_in.txt"
+    tmpOut := A_Temp "\keyswap_check_out.txt"
+    try FileDelete(tmpIn)
+    try FileDelete(tmpOut)
+    FileAppend(A_Clipboard, tmpIn, "UTF-8")
+    ps := Format(
+        "Get-Content -Raw -Encoding UTF8 '{1}' | & {2} '{3}' --from auto --dict mw --hud --timeout 12 | Set-Content -Encoding UTF8 -NoNewline '{4}'",
+        tmpIn, py, script, tmpOut
+    )
+    ShowHud("checking Cologne…")
+    RunWait('powershell -NoProfile -Command ' ps, , "Hide")
+    if FileExist(tmpOut) {
+        msg := FileRead(tmpOut, "UTF-8")
+        ShowHud(msg)
+        TrayTip("KeySwap headword", msg, "Iconi")
+    } else {
+        ShowHud("check failed (Python / network?)")
+    }
+}
+
 BuildTray() {
     A_TrayMenu.Delete()
     A_TrayMenu.Add("KeySwap 2.1", (*) => 0)
@@ -343,6 +373,7 @@ BuildTray() {
     A_TrayMenu.Add("Clipboard → Devanāgarī", (*) => ConvertClipboard("deva", "auto"))
     A_TrayMenu.Add("Clipboard → IAST (auto scheme)", (*) => ConvertClipboard("iast", "auto"))
     A_TrayMenu.Add("Clipboard → Cologne Simple Search (Ctrl+Alt+C)", (*) => OpenCologneSearch())
+    A_TrayMenu.Add("Clipboard headword check (Ctrl+Alt+S)", (*) => CheckClipboardHeadword())
     A_TrayMenu.Add()
     A_TrayMenu.Add("Exit", (*) => ExitApp())
 }
