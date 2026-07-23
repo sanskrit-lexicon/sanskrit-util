@@ -1,0 +1,29 @@
+# Draft Vedic / accent-friendly cycles.
+# Combines classical length with acute (and macron+acute) for rough svara notes.
+# Not a complete Vedic svara system — extend as needed.
+a > ā > á > ā́
+i > ī > í > ī́
+u > ū > ú > ū́
+e > ē > é > ḗ
+o > ō > ó > ṓ
+r > ṛ > ṛ́ > ṝ > ṝ́
+l > ḷ > ḹ
+m > ṃ > ṁ
+h > ḥ
+n > ṇ > ṅ > ñ > ṉ
+t > ṭ
+d > ḍ
+s > ṣ > ś
+A > Ā > Á > Ā́
+I > Ī > Í > Ī́
+U > Ū > Ú > Ū́
+E > Ē > É > Ḗ
+O > Ō > Ó > Ṓ
+R > Ṛ > Ṛ́ > Ṝ > Ṝ́
+L > Ḷ > Ḹ
+M > Ṃ > Ṁ
+H > Ḥ
+N > Ṇ > Ṅ > Ñ > Ṉ
+T > Ṭ
+D > Ḍ
+S > Ṣ > Ś

@@ -1,0 +1,24 @@
+# Default profile for tools that load config.txt beside the app (Windows AHK / vendor exe).
+# Same content as configs/iast-classic.txt — re-run validate_configs.py after edits.
+a > ā
+i > ī
+u > ū
+r > ṛ > ṝ
+l > ḷ > ḹ
+m > ṃ > ṁ
+h > ḥ
+n > ṇ > ṅ > ñ
+t > ṭ
+d > ḍ
+s > ṣ > ś
+A > Ā
+I > Ī
+U > Ū
+R > Ṛ > Ṝ
+L > Ḷ > Ḹ
+M > Ṃ > Ṁ
+H > Ḥ
+N > Ṇ > Ṅ > Ñ
+T > Ṭ
+D > Ḍ
+S > Ṣ > Ś

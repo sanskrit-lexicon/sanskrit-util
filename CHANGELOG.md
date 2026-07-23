@@ -5,6 +5,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **tools/KeySwap** — cross-platform IAST diacritic cycler toolkit: scholarly
+  config profiles (`iast-classic`, `iso15919`, `vedic-draft`, `personal-legacy`),
+  Python `cycle_engine` + validator/tests, open Windows AutoHotkey v2 script,
+  Swift `KeySwapCore` + **iPhone custom keyboard** + **Mac menu-bar** app sources,
+  vendor PE isolated under `vendor/` with SHA-256 provenance and third-party notice.
+  Not part of the PyPI/npm library API.
+
 ### Fixed
 
 - `iast_to_devanagari` re-implemented as the `to_slp1` -> `slp1_to_devanagari`
