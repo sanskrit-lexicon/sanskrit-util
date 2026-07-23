@@ -305,7 +305,7 @@ def fetch_results(q: CologneQuery, *, timeout: float = 30.0) -> list[str]:
     Raises urllib/json errors; callers may use :func:`format_api_error` for HUD text.
     """
     req = urllib.request.Request(
-        q.api_url, headers={"User-Agent": "KeySwap-cologne_search/2.3"}
+        q.api_url, headers={"User-Agent": "KeySwap-cologne_search/2.4"}
     )
     with urllib.request.urlopen(req, timeout=timeout) as r:
         data = json.load(r)

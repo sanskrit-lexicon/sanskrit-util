@@ -40,7 +40,7 @@ Requires Python + repo `py/sanskrit_util`:
 | Ctrl+Alt+= | Clipboard → Devanāgarī |
 | Ctrl+Alt+I / H | Clipboard auto-scheme → IAST |
 | Ctrl+Alt+C | Clipboard → [Cologne Simple Search](https://sanskrit-lexicon.uni-koeln.de/simple/) |
-| Ctrl+Alt+S | Clipboard **headword check** (✓/✗ via Cologne API, HUD) |
+| Ctrl+Alt+S | Clipboard **headword check** (Cologne API → local wordlist fallback, HUD) |
 
 Also:
 

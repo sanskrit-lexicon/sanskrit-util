@@ -328,8 +328,9 @@ OpenCologneSearch() {
     TrayTip("KeySwap", "Opened Cologne Simple Search for clipboard", "Iconi")
 }
 
-; Light typing-tool port: last clipboard token → Cologne headword check (network)
+; Typing-tool: last clipboard token → Cologne API, then local wordlist if offline
 CheckClipboardHeadword() {
+
     py := "python"
     script := A_ScriptDir "\..\typing_check.py"
     if !FileExist(script) {
