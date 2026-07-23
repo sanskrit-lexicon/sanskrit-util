@@ -11,6 +11,7 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 
+from cologne_search import format_api_error
 from typing_check import TypingCheck, check_word, last_token
 
 
@@ -56,7 +57,22 @@ class TestCheckMocked(unittest.TestCase):
         with patch("typing_check.fetch_results", side_effect=TimeoutError("x")):
             r = check_word("rāma", verify=True)
         self.assertIsNone(r.known)
-        self.assertIn("api:", r.error)
+        self.assertIn("timeout", r.error)
+
+    def test_http_429_hud(self):
+        import urllib.error
+
+        err = urllib.error.HTTPError(
+            url="http://example", code=429, msg="Too Many Requests", hdrs=None, fp=None
+        )
+        with patch("typing_check.fetch_results", side_effect=err):
+            r = check_word("rāma", verify=True)
+        self.assertIsNone(r.known)
+        self.assertTrue(r.error.startswith("rate-limited"))
+        hud = r.hud_line()
+        self.assertIn("rate-limited", hud)
+        self.assertIn("Ctrl+Alt+C", hud)
+        self.assertNotIn("HTTPError", hud)
 
 
 class TestHud(unittest.TestCase):
@@ -72,6 +88,22 @@ class TestHud(unittest.TestCase):
             dict="mw",
         )
         self.assertLessEqual(len(t.hud_line()), 120)
+
+
+class TestFormatApiError(unittest.TestCase):
+    def test_429(self):
+        import urllib.error
+
+        e = urllib.error.HTTPError("http://x", 429, "Too Many", None, None)
+        msg = format_api_error(e)
+        self.assertIn("rate-limited", msg)
+        self.assertIn("Ctrl+Alt+C", msg)
+
+    def test_500(self):
+        import urllib.error
+
+        e = urllib.error.HTTPError("http://x", 503, "Unavailable", None, None)
+        self.assertEqual(format_api_error(e), "api server 503")
 
 
 if __name__ == "__main__":

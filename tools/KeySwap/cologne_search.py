@@ -273,9 +273,40 @@ def prepare(
     )
 
 
+def format_api_error(exc: BaseException) -> str:
+    """Map network/API failures to short HUD-friendly labels.
+
+    HTTP 429 (Cologne rate limit) is the common live failure mode — point users
+    at the browser Simple Search path (AHK Ctrl+Alt+C) instead of raw HTTPError.
+    """
+    if isinstance(exc, urllib.error.HTTPError):
+        if exc.code == 429:
+            return "rate-limited — try browser (Ctrl+Alt+C)"
+        if exc.code >= 500:
+            return f"api server {exc.code}"
+        return f"api HTTP {exc.code}"
+    if isinstance(exc, urllib.error.URLError):
+        reason = getattr(exc, "reason", None)
+        if isinstance(reason, TimeoutError) or (
+            reason is not None and "timed out" in str(reason).lower()
+        ):
+            return "api timeout"
+        return "api network error"
+    if isinstance(exc, TimeoutError):
+        return "api timeout"
+    if isinstance(exc, json.JSONDecodeError):
+        return "api bad JSON"
+    return f"api: {type(exc).__name__}"
+
+
 def fetch_results(q: CologneQuery, *, timeout: float = 30.0) -> list[str]:
-    """Live API: return ordered ``dicthw`` list (IAST/output as requested)."""
-    req = urllib.request.Request(q.api_url, headers={"User-Agent": "KeySwap-cologne_search/2.2"})
+    """Live API: return ordered ``dicthw`` list (IAST/output as requested).
+
+    Raises urllib/json errors; callers may use :func:`format_api_error` for HUD text.
+    """
+    req = urllib.request.Request(
+        q.api_url, headers={"User-Agent": "KeySwap-cologne_search/2.3"}
+    )
     with urllib.request.urlopen(req, timeout=timeout) as r:
         data = json.load(r)
     return [x.get("dicthw", "") for x in data.get("result", []) if x.get("dicthw")]
