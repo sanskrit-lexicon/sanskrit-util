@@ -9,6 +9,7 @@
 ;   ^!=               clipboard → Devanāgarī
 ;   ^!i               clipboard → IAST
 ;   ^!h               clipboard HK/ITRANS/auto → IAST
+;   ^!c               open Cologne Simple Search for clipboard (auto scheme)
 ;   F6                reload config + allowlist
 ;   F7                toggle teaching HUD
 ;
@@ -54,6 +55,7 @@ Loop Parse bases {
 ^!=:: ConvertClipboard("deva", "auto")
 ^!i:: ConvertClipboard("iast", "auto")
 ^!h:: ConvertClipboard("iast", "auto")  ; scheme auto → IAST
+^!c:: OpenCologneSearch()
 F6:: LoadAll()
 F7:: ToggleHud()
 
@@ -304,6 +306,26 @@ ToggleHud() {
     TrayTip("KeySwap 2.1", "Teaching HUD: " (HudOn ? "ON" : "OFF"), "Iconi")
 }
 
+OpenCologneSearch() {
+    py := "python"
+    script := A_ScriptDir "\..\cologne_search.py"
+    if !FileExist(script) {
+        MsgBox("Missing cologne_search.py", "KeySwap", "Iconx")
+        return
+    }
+    tmpIn := A_Temp "\keyswap_cologne.txt"
+    try FileDelete(tmpIn)
+    FileAppend(A_Clipboard, tmpIn, "UTF-8")
+    ; --open builds URL and opens browser; print keys via tray
+    ps := Format(
+        "Get-Content -Raw -Encoding UTF8 '{1}' | & {2} '{3}' --from auto --dict mw --open --print-keys",
+        tmpIn, py, script
+    )
+    RunWait('powershell -NoProfile -Command ' ps, , "Hide")
+    ShowHud("Cologne Simple Search")
+    TrayTip("KeySwap", "Opened Cologne Simple Search for clipboard", "Iconi")
+}
+
 BuildTray() {
     A_TrayMenu.Delete()
     A_TrayMenu.Add("KeySwap 2.1", (*) => 0)
@@ -320,6 +342,7 @@ BuildTray() {
     A_TrayMenu.Add()
     A_TrayMenu.Add("Clipboard → Devanāgarī", (*) => ConvertClipboard("deva", "auto"))
     A_TrayMenu.Add("Clipboard → IAST (auto scheme)", (*) => ConvertClipboard("iast", "auto"))
+    A_TrayMenu.Add("Clipboard → Cologne Simple Search (Ctrl+Alt+C)", (*) => OpenCologneSearch())
     A_TrayMenu.Add()
     A_TrayMenu.Add("Exit", (*) => ExitApp())
 }

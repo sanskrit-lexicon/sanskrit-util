@@ -1,11 +1,12 @@
-# KeySwap **2.1** — IAST diacritic toolkit
+# KeySwap **2.2** — IAST typing + Cologne Simple Search
 
 _Created: 23-07-2026 · Last updated: 23-07-2026_  
-_Version: [2.1.0](VERSION)_
+_Version: [2.2.0](VERSION)_
 
 Type Sanskrit **romanization** (IAST / ISO-style) with a shared config language
 across **Windows, iPhone, Mac, and the browser**. Convert **HK / ITRANS /
-Velthuis** paste and **IAST ↔ Devanāgarī** via this repo’s library.
+Velthuis** paste, **IAST ↔ Devanāgarī**, and prepare **Cologne Simple Search**
+queries (scheme → SLP1 → `dalnorm` key → open/API).
 
 ```text
 n  =  =  =           →  ṇ → ṅ → ñ       (cycle)
@@ -18,20 +19,24 @@ Not part of the PyPI/npm package API. Web survey: [IMPROVEMENTS_FROM_WEB.md](IMP
 
 ---
 
-## What’s in 2.1 (backlog completion)
+## What’s in 2.2 (Cologne Simple Search)
 
 | Feature | Detail |
 |---------|--------|
-| **scheme_bridge** | Harvard-Kyoto, ITRANS, Velthuis → IAST (longest-token) |
-| **convert `--from`** | `auto\|hk\|itrans\|velthuis\|iast\|deva\|slp1` → `iast\|deva\|slp1` |
-| **Keyman guard** | AHK warns if Keyman processes are running |
-| **Allowlist** | Optional `windows/allowlist.txt` — only listed apps |
-| **Teaching HUD** | AHK ToolTip (F7) + PWA status line |
-| **MSKLC path** | [layouts/msklc/](layouts/msklc/) chords + classroom docs |
-| **Packaging docs** | [packaging/APP_STORE.md](packaging/APP_STORE.md), [VENDOR_PE.md](packaging/VENDOR_PE.md) |
-| **Mac clipboard convert** | Menu: clipboard → IAST / Devanāgarī via Python |
+| **`cologne_search.py`** | Multi-scheme → SLP1 → **dalnorm** (port of csl-apidev `Dalnorm::normalize`) |
+| **Cologne URLs** | Builds [Simple Search](https://sanskrit-lexicon.uni-koeln.de/simple/) UI + getword_list API links |
+| **`--open` / `--api`** | Browser jump or live headword list |
+| **AHK Ctrl+Alt+C** | Clipboard → Cologne Simple Search |
+| **PWA “Cologne”** | Opens Simple Search with scheme-aware `input` + `key` |
+| **Mac menu** | Clipboard → Cologne Simple Search |
 
-All **2.0** features remain (smart, long-press, PWA, profiles, AHK modes).
+### 2.1 (still included)
+
+scheme_bridge · convert `--from` · Keyman guard · allowlist · HUD · MSKLC docs · packaging checklists
+
+### 2.0 (still included)
+
+smart digraphs · long-press · PWA · profiles · AHK cycle/smart/deadkey
 
 ---
 
@@ -67,6 +72,12 @@ python tools/KeySwap/scheme_bridge.py --from auto "saMskRta"
 python tools/KeySwap/convert_bridge.py --from hk --to deva "rAma"
 python tools/KeySwap/convert_bridge.py --from itrans --to iast "shiva"
 python tools/KeySwap/convert_bridge.py --to slp1 "śiva"
+
+# Cologne Simple Search (dalnorm keys + open/API)
+python tools/KeySwap/cologne_search.py "rāma" --print-keys
+python tools/KeySwap/cologne_search.py --from hk "ziva" --dict mw --open
+python tools/KeySwap/cologne_search.py "śiva" --api --dict mw
+python tools/KeySwap/test_cologne_search.py
 ```
 
 ---
@@ -95,15 +106,16 @@ Copy [`windows/allowlist.example.txt`](windows/allowlist.example.txt) → `allow
 
 ```text
 KeySwap/
-  VERSION  (2.1.0)
+  VERSION  (2.2.0)
+  cologne_search.py     # Cologne Simple Search prep (dalnorm + URLs)
   scheme_bridge.py      # HK/ITRANS/Velthuis → IAST
   convert_bridge.py     # + --from schemes
   smart_input.py
   cycle_engine.py
   layouts/msklc/        # classroom / MSKLC
   packaging/            # App Store + PE policy
-  windows/              # AHK + allowlist
-  pwa/                  # offline pad + scheme → IAST
+  windows/              # AHK + allowlist + Cologne hotkey
+  pwa/                  # offline pad + Cologne button
   apple/                # iOS + Mac
   vendor/               # optional 1.x PE
 ```

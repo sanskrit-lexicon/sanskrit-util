@@ -46,6 +46,6 @@ final class CycleEngineTests: XCTestCase {
     }
 
     func testVersion() {
-        XCTAssertEqual(KeySwapVersion.current, "2.1.0")
+        XCTAssertEqual(KeySwapVersion.current, "2.2.0")
     }
 }

@@ -39,8 +39,14 @@ Requires Python + repo `py/sanskrit_util`:
 |--------|--------|
 | Ctrl+Alt+= | Clipboard → Devanāgarī |
 | Ctrl+Alt+I / H | Clipboard auto-scheme → IAST |
+| Ctrl+Alt+C | Clipboard → [Cologne Simple Search](https://sanskrit-lexicon.uni-koeln.de/simple/) |
 
-Also: `python ..\scheme_bridge.py --from hk "saMskRta"`.
+Also:
+
+```text
+python ..\scheme_bridge.py --from hk "saMskRta"
+python ..\cologne_search.py "rāma" --open --dict mw
+```
 
 ## Legacy PE
 

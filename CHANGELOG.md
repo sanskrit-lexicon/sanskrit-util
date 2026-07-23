@@ -7,12 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **tools/KeySwap 2.1** (`2.1.0`) — backlog completion on the IAST typing toolkit:
-  `scheme_bridge` (Harvard-Kyoto / ITRANS / Velthuis → IAST), `convert_bridge
-  --from`, AHK Keyman guard + process allowlist + teaching HUD, MSKLC classroom
-  pack, App Store/PE packaging checklists, Mac clipboard convert, PWA scheme→IAST
-  + HUD. Builds on 2.0 (smart digraphs, long-press iOS, profiles, PWA, AHK modes).
-  Not part of the PyPI/npm library API.
+- **tools/KeySwap 2.2** (`2.2.0`) — Cologne Simple Search integration:
+  `cologne_search.py` ports csl-apidev `Dalnorm::normalize` + multi-scheme→SLP1
+  query prep, builds Simple Search UI/API URLs (`--open` / `--api`), AHK
+  Ctrl+Alt+C, PWA Cologne button, Mac menu item. Builds on 2.1 (scheme_bridge,
+  convert `--from`, guards, HUD) and 2.0 (smart/long-press/PWA). Not part of
+  the PyPI/npm library API.
 
 ### Fixed
 

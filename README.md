@@ -179,9 +179,9 @@ over the full alphabet plus [`vectors/slp1_roundtrip_sample.txt`](https://github
 
 ## Related tools (optional, not part of the library API)
 
-- **[tools/KeySwap 2.1](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/README.md)** —
-  type IAST on **Windows** (AHK), **iPhone**, **Mac**, **PWA**; HK/ITRANS/Velthuis
-  → IAST; convert via this library; classroom layout path. Not in PyPI/npm.
+- **[tools/KeySwap 2.2](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/README.md)** —
+  type IAST (Windows/iPhone/Mac/PWA); HK/ITRANS/Velthuis → IAST; **Cologne
+  Simple Search** key prep (`dalnorm` + open/API). Not in PyPI/npm.
 
 ## Layout
 

@@ -235,6 +235,34 @@ S > Ṣ > Ś
       ta.focus();
     };
   }
+  const cologneBtn = document.getElementById("cologne");
+  if (cologneBtn) {
+    cologneBtn.onclick = () => {
+      const scheme = document.getElementById("scheme").value;
+      let key = ta.value.trim() || ta.placeholder;
+      let input = "iast";
+      if (scheme === "hk") input = "hk";
+      else if (scheme === "itrans") input = "itrans";
+      else if (scheme === "velthuis") {
+        key = schemeToIast(key, "velthuis");
+        input = "iast";
+      } else if (scheme === "auto") {
+        // prefer IAST after client convert when diacritics present
+        if (/[āīūṛṝḷḹṅñṭḍṇśṣṃḥ]/i.test(key)) input = "iast";
+        else if (/[AIURMGJTDNzSH]/.test(key) && /[a-z]/.test(key)) input = "hk";
+        else input = "iast";
+      }
+      const qs = new URLSearchParams({
+        dict: "mw",
+        input: input,
+        output: "iast",
+        key: key,
+      });
+      const url = "https://www.sanskrit-lexicon.uni-koeln.de/simple/?" + qs.toString();
+      window.open(url, "_blank", "noopener");
+      setHud("Cologne ← " + input + " · " + key.slice(0, 24));
+    };
+  }
   document.getElementById("copy").onclick = async () => {
     await navigator.clipboard.writeText(ta.value);
   };

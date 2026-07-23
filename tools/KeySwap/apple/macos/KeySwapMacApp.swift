@@ -113,6 +113,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: "Clipboard → IAST (auto scheme)", action: #selector(clipToIast), keyEquivalent: "i")
         menu.addItem(withTitle: "Clipboard → Devanāgarī", action: #selector(clipToDeva), keyEquivalent: "=")
+        menu.addItem(withTitle: "Clipboard → Cologne Simple Search", action: #selector(clipCologne), keyEquivalent: "c")
         menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: "Open Accessibility Settings", action: #selector(openAccessibility), keyEquivalent: "")
         menu.addItem(withTitle: "Quit KeySwap \(KeySwapVersion.current)", action: #selector(quit), keyEquivalent: "q")
@@ -121,6 +122,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func clipToIast() { runConvert(to: "iast") }
     @objc private func clipToDeva() { runConvert(to: "deva") }
+    @objc private func clipCologne() {
+        let script = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("cologne_search.py")
+        guard FileManager.default.fileExists(atPath: script.path) else {
+            model.status = "cologne_search.py not found"
+            return
+        }
+        let src = NSPasteboard.general.string(forType: .string) ?? ""
+        let proc = Process()
+        proc.executableURL = URL(fileURLWithPath: "/usr/bin/python3")
+        proc.arguments = [script.path, "--from", "auto", "--dict", "mw", "--open", src]
+        do {
+            try proc.run()
+            model.status = "Opened Cologne Simple Search"
+        } catch {
+            model.status = "Cologne open failed: \(error.localizedDescription)"
+        }
+    }
 
     private func runConvert(to: String) {
         // Prefer repo convert_bridge.py when developing from source tree
