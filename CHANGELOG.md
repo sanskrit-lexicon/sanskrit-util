@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   [`SIMILARS_COMPARISON.md`](tools/KeySwap/SIMILARS_COMPARISON.md) (Lexilogos,
   Keyman/Heidelberg, EasyUnicode, SanskritTypist, Sanscript, Aksharamukha, …)
   with Tier A light-next features and explicit heavy-skips.
+- **tools/KeySwap** — upstream page + **80-comment** analysis
+  ([`UPSTREAM_KEYSWAP_ANALYSIS.md`](tools/KeySwap/UPSTREAM_KEYSWAP_ANALYSIS.md));
+  README hero, Word/`=` troubleshooting, config recipes (danda, ॐ, svara),
+  first-60-seconds launch path.
 
 ### Fixed
 

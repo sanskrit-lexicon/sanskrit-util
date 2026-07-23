@@ -3,19 +3,39 @@
 _Created: 23-07-2026 · Last updated: 23-07-2026_  
 _Version: [2.2.0](VERSION)_
 
-Type Sanskrit **romanization** (IAST / ISO-style) with a shared config language
-across **Windows, iPhone, Mac, and the browser**. Convert **HK / ITRANS /
-Velthuis** paste, **IAST ↔ Devanāgarī**, and prepare **Cologne Simple Search**
-queries (scheme → SLP1 → `dalnorm` key → open/API).
+**Add IAST diacritics by cycling a letter** (default trigger `=`), or type smart
+digraphs (`aa`→ā, `sh`→ś). Works in Word, browser, chat — not only one app.
 
 ```text
-n  =  =  =           →  ṇ → ṅ → ñ       (cycle)
-aa ii sh             →  ā  ī  ś         (smart digraphs)
-saMskRta --from hk   →  saṃskṛta        (scheme bridge 2.1)
-long-press n         →  menu n ṇ ṅ ñ    (iOS / PWA)
+n  =  =  =     →  ṇ → ṅ → ñ
+r  =  =        →  ṛ → ṝ
+s  =  =        →  ṣ → ś
+kṛṣṇa · Rāmāyaṇam · saṃsāra · śiṣyāḥ
 ```
 
-Not part of the PyPI/npm package API. Web survey: [IMPROVEMENTS_FROM_WEB.md](IMPROVEMENTS_FROM_WEB.md).
+Also: HK/ITRANS/Velthuis paste → IAST, IAST↔Devanāgarī, Cologne Simple Search
+prep. Not part of the PyPI/npm package API.
+
+**Origin UX:** [Andre Vas / Yes Vedanta Keyswap](https://www.yesvedanta.com/keyswap/)
+(Windows cycle + `config.txt`). This folder is the **open multi-platform 2.x**
+toolkit. Feedback analysis: [UPSTREAM_KEYSWAP_ANALYSIS.md](UPSTREAM_KEYSWAP_ANALYSIS.md).
+
+> **If `=` breaks Microsoft Word** (jumps to Draft view, splits the window, or
+> turns `t` into ™): set the **system** keyboard to **English (US)** (Settings →
+> Time & language → Typing — not Word’s language), **or change the trigger key**,
+> **or use** [`windows/KeySwap.ahk`](windows/KeySwap.ahk) / PWA. This is the #1
+> community failure mode on the upstream page.
+
+---
+
+## First 60 seconds (Windows)
+
+1. Install [AutoHotkey v2](https://www.autohotkey.com/) (preferred) **or** use PWA.  
+2. Double-click [`windows/KeySwap.ahk`](windows/KeySwap.ahk) — **no main window**; look for the **tray icon**.  
+3. Open Notepad → type `n` → press `=` a few times → `ṇ` `ṅ` `ñ`.  
+4. Optional: tray → change mode (cycle / smart / deadkey).
+
+Legacy PE: [`vendor/keyswap.exe`](vendor/) — unsigned; SmartScreen “More info → Run anyway”. Prefer AHK.
 
 ---
 
@@ -82,23 +102,65 @@ python tools/KeySwap/test_cologne_search.py
 
 ---
 
-## Windows AHK (2.1)
+## Windows AHK
 
 | Key | Action |
 |-----|--------|
-| `=` | Cycle |
+| `=` (or your trigger) | Cycle last letter |
 | F6 | Reload config + allowlist |
 | F7 | Toggle teaching HUD |
 | Ctrl+Alt+= | Clipboard → Devanāgarī |
 | Ctrl+Alt+I / H | Clipboard auto-scheme → IAST |
+| Ctrl+Alt+C | Clipboard → Cologne Simple Search |
 
 Copy [`windows/allowlist.example.txt`](windows/allowlist.example.txt) → `allowlist.txt` to restrict apps.
+
+**Non-US keyboards:** on Spanish layouts the physical key may be `+` not `=`; set another trigger (upstream users use `]`, `/`, `` ` ``, `|`). Layout often only affects the **trigger**, not the base letters (Hakon / Norway).
 
 ---
 
 ## Profiles
 
-`iast-classic` (default) · `iso15919` · `vedic-draft` · `vedic-svara` · `personal-legacy`
+| Profile | Who |
+|---------|-----|
+| `iast-classic` (default) | Classical IAST; capitals included |
+| `iso15919` | ē ō ḻ ṉ, vocalic r̥-style extras |
+| `vedic-draft` / `vedic-svara` | Accents / svara experiments (Rudram, etc.) |
+| `personal-legacy` | Upstream personal map (ç, æ, …) |
+
+### Config recipes (from community + upstream help)
+
+```text
+# danda / double danda (Durgaprasad)
+. > । > ॥
+
+# oṃ / ॐ (Jai)
+o > oṃ > ॐ
+
+# svara: paste combining forms from Lexilogos, then e.g.
+e > e̍ > e̱
+```
+
+After edit: **F6** (AHK) or quit tray app and relaunch (vendor PE). Chandrabindu and odd marks: type on [Lexilogos](https://www.lexilogos.com/keyboard/sanskrit_latin.htm) → paste into the chain.
+
+---
+
+## Troubleshooting (from 80 upstream comments)
+
+| Symptom | Fix |
+|---------|-----|
+| Word Draft / Vertical Split / ™ when cycling | System keyboard **English (US)**; or change trigger; try Google Docs |
+| Works day 1, fails day 2 in Office | Same layout fix; avoid competing keystroke tools |
+| `an item with the same key has already been added` | PE: re-extract zip, SmartScreen → More info → Run anyway (#6342). AHK: check duplicate bases in config (`validate_configs.py`) |
+| Keyman + KeySwap both on | Pause one of them |
+| Capitals not cycling | Use `iast-classic` (has `A>Ā`…); uppercase and lowercase are **separate** chains |
+| WordPerfect / stubborn apps | Last resort: run helper **and** app elevated — prefer AHK first |
+| Font snaps to Cambria after cycle | PE quirk; try AHK; type into already-selected font |
+| Mac / iPhone / Chromebook | Mac app · iOS keyboard · PWA (not the PE) |
+| Need ISO r̥ / r̥̄ | `configs/iso15919.txt` or add to config |
+| Need speed like Azhagi phonetic | Enable **smart** digraphs; or Keyman/Azhagi for pure phonetic Deva/IAST |
+
+Full comment analysis: [UPSTREAM_KEYSWAP_ANALYSIS.md](UPSTREAM_KEYSWAP_ANALYSIS.md).
 
 ---
 
