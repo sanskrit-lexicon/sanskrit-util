@@ -14,10 +14,16 @@ Optional DCS-2026 frequencies (off by default):
 
 When enabled, HUD shows ``dcs=N`` and multi-hit lists can be re-ranked.
 
+Opt-in v3 plugins (never default Startup / never without flag):
+
+  --plugin offline_fuzzy   or  KEYSWAP_PLUGINS=offline_fuzzy
+  → exact + prefix/edit-distance over the local wordlist (V3-2)
+
 Usage:
   python typing_check.py "kṛṣṇa"
   python typing_check.py --hud "rāma"
   python typing_check.py --local-only --hud "rāma"
+  python typing_check.py --local-only --plugin offline_fuzzy --hud "rAm"
   python typing_check.py --dcs-freq --hud "rāma"
   python typing_check.py --dcs-freq --freqsrc wf1 --hud "rāma"
 
@@ -29,6 +35,7 @@ import argparse
 import json
 import re
 import sys
+from collections.abc import Iterable
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -45,6 +52,7 @@ from cologne_search import (  # noqa: E402
 )
 from dcs_freq import dcs_freq_enabled, freq_of  # noqa: E402
 from local_wordlist import get_wordlist, lookup, wordlist_label  # noqa: E402
+from plugins.discovery import plugin_enabled  # noqa: E402
 
 
 @dataclass
@@ -60,10 +68,11 @@ class TypingCheck:
     scheme: str
     dict: str
     error: str = ""
-    source: str = ""  # "api" | "local" | "keys" | ""
+    source: str = ""  # "api" | "local" | "offline_fuzzy" | "keys" | ""
     dcs_n: int | None = None  # DCS-2026 token count when --dcs-freq
     freq_source: str = ""  # server freq_source or "local-dcs"
     gloss_url: str = ""  # Cologne webtc deep-link for full entry/gloss
+    fuzzy_status: str = ""  # exact | fuzzy-unique | fuzzy-multi | …
 
     def hud_line(self, *, max_hits: int = 3) -> str:
         """One short line for tray ToolTip / status bar."""
@@ -80,6 +89,18 @@ class TypingCheck:
         if self.known is None:
             return f"· {q}  ·  slp1={self.slp1}  norm={self.normkey}{dcs}"
         if self.known:
+            if self.source == "offline_fuzzy":
+                tag = self.fuzzy_status or "exact"
+                if tag == "fuzzy-unique" and self.top:
+                    near = self.top[0]
+                    return (
+                        f"~ {q}  ·  fuzzy→{near}  ·  "
+                        f"{wordlist_label()}{dcs}{gloss}"
+                    )
+                return (
+                    f"✓ {q}  ·  fuzzy ({self.dict})  ·  "
+                    f"{wordlist_label()}{dcs}{gloss}"
+                )
             if self.source == "local":
                 return (
                     f"✓ {q}  ·  local ({self.dict})  ·  "
@@ -90,6 +111,12 @@ class TypingCheck:
             return (
                 f"✓ {q}  ·  {self.dict} {self.n_hits} hit(s): "
                 f"{sample}{extra}{dcs}{gloss}"
+            )
+        if self.source == "offline_fuzzy" and self.top:
+            sample = ", ".join(self.top[:max_hits])
+            return (
+                f"~ {q}  ·  near: {sample}  ·  "
+                f"slp1={self.slp1}{dcs}"
             )
         if self.source == "local":
             if self.error and self.error.startswith("rate-limited"):
@@ -144,8 +171,13 @@ def _local_result(
     wordlist: str | Path | None,
     api_error: str = "",
     dcs: bool = False,
+    use_fuzzy: bool = False,
 ) -> TypingCheck | None:
     """Return a TypingCheck from the local wordlist, or None if no file."""
+    if use_fuzzy:
+        return _fuzzy_local_result(
+            query, q, dict_code, wordlist=wordlist, api_error=api_error, dcs=dcs
+        )
     hit = lookup(q.slp1, q.normkey, path=wordlist)
     if hit is None:
         return None
@@ -164,6 +196,67 @@ def _local_result(
     return _attach_gloss(_attach_dcs(r, dcs=dcs))
 
 
+def _fuzzy_local_result(
+    query: str,
+    q,
+    dict_code: str,
+    *,
+    wordlist: str | Path | None,
+    api_error: str = "",
+    dcs: bool = False,
+) -> TypingCheck | None:
+    """Opt-in offline_fuzzy plugin path (lazy import)."""
+    # Lazy: never import the plugin unless the caller opted in.
+    from plugins.offline_fuzzy.fuzzy_lookup import lookup as fuzzy_lookup  # noqa: PLC0415
+
+    fr = fuzzy_lookup(q.slp1, path=wordlist, normkey=q.normkey)
+    if fr.status == "no-wordlist":
+        return None
+    if fr.status == "empty-query":
+        return TypingCheck(
+            query=query,
+            known=None,
+            n_hits=0,
+            top=[],
+            slp1=q.slp1,
+            normkey=q.normkey,
+            scheme=q.scheme_resolved,
+            dict=dict_code.lower(),
+            error="empty",
+            source="offline_fuzzy",
+            fuzzy_status=fr.status,
+        )
+
+    top: list[str] = []
+    if fr.match:
+        top.append(fr.match)
+    for s in fr.suggestions:
+        if s not in top:
+            top.append(s)
+    known = fr.found
+    err = ""
+    if not known:
+        err = api_error or ""
+    r = TypingCheck(
+        query=query,
+        known=known,
+        n_hits=len(top) if top else (1 if known else 0),
+        top=top[:10],
+        slp1=q.slp1,
+        normkey=q.normkey,
+        scheme=q.scheme_resolved,
+        dict=dict_code.lower(),
+        error=err,
+        source="offline_fuzzy",
+        fuzzy_status=fr.status,
+    )
+    r = _attach_gloss(_attach_dcs(r, dcs=dcs))
+    # Soft unique: gloss the resolved headword, not the mistyped probe.
+    if known and fr.match and fr.status == "fuzzy-unique":
+        r.gloss_url = webtc_url(fr.match, dict_code=dict_code.lower() or "mw")
+    return r
+
+
 def check_word(
     text: str,
     *,
@@ -177,6 +270,7 @@ def check_word(
     wordlist: str | Path | None = None,
     dcs_freq: bool | None = None,
     freqsrc: str = "",
+    plugins: Iterable[str] | None = None,
 ) -> TypingCheck:
     """Check one word against Cologne Simple Search and/or a local SLP1 wordlist.
 
@@ -187,11 +281,15 @@ def check_word(
     freqsrc
         Pass-through to Cologne API: ``wf1`` (DCS) or ``wf0`` (legacy). Empty =
         server default (wf1 after Fix I deploy).
+    plugins
+        Opt-in plugin ids (also ``KEYSWAP_PLUGINS``). ``offline_fuzzy`` enables
+        V3-2 fuzzy local lookup. Empty = no plugins (default).
     """
     dcs = dcs_freq_enabled(dcs_freq)
     # When DCS mode is on and caller did not pick a server table, prefer wf1.
     if dcs and not freqsrc:
         freqsrc = "wf1"
+    use_fuzzy = plugin_enabled("offline_fuzzy", plugins)
 
     raw = (text or "").strip()
     query = last_token(raw) if last_word_only else raw
@@ -227,7 +325,7 @@ def check_word(
 
     if local_only:
         local = _local_result(
-            query, q, dict_code, wordlist=wordlist, dcs=dcs
+            query, q, dict_code, wordlist=wordlist, dcs=dcs, use_fuzzy=use_fuzzy
         )
         if local is not None:
             return local
@@ -281,6 +379,7 @@ def check_word(
                 wordlist=wordlist,
                 api_error=api_err,
                 dcs=dcs,
+                use_fuzzy=use_fuzzy,
             )
             if local is not None:
                 if local.known:
@@ -348,6 +447,14 @@ def main(argv: list[str] | None = None) -> int:
         default="",
         help="Cologne API ranking table: wf1 (DCS-2026) or wf0 (legacy)",
     )
+    ap.add_argument(
+        "--plugin",
+        action="append",
+        default=[],
+        metavar="ID",
+        help="opt-in v3 plugin id (repeatable); also KEYSWAP_PLUGINS=id1,id2. "
+        "offline_fuzzy = V3-2 local fuzzy index (never default)",
+    )
     ap.add_argument("--full-text", action="store_true", help="do not reduce to last token")
     ap.add_argument("--hud", action="store_true", help="print one-line HUD status only")
     ap.add_argument("--json", action="store_true", help="print JSON result")
@@ -372,6 +479,7 @@ def main(argv: list[str] | None = None) -> int:
         wordlist=args.wordlist,
         dcs_freq=True if args.dcs_freq else None,
         freqsrc=args.freqsrc,
+        plugins=args.plugin,
     )
 
     if args.hud:

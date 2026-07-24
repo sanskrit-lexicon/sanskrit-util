@@ -68,7 +68,7 @@ plugin tree: [plugins/](plugins/).
 | # | Item | Why it was skipped in 2.x | v3 direction | Status (24-07-2026) |
 |---|------|---------------------------|--------------|---------------------|
 | V3-1 | **Embed Aksharamukha** (or full script matrix) | Weight / 100+ scripts | Optional module or sidecar; not core tray | planned (link-out until pack) |
-| V3-2 | **Local MW / hwnorm1c SQLite** always-on DB | Multi-MB; server role | Optional offline fuzzy search pack | **first pick** — scaffold `plugins/offline_fuzzy/` (no full index yet) |
+| V3-2 | **Local MW / hwnorm1c SQLite** always-on DB | Multi-MB; server role | Optional offline fuzzy search pack | **shipped** (opt-in) — `plugins/offline_fuzzy/` exact+prefix+edit; `--plugin offline_fuzzy` / `KEYSWAP_PLUGINS`; full MW via `KEYSWAP_WORDLIST` / `build_local_wordlist.py` |
 | V3-3 | **Full Keyman-class IME** | Competing stack; dual-hook hell | Documented dual install only, or thin Keyman bridge | planned (docs only) |
 | V3-4 | **OCR** | Out of typing scope | Link-out or separate tool | planned (link-out) |
 | V3-5 | **TTS** | Out of typing scope | Link-out (SRI TTS, etc.) | planned (link-out) |
@@ -78,7 +78,7 @@ plugin tree: [plugins/](plugins/).
 
 **v3 principle:** core KeySwap stays the typing shell; heavy capabilities are **plugins or sibling apps**, never forced into the default Startup path.
 
-**First cut (3.0.0 path):** V3-2 offline fuzzy plugin scaffold landed under H1581; full SQLite/fuzzy pack is a follow-up. V3-8 remains a sibling design, not default KeySwap.
+**First cut (3.0.0 path):** V3-2 offline fuzzy **implemented** (opt-in plugin; seed or full wordlist). V3-8 remains a sibling design, not default KeySwap.
 
 ---
 

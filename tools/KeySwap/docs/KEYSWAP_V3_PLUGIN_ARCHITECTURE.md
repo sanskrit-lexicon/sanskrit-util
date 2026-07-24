@@ -114,18 +114,18 @@ KeySwap **3.0.0** first capability. Park **V3-8** as a future **sibling** design
 doc (not a plugin that loads under the typing tray). V3-1/3–6 remain link-out or
 later packs per the table above.
 
-### V3-2 target behaviour (when implemented, not this scaffold)
+### V3-2 behaviour (implemented)
 
 1. Exact SLP1 / normkey hit (same as 2.4 wordlist).  
-2. Optional fuzzy: edit-distance / prefix over a full MW key1 (or larger) index.  
-3. Data: gitignored or downloadable pack; `build_local_wordlist.py` remains the
-   builder entry; never force multi-MB blobs into the default clone path.  
-4. Wire only behind `--plugin offline_fuzzy` / `KEYSWAP_PLUGINS` — **not** AHK
-   default menus until a later opt-in PR.
+2. Prefix + Levenshtein (length-scaled max dist 1–2) over the active wordlist.  
+3. Data: seed `data/local_headwords.txt` or full MW via `build_local_wordlist.py` /
+   `KEYSWAP_WORDLIST` — multi-MB packs stay opt-in paths, not default clone.  
+4. Wired only behind `--plugin offline_fuzzy` / `KEYSWAP_PLUGINS` — **not** AHK
+   default menus.
 
-### What this scaffold does **not** do
+### Still out of default path
 
-- No SQLite file committed.  
+- No SQLite file committed (in-memory wordlist index is enough).  
 - No import from `windows/KeySwap.ahk` or install scripts.  
 - No change to Cologne online API as the primary online path.
 
@@ -137,14 +137,14 @@ later packs per the table above.
 - [ ] Plugin `never_autoload: true` in manifest.  
 - [ ] README / ROADMAP status row updated for touched V3-*.
 
-## Status after H1581
+## Status
 
 | Deliverable | State |
 |-------------|--------|
-| This design memo | **shipped** |
+| This design memo | **shipped** (H1581) |
 | First-pick decision (V3-2) | **recorded** |
-| `plugins/` discovery contract + `offline_fuzzy` thin scaffold | **shipped** |
-| Full fuzzy index implementation | **not** this handoff |
+| `plugins/` discovery + `offline_fuzzy` scaffold | **shipped** (H1581) |
+| Fuzzy index (exact/prefix/edit) + `typing_check --plugin` | **shipped** |
 | V3-8 sibling app | **parked** (design-only pointer in ROADMAP) |
 
 _Dr. Mārcis Gasūns_
