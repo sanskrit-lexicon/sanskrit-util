@@ -59,7 +59,24 @@ Legacy PE: [vendor/](vendor/) — prefer AHK.
 
 ---
 
-## What's in 2.6 (vs Sanskrit Writer roadmap)
+## Roadmap (v2 remainder vs v3 heavy)
+
+See **[ROADMAP_KEYSWAP_V2_V3.md](ROADMAP_KEYSWAP_V2_V3.md)**:
+
+- **v2** — 10 light peer-survey items + highest-leverage pack (2.7+)  
+- **v3** — former explicit skips (Aksharamukha embed, local SQLite, morphology DB, …)
+
+### What's in 2.7 (highest-leverage pack)
+
+| Item | Detail |
+|------|--------|
+| **Ctrl+Alt+K** | Copy **SLP1 + normkey** of clipboard (no browser) |
+| **Ecosystem tray** | Sanscript, Aksharamukha, Lexilogos, Dunning, Keyman, SW, Cologne… |
+| **Shift+=** | Literal `=` (does not cycle) |
+| **`pali-lite`** | Pāli subset profile |
+| **Docs** | SIMILARS refresh · classroom layout vs KeySwap · this roadmap |
+
+### What's in 2.6 (vs Sanskrit Writer roadmap)
 
 | # | Deliverable | Detail |
 |---|-------------|--------|
@@ -208,6 +225,7 @@ Copy [`windows/allowlist.example.txt`](windows/allowlist.example.txt) → `allow
 |---------|-----|
 | `iast-classic` (default) | Classical IAST; capitals included |
 | `writer-scheme` | Same cycles + **Writer-style** digraphs |
+| `pali-lite` | Pāli / Buddhist IAST subset |
 | `iso15919` | ē ō ḻ ṉ, vocalic r̥-style extras |
 | `vedic-draft` / `vedic-svara` | Accents / svara experiments (Rudram, etc.) |
 | `personal-legacy` | Upstream personal map (ç, æ, …) |
