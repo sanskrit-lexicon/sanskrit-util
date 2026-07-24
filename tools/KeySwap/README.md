@@ -1,7 +1,7 @@
-# KeySwap **2.4** — IAST typing + Cologne headword check (+ offline wordlist)
+# KeySwap **2.5** — IAST typing + Cologne headword check (+ offline + optional DCS freq)
 
-_Created: 23-07-2026 · Last updated: 23-07-2026_  
-_Version: [2.4.0](VERSION)_
+_Created: 23-07-2026 · Last updated: 24-07-2026_  
+_Version: [2.5.0](VERSION)_
 
 **Add IAST diacritics by cycling a letter** (default trigger `=`), or type smart
 digraphs (`aa`→ā, `sh`→ś). Works in Word, browser, chat — not only one app.
@@ -39,7 +39,24 @@ Legacy PE: [`vendor/keyswap.exe`](vendor/) — unsigned; SmartScreen “More inf
 
 ---
 
-## What’s in 2.4 (offline local wordlist)
+## What’s in 2.5 (optional DCS-2026 frequencies)
+
+| Feature | Detail |
+|---------|--------|
+| **`--dcs-freq` / `KEYSWAP_DCS_FREQ=1`** | Opt-in: annotate HUD with DCS lemma token counts (`dcs=N`) |
+| **`data/dcs_freq.txt`** | Local copy of csl-apidev `simple-search/wf1` (DCS-2026 merge over wf0) |
+| **`--freqsrc wf1\|wf0`** | Ask Cologne API which ranking table to use (after server Fix I) |
+| **Default** | **Off** — no DCS unless you enable the flag/env |
+
+```bash
+python tools/KeySwap/typing_check.py --local-only --dcs-freq --hud "rāma"
+# → ✓ rāma  ·  local (mw)  ·  local_headwords.txt  ·  dcs=6
+
+set KEYSWAP_DCS_FREQ=1
+python tools/KeySwap/typing_check.py --hud "kṛṣṇa"
+```
+
+### 2.4 (offline local wordlist)
 
 | Feature | Detail |
 |---------|--------|
@@ -206,11 +223,13 @@ Full comment analysis: [UPSTREAM_KEYSWAP_ANALYSIS.md](UPSTREAM_KEYSWAP_ANALYSIS.
 
 ```text
 KeySwap/
-  VERSION  (2.4.0)
-  typing_check.py       # headword check: Cologne API + local fallback
+  VERSION  (2.5.0)
+  typing_check.py       # headword check: Cologne API + local fallback + optional DCS
   local_wordlist.py     # load/lookup SLP1 wordlist
+  dcs_freq.py           # optional DCS-2026 frequency table
   build_local_wordlist.py
-  data/local_headwords.txt  # seed offline list (~1k SLP1 keys)
+  data/local_headwords.txt  # offline list (seed or full MW)
+  data/dcs_freq.txt         # DCS-2026 ranking counts (opt-in)
   cologne_search.py     # Cologne Simple Search prep (dalnorm + URLs)
   scheme_bridge.py      # HK/ITRANS/Velthuis → IAST
   convert_bridge.py     # + --from schemes

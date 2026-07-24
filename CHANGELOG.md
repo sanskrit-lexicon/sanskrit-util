@@ -5,6 +5,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **tools/KeySwap 2.5** (`2.5.0`) — optional **DCS-2026** frequency mode
+  (`--dcs-freq` / `KEYSWAP_DCS_FREQ=1`): `data/dcs_freq.txt` (csl-apidev
+  `simple-search/wf1`), HUD `dcs=N`, Cologne `--freqsrc wf1|wf0` for ranking
+  table selection after server Fix I. Default remains off.
+
 ## [0.8.2] - 2026-07-23
 
 ### Added

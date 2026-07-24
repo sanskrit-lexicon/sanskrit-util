@@ -215,9 +215,20 @@ class CologneQuery:
     output: str
     ui_url: str
     api_url: str
+    freqsrc: str = ""  # "" | "wf1" | "wf0" — Cologne ranking table preference
 
     def as_dict(self) -> dict[str, Any]:
         return asdict(self)
+
+
+@dataclass
+class CologneHit:
+    """One Simple Search result row (display form + optional ranking fields)."""
+
+    dicthw: str
+    key: str = ""  # SLP1 key when the API provides it
+    wf: int | None = None  # ranking frequency from API (server-side table)
+    dcs_n: int | None = None  # local DCS-2026 table when --dcs-freq is on
 
 
 def prepare(
@@ -226,8 +237,13 @@ def prepare(
     scheme: str = "auto",
     dict_code: str = "mw",
     output: str = "iast",
+    freqsrc: str = "",
 ) -> CologneQuery:
-    """Prepare SLP1 + dalnorm key and Cologne URLs for ``text``."""
+    """Prepare SLP1 + dalnorm key and Cologne URLs for ``text``.
+
+    ``freqsrc``: when non-empty, appends ``?freqsrc=`` for the getword_list API
+    (``wf1`` = DCS-2026 default after Fix I, ``wf0`` = legacy 2017 table).
+    """
     text = (text or "").strip()
     slp1, resolved = to_slp1(text, scheme)
     # strip accents for key (Cologne often strips; slp1_norm does similar)
@@ -248,14 +264,19 @@ def prepare(
     else:
         key_for_cologne = text
 
-    qs = urllib.parse.urlencode(
-        {
-            "dict": dict_code.lower(),
-            "input": cin,
-            "output": output,
-            "key": key_for_cologne,
-        }
-    )
+    params: dict[str, str] = {
+        "dict": dict_code.lower(),
+        "input": cin,
+        "output": output,
+        "key": key_for_cologne,
+    }
+    freq = (freqsrc or "").strip().lower()
+    if freq in ("wf0", "wf1", "dcs", "legacy"):
+        params["freqsrc"] = "wf0" if freq in ("wf0", "legacy") else "wf1"
+        freq = params["freqsrc"]
+    else:
+        freq = ""
+    qs = urllib.parse.urlencode(params)
     # Simple Search UI is mostly interactive; deep-link via API is reliable.
     # Also offer a citation-style UI base.
     api_url = f"{COLOGNE_API}?{qs}"
@@ -270,6 +291,7 @@ def prepare(
         output=output,
         ui_url=ui_url,
         api_url=api_url,
+        freqsrc=freq,
     )
 
 
@@ -299,17 +321,93 @@ def format_api_error(exc: BaseException) -> str:
     return f"api: {type(exc).__name__}"
 
 
-def fetch_results(q: CologneQuery, *, timeout: float = 30.0) -> list[str]:
+def fetch_results_detailed(
+    q: CologneQuery,
+    *,
+    timeout: float = 30.0,
+    dcs_freq: bool = False,
+) -> tuple[list[CologneHit], dict[str, Any]]:
+    """Live API: structured hits + response meta.
+
+    When ``dcs_freq`` is True, annotate each hit with local DCS-2026 counts
+    (``data/dcs_freq.txt``) and re-order by that table when the API does not
+    already expose server ``wf`` values (or when client re-rank is preferred).
+
+    Raises urllib/json errors; callers may use :func:`format_api_error`.
+    """
+    req = urllib.request.Request(
+        q.api_url, headers={"User-Agent": "KeySwap-cologne_search/2.5"}
+    )
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        data = json.load(r)
+    rows = data.get("result") or []
+    hits: list[CologneHit] = []
+    for x in rows:
+        if not isinstance(x, dict):
+            continue
+        dw = x.get("dicthw") or x.get("dicthwoutput") or ""
+        if not dw:
+            continue
+        wf_raw = x.get("wf")
+        wf: int | None
+        try:
+            wf = int(wf_raw) if wf_raw is not None else None
+        except (TypeError, ValueError):
+            wf = None
+        hits.append(
+            CologneHit(
+                dicthw=str(dw),
+                key=str(x.get("key") or ""),
+                wf=wf,
+            )
+        )
+
+    meta: dict[str, Any] = {
+        "freq_source": data.get("freq_source") or q.freqsrc or "",
+        "n": len(hits),
+    }
+
+    if dcs_freq:
+        from dcs_freq import get_dcs_freq  # local import keeps base path light
+
+        tab = get_dcs_freq()
+        if tab:
+            for h in hits:
+                key = h.key or ""
+                n = tab.get(key) if key else None
+                if n is None:
+                    # API output is often IAST; fall back not possible without reverse
+                    # map — use server wf only if key empty
+                    n = tab.get(h.dicthw)
+                h.dcs_n = n if n is not None else -1
+            # Prefer local DCS order when enabled (works pre- and post-server Fix I)
+            hits.sort(
+                key=lambda h: (
+                    -(h.dcs_n if h.dcs_n is not None and h.dcs_n >= 0 else -1),
+                    h.dicthw,
+                )
+            )
+            meta["dcs_freq"] = True
+            meta["dcs_keys"] = len(tab)
+        else:
+            meta["dcs_freq"] = False
+            meta["dcs_error"] = "no dcs_freq table (data/dcs_freq.txt)"
+
+    return hits, meta
+
+
+def fetch_results(
+    q: CologneQuery,
+    *,
+    timeout: float = 30.0,
+    dcs_freq: bool = False,
+) -> list[str]:
     """Live API: return ordered ``dicthw`` list (IAST/output as requested).
 
     Raises urllib/json errors; callers may use :func:`format_api_error` for HUD text.
     """
-    req = urllib.request.Request(
-        q.api_url, headers={"User-Agent": "KeySwap-cologne_search/2.4"}
-    )
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        data = json.load(r)
-    return [x.get("dicthw", "") for x in data.get("result", []) if x.get("dicthw")]
+    hits, _meta = fetch_results_detailed(q, timeout=timeout, dcs_freq=dcs_freq)
+    return [h.dicthw for h in hits]
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -318,6 +416,16 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--from", dest="frm", default="auto", help="auto|iast|hk|itrans|velthuis|slp1|deva")
     ap.add_argument("--dict", default="mw", help="dictionary code (mw, pw, ap90, …)")
     ap.add_argument("--output", default="iast", help="Cologne output scheme")
+    ap.add_argument(
+        "--freqsrc",
+        default="",
+        help="Cologne ranking table: wf1 (DCS-2026) or wf0 (legacy); empty = server default",
+    )
+    ap.add_argument(
+        "--dcs-freq",
+        action="store_true",
+        help="annotate/re-rank with local data/dcs_freq.txt (DCS-2026)",
+    )
     ap.add_argument("--open", action="store_true", help="open UI URL in default browser")
     ap.add_argument("--api", action="store_true", help="fetch live JSON and print headwords")
     ap.add_argument("--print-keys", action="store_true", help="print slp1 + normkey only")
@@ -329,7 +437,13 @@ def main(argv: list[str] | None = None) -> int:
         print("empty query", file=sys.stderr)
         return 2
 
-    q = prepare(text, scheme=args.frm, dict_code=args.dict, output=args.output)
+    q = prepare(
+        text,
+        scheme=args.frm,
+        dict_code=args.dict,
+        output=args.output,
+        freqsrc=args.freqsrc,
+    )
 
     if args.print_keys:
         print(f"slp1\t{q.slp1}")
@@ -344,18 +458,27 @@ def main(argv: list[str] | None = None) -> int:
         print(f"scheme:    {q.scheme_resolved} (cologne input={q.cologne_input})")
         print(f"slp1:      {q.slp1}")
         print(f"normkey:   {q.normkey}")
+        if q.freqsrc:
+            print(f"freqsrc:   {q.freqsrc}")
         print(f"ui:        {q.ui_url}")
         print(f"api:       {q.api_url}")
 
     if args.api:
         try:
-            hits = fetch_results(q)
+            hits, meta = fetch_results_detailed(
+                q, dcs_freq=args.dcs_freq
+            )
         except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
             print(f"API error: {e}", file=sys.stderr)
             return 1
-        print(f"results ({len(hits)}):")
+        print(f"results ({len(hits)}) freq_source={meta.get('freq_source') or '-'}:")
         for i, h in enumerate(hits[:40], 1):
-            print(f"  {i:2d}. {h}")
+            extra = ""
+            if h.dcs_n is not None and h.dcs_n >= 0:
+                extra = f"  dcs={h.dcs_n}"
+            elif h.wf is not None:
+                extra = f"  wf={h.wf}"
+            print(f"  {i:2d}. {h.dicthw}{extra}")
         if len(hits) > 40:
             print(f"  … +{len(hits) - 40} more")
 
