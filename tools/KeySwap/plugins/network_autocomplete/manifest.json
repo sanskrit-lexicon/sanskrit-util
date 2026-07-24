@@ -1,0 +1,10 @@
+{
+  "id": "network_autocomplete",
+  "title": "Network autocomplete (after offline fuzzy)",
+  "version": "0.1.0",
+  "never_autoload": true,
+  "v3_item": "V3-7",
+  "entry": "autocomplete:suggest",
+  "requires": ["offline_fuzzy"],
+  "data_note": "Uses Cologne Simple Search API only when offline fuzzy is not confident. Never always-on; opt-in via KEYSWAP_PLUGINS / --plugin."
+}

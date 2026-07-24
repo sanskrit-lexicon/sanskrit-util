@@ -5,6 +5,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.9] - 2026-07-24
+
+### Added
+
+- **tools/KeySwap V3-7 network_autocomplete** — opt-in offline-first then Cologne
+  Simple Search when the local fuzzy index is not confident
+  (`plugins/network_autocomplete/`; `--plugin network_autocomplete` /
+  `KEYSWAP_PLUGINS`). Never always-on; never default Startup AHK.
+  Tests: `test_network_autocomplete_plugin.py`.
+
 ## [0.8.8] - 2026-07-24
 
 ### Added

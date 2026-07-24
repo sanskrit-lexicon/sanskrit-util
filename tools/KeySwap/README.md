@@ -68,7 +68,10 @@ See **[ROADMAP_KEYSWAP_V2_V3.md](ROADMAP_KEYSWAP_V2_V3.md)**:
   — design: [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md)  
   — **V3-2 offline_fuzzy** (opt-in): `--plugin offline_fuzzy` /
     `KEYSWAP_PLUGINS=offline_fuzzy` — exact + prefix + edit-distance over the
-    local wordlist ([plugins/offline_fuzzy/](plugins/offline_fuzzy/))
+    local wordlist ([plugins/offline_fuzzy/](plugins/offline_fuzzy/))  
+  — **V3-7 network_autocomplete** (opt-in): `--plugin network_autocomplete` —
+    offline first, Cologne only when local is not confident
+    ([plugins/network_autocomplete/](plugins/network_autocomplete/))
 
 ### What's in 2.8 (trigger presets)
 

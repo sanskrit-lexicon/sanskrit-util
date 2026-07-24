@@ -19,11 +19,15 @@ Opt-in v3 plugins (never default Startup / never without flag):
   --plugin offline_fuzzy   or  KEYSWAP_PLUGINS=offline_fuzzy
   → exact + prefix/edit-distance over the local wordlist (V3-2)
 
+  --plugin network_autocomplete  or  KEYSWAP_PLUGINS=network_autocomplete
+  → offline fuzzy first; Cologne API only when local is not confident (V3-7)
+
 Usage:
   python typing_check.py "kṛṣṇa"
   python typing_check.py --hud "rāma"
   python typing_check.py --local-only --hud "rāma"
   python typing_check.py --local-only --plugin offline_fuzzy --hud "rAm"
+  python typing_check.py --plugin network_autocomplete --hud "rAm"
   python typing_check.py --dcs-freq --hud "rāma"
   python typing_check.py --dcs-freq --freqsrc wf1 --hud "rāma"
 
@@ -68,11 +72,12 @@ class TypingCheck:
     scheme: str
     dict: str
     error: str = ""
-    source: str = ""  # "api" | "local" | "offline_fuzzy" | "keys" | ""
+    source: str = ""  # "api" | "local" | "offline_fuzzy" | "network_autocomplete" | "keys" | ""
     dcs_n: int | None = None  # DCS-2026 token count when --dcs-freq
     freq_source: str = ""  # server freq_source or "local-dcs"
     gloss_url: str = ""  # Cologne webtc deep-link for full entry/gloss
-    fuzzy_status: str = ""  # exact | fuzzy-unique | fuzzy-multi | …
+    fuzzy_status: str = ""  # exact | fuzzy-unique | fuzzy-multi | network-* | …
+    network_used: bool = False  # True when V3-7 hit Cologne after offline
 
     def hud_line(self, *, max_hits: int = 3) -> str:
         """One short line for tray ToolTip / status bar."""
@@ -101,6 +106,13 @@ class TypingCheck:
                     f"✓ {q}  ·  fuzzy ({self.dict})  ·  "
                     f"{wordlist_label()}{dcs}{gloss}"
                 )
+            if self.source == "network_autocomplete":
+                sample = ", ".join(self.top[:max_hits])
+                extra = f" +{self.n_hits - max_hits}" if self.n_hits > max_hits else ""
+                return (
+                    f"✓ {q}  ·  net ({self.dict}) {self.n_hits}: "
+                    f"{sample}{extra}{dcs}{gloss}"
+                )
             if self.source == "local":
                 return (
                     f"✓ {q}  ·  local ({self.dict})  ·  "
@@ -116,6 +128,12 @@ class TypingCheck:
             sample = ", ".join(self.top[:max_hits])
             return (
                 f"~ {q}  ·  near: {sample}  ·  "
+                f"slp1={self.slp1}{dcs}"
+            )
+        if self.source == "network_autocomplete" and self.top:
+            sample = ", ".join(self.top[:max_hits])
+            return (
+                f"~ {q}  ·  net: {sample}  ·  "
                 f"slp1={self.slp1}{dcs}"
             )
         if self.source == "local":
@@ -257,6 +275,59 @@ def _fuzzy_local_result(
     return r
 
 
+def _network_autocomplete_result(
+    query: str,
+    q,
+    dict_code: str,
+    *,
+    scheme: str,
+    timeout: float,
+    wordlist: str | Path | None,
+    dcs: bool = False,
+) -> TypingCheck:
+    """Opt-in V3-7 path: offline fuzzy first, Cologne only when not confident."""
+    # Lazy: never import the plugin unless the caller opted in.
+    from plugins.network_autocomplete.autocomplete import suggest  # noqa: PLC0415
+
+    # Cap network wait for autocomplete feel (caller timeout may be higher).
+    net_timeout = min(float(timeout), 5.0) if timeout else 5.0
+    ar = suggest(
+        query,
+        scheme=scheme,
+        dict_code=dict_code,
+        timeout=net_timeout,
+        wordlist=wordlist,
+    )
+    top = list(ar.suggestions)
+    if ar.match and ar.match not in top:
+        top.insert(0, ar.match)
+    known: bool | None
+    if ar.status == "empty-query":
+        known = None
+    elif ar.status == "network-error":
+        known = None
+    else:
+        known = ar.found
+    r = TypingCheck(
+        query=query,
+        known=known,
+        n_hits=len(top) if top else (1 if known else 0),
+        top=top[:10],
+        slp1=ar.slp1 or q.slp1,
+        normkey=ar.normkey or q.normkey,
+        scheme=q.scheme_resolved,
+        dict=dict_code.lower(),
+        error=ar.error,
+        source=ar.source,
+        fuzzy_status=ar.status,
+        network_used=ar.network_used,
+    )
+    r = _attach_gloss(_attach_dcs(r, dcs=dcs))
+    if known and ar.match and ar.source == "offline_fuzzy" and ar.status == "fuzzy-unique":
+        r.gloss_url = webtc_url(ar.match, dict_code=dict_code.lower() or "mw")
+    return r
+
+
 def check_word(
     text: str,
     *,
@@ -283,13 +354,16 @@ def check_word(
         server default (wf1 after Fix I deploy).
     plugins
         Opt-in plugin ids (also ``KEYSWAP_PLUGINS``). ``offline_fuzzy`` enables
-        V3-2 fuzzy local lookup. Empty = no plugins (default).
+        V3-2 fuzzy local lookup. ``network_autocomplete`` enables V3-7 offline-first
+        then Cologne when local is not confident. Empty = no plugins (default).
     """
     dcs = dcs_freq_enabled(dcs_freq)
     # When DCS mode is on and caller did not pick a server table, prefer wf1.
     if dcs and not freqsrc:
         freqsrc = "wf1"
-    use_fuzzy = plugin_enabled("offline_fuzzy", plugins)
+    use_net_ac = plugin_enabled("network_autocomplete", plugins)
+    # V3-7 implies V3-2 pre-pass; bare offline_fuzzy still works alone.
+    use_fuzzy = plugin_enabled("offline_fuzzy", plugins) or use_net_ac
 
     raw = (text or "").strip()
     query = last_token(raw) if last_word_only else raw
@@ -322,6 +396,19 @@ def check_word(
             source="keys",
         )
         return _attach_gloss(_attach_dcs(r, dcs=dcs))
+
+    # V3-7 offline-first cascade (network only when local is not confident).
+    # With --local-only, skip network and use fuzzy-only path.
+    if use_net_ac and not local_only:
+        return _network_autocomplete_result(
+            query,
+            q,
+            dict_code,
+            scheme=scheme,
+            timeout=timeout,
+            wordlist=wordlist,
+            dcs=dcs,
+        )
 
     if local_only:
         local = _local_result(
@@ -453,7 +540,8 @@ def main(argv: list[str] | None = None) -> int:
         default=[],
         metavar="ID",
         help="opt-in v3 plugin id (repeatable); also KEYSWAP_PLUGINS=id1,id2. "
-        "offline_fuzzy = V3-2 local fuzzy index (never default)",
+        "offline_fuzzy = V3-2 local fuzzy; network_autocomplete = V3-7 "
+        "offline-first then Cologne (never default)",
     )
     ap.add_argument("--full-text", action="store_true", help="do not reduce to last token")
     ap.add_argument("--hud", action="store_true", help="print one-line HUD status only")
