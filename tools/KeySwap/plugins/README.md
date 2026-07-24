@@ -21,6 +21,7 @@ Contract (full): [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](../docs/KEYSWAP_V3_PLU
 | id | V3 item | Status |
 |----|---------|--------|
 | [offline_fuzzy](offline_fuzzy/) | V3-2 | **Implemented** — exact + prefix + edit-distance; enable with `--plugin offline_fuzzy` |
+| [network_autocomplete](network_autocomplete/) | V3-7 | **Implemented** — offline first, Cologne only when local is not confident; `--plugin network_autocomplete` |
 
 ## Do not
 

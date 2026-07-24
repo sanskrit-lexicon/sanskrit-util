@@ -1,7 +1,7 @@
 # KeySwap v3 — plugin / sibling architecture
 
 _Created: 24-07-2026 · Last updated: 24-07-2026_  
-_Handoff: [H1581](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1581-Sonnet_sanskrit-util_keyswap-v3-former-skips-heavy-wave_24.07.26.md) · Model: Grok 4.5 (`grok-4.5`)_  
+_Handoff: [H1581](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1581-Sonnet_sanskrit-util_keyswap-v3-former-skips-heavy-wave_24.07.26.md) · [H1583](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1583-Sonnet_sanskrit-util_keyswap-v3-7-network-autocomplete_24.07.26.md) · Model: Grok 4.5 (`grok-4.5`)_  
 _Roadmap: [ROADMAP_KEYSWAP_V2_V3.md](../ROADMAP_KEYSWAP_V2_V3.md) · Peers: [SIMILARS_COMPARISON.md](../SIMILARS_COMPARISON.md)_
 
 ## Hard principle
@@ -96,7 +96,7 @@ tools/KeySwap/plugins/
 | **V3-4** | OCR | Aksharamukha OCR / other | Link-out or sibling | Link-out |
 | **V3-5** | TTS | e.g. SRI TTS | Link-out | Link-out |
 | **V3-6** | Heritage segmenter | [Sanskrit Heritage](https://sanskrit.inria.fr/) | Microservice / link-out | Link-out |
-| **V3-7** | Network autocomplete | Cologne API (or other) | Optional after V3-2 | Off; depends on offline index quality |
+| **V3-7** | Network autocomplete | Cologne API (or other) | **shipped** opt-in plugin after V3-2 | Off by default; offline-first cascade |
 | **V3-8** | Morphology / forms dict | SW-class lexical DB | **Sibling app** (“compose companion”) | Not a KeySwap plugin load |
 
 ## First plugin pick: **V3-2 offline fuzzy** (not V3-8)
@@ -137,6 +137,15 @@ later packs per the table above.
 - [ ] Plugin `never_autoload: true` in manifest.  
 - [ ] README / ROADMAP status row updated for touched V3-*.
 
+### V3-7 behaviour (implemented — H1583)
+
+1. Opt-in only: `--plugin network_autocomplete` / `KEYSWAP_PLUGINS=network_autocomplete`.  
+2. **Implies** offline fuzzy pre-pass (V3-2).  
+3. Network (Cologne Simple Search) runs **only** when offline is not confident
+   (`not-found` / `no-wordlist`); exact / fuzzy-unique / fuzzy-multi stay local.  
+4. Short network timeout (≤5 s); rate-limit errors use the same HUD labels as core.  
+5. Never wired into default AHK / install.
+
 ## Status
 
 | Deliverable | State |
@@ -145,6 +154,7 @@ later packs per the table above.
 | First-pick decision (V3-2) | **recorded** |
 | `plugins/` discovery + `offline_fuzzy` scaffold | **shipped** (H1581) |
 | Fuzzy index (exact/prefix/edit) + `typing_check --plugin` | **shipped** |
+| V3-7 `network_autocomplete` offline-first cascade | **shipped** (H1583) |
 | V3-8 sibling app | **parked** (design-only pointer in ROADMAP) |
 
 _Dr. Mārcis Gasūns_

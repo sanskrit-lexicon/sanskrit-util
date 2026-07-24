@@ -73,7 +73,7 @@ plugin tree: [plugins/](plugins/).
 | V3-4 | **OCR** | Out of typing scope | Link-out or separate tool | planned (link-out) |
 | V3-5 | **TTS** | Out of typing scope | Link-out (SRI TTS, etc.) | planned (link-out) |
 | V3-6 | **Sanskrit Heritage segmenter** | Heavy grammar engine | Microservice / link-out | planned (link-out) |
-| V3-7 | **Always-on network autocomplete** | Latency + privacy + false confidence | Optional after offline index (V3-2) | blocked on V3-2 index |
+| V3-7 | **Always-on network autocomplete** | Latency + privacy + false confidence | Optional after offline index (V3-2) | **shipped** (opt-in) — `plugins/network_autocomplete/`; offline fuzzy first, Cologne only when local not confident; never default Startup |
 | V3-8 | **Full morphology / forms dictionary** (SW-class) | Product-sized DB | Separate “compose” companion, not KeySwap core | **parked** (sibling app; not tray plugin) |
 
 **v3 principle:** core KeySwap stays the typing shell; heavy capabilities are **plugins or sibling apps**, never forced into the default Startup path.
