@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.4] - 2026-07-24
+
 ### Added
 
 - **tools/KeySwap 2.6** (`2.6.0`) — beat-Sanskrit-Writer roadmap (all five):
