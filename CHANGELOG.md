@@ -15,6 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `KEYSWAP_PLUGINS`). Never always-on; never default Startup AHK.
   Tests: `test_network_autocomplete_plugin.py`.
 
+### Changed
+
+- **Registration surfaces for KeySwap v3 plugins** (H1583 `/artifact-propagate`):
+  root README “Related tools”, `CLAUDE.md` KeySwap agent rules + table rows,
+  `.ai_state.md` completed entry, architecture
+  [metadoc](tools/KeySwap/docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.meta.md).
+
 ## [0.8.8] - 2026-07-24
 
 ### Added

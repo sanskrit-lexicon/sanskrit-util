@@ -179,9 +179,16 @@ over the full alphabet plus [`vectors/slp1_roundtrip_sample.txt`](https://github
 
 ## Related tools (optional, not part of the library API)
 
-- **[tools/KeySwap 2.2](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/README.md)** —
-  type IAST (Windows/iPhone/Mac/PWA); HK/ITRANS/Velthuis → IAST; **Cologne
-  Simple Search** key prep (`dalnorm` + open/API). Not in PyPI/npm.
+- **[tools/KeySwap](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/README.md)**
+  (2.8 shell + v3 opt-in plugins) — type IAST (Windows/iPhone/Mac/PWA);
+  HK/ITRANS/Velthuis → IAST; **Cologne Simple Search** (`dalnorm` + open/API);
+  offline wordlist; **v3 plugins** (never default Startup):
+  [`offline_fuzzy`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/plugins/offline_fuzzy/)
+  (V3-2),
+  [`network_autocomplete`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/plugins/network_autocomplete/)
+  (V3-7, offline-first then Cologne). Architecture:
+  [KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md).
+  Not in PyPI/npm.
 
 ## Layout
 
