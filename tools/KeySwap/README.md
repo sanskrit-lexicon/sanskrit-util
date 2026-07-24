@@ -66,7 +66,9 @@ See **[ROADMAP_KEYSWAP_V2_V3.md](ROADMAP_KEYSWAP_V2_V3.md)**:
 - **v2** — 10 light peer-survey items + highest-leverage pack (2.7+)  
 - **v3** — former explicit skips as **plugins / siblings** (never default Startup)  
   — design: [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md)  
-  — first scaffold: [plugins/offline_fuzzy/](plugins/offline_fuzzy/) (V3-2; H1581)
+  — **V3-2 offline_fuzzy** (opt-in): `--plugin offline_fuzzy` /
+    `KEYSWAP_PLUGINS=offline_fuzzy` — exact + prefix + edit-distance over the
+    local wordlist ([plugins/offline_fuzzy/](plugins/offline_fuzzy/))
 
 ### What's in 2.7 (highest-leverage pack)
 

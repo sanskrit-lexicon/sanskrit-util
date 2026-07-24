@@ -5,6 +5,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.7] - 2026-07-24
+
+### Added
+
+- **tools/KeySwap V3-2 offline_fuzzy** — real fuzzy index over the local SLP1
+  wordlist (exact → prefix → Levenshtein); enable only via
+  `typing_check --plugin offline_fuzzy` or `KEYSWAP_PLUGINS=offline_fuzzy`.
+  Full MW remains opt-in through `KEYSWAP_WORDLIST` /
+  `build_local_wordlist.py`. Still **never** loaded by default Startup AHK.
+
 ## [0.8.6] - 2026-07-24
 
 ### Added

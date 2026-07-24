@@ -20,7 +20,7 @@ Contract (full): [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](../docs/KEYSWAP_V3_PLU
 
 | id | V3 item | Status |
 |----|---------|--------|
-| [offline_fuzzy](offline_fuzzy/) | V3-2 | Scaffold only (no SQLite pack yet) |
+| [offline_fuzzy](offline_fuzzy/) | V3-2 | **Implemented** — exact + prefix + edit-distance; enable with `--plugin offline_fuzzy` |
 
 ## Do not
 
