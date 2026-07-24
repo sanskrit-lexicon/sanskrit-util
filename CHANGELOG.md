@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.3] - 2026-07-24
+
 ### Added
 
 - **tools/KeySwap 2.5** (`2.5.0`) — optional **DCS-2026** frequency mode
