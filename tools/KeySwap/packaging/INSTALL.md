@@ -9,6 +9,22 @@ Notarized / code-signed binaries still need a human Apple/Windows cert
 
 ---
 
+## Two different “Keyswaps” (do not run both)
+
+| | **Vendor PE (legacy 1.x)** | **KeySwap 2.x toolkit (this repo)** |
+|--|---------------------------|--------------------------------------|
+| What | Single `keyswap.exe` (Yes Vedanta–style portable app) | `AutoHotkey` + `windows/KeySwap.ahk` + Python helpers |
+| Where you might see it | e.g. `Documents\KeySwap\keyswap.exe`, or [`vendor/`](../vendor/) | `sanskrit-util/tools/KeySwap/` |
+| Features | `=` cycle (basic) | Cycle · smart/Writer · Cologne · gloss · script mode · offline list · optional DCS |
+| Portable? | **Yes** — one folder / one exe | **Yes** — no MSI required; AHK zip + repo scripts + optional Startup **shortcut** |
+| Default? | **No** | **Yes** (Windows) |
+
+**Do not run PE and AHK at the same time.** Both hook keyboard input; dual `=` handlers fight (Word glitches, double-inserts). Quit `keyswap.exe` / remove its Startup entry before using AHK 2.x.
+
+Policy detail: [VENDOR_PE.md](VENDOR_PE.md). Provenance of any vendored exe: [PROVENANCE.md](../PROVENANCE.md).
+
+---
+
 ## Windows (recommended)
 
 ### Prerequisites
@@ -27,8 +43,13 @@ powershell -ExecutionPolicy Bypass -File tools\KeySwap\packaging\install-windows
 What it does:
 
 - Ensures `windows\allowlist.txt` exists (from the example)  
-- Optionally adds a **Startup** shortcut so KeySwap loads at login  
+- Locates AutoHotkey v2 under Program Files **or** a portable user install  
+  (`%LocalAppData%\Programs\AutoHotkey\`)  
+- Optionally adds a **Startup** shortcut so the **AHK script** loads at login  
+  (not the PE)  
 - Starts `windows\KeySwap.ahk` (tray icon — no main window)
+
+If you already run a portable `keyswap.exe` from another folder, **exit it first**.
 
 ### Manual (same result)
 

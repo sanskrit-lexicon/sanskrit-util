@@ -16,7 +16,7 @@ $Allow = Join-Path $KeySwap "windows\allowlist.txt"
 $AllowEx = Join-Path $KeySwap "windows\allowlist.example.txt"
 
 if (-not (Test-Path $Ahk)) {
-    Write-Error "Missing $Ahk — run from a full sanskrit-util checkout."
+    Write-Error "Missing $Ahk - run from a full sanskrit-util checkout."
 }
 
 if (-not (Test-Path $Allow) -and (Test-Path $AllowEx)) {
@@ -28,7 +28,10 @@ $ahkExe = $null
 foreach ($c in @(
     "${env:ProgramFiles}\AutoHotkey\v2\AutoHotkey64.exe",
     "${env:ProgramFiles}\AutoHotkey\v2\AutoHotkey.exe",
-    "${env:LocalAppData}\Programs\AutoHotkey\v2\AutoHotkey64.exe"
+    "${env:LocalAppData}\Programs\AutoHotkey\v2\AutoHotkey64.exe",
+    "${env:LocalAppData}\Programs\AutoHotkey\AutoHotkey64.exe",
+    "${env:LocalAppData}\Programs\AutoHotkey\AutoHotkey32.exe",
+    "${env:LocalAppData}\Programs\AutoHotkey\v2\AutoHotkey32.exe"
 )) {
     if (Test-Path $c) { $ahkExe = $c; break }
 }
@@ -57,7 +60,7 @@ if (-not $NoStartup -and $ahkExe) {
 if (-not $NoStart) {
     if ($ahkExe) {
         Start-Process -FilePath $ahkExe -ArgumentList "`"$Ahk`""
-        Write-Host "Started KeySwap (tray icon). Script mode: Ctrl+Alt+D · Gloss: Ctrl+Alt+G"
+        Write-Host "Started KeySwap (tray icon). Script mode: Ctrl+Alt+D. Gloss: Ctrl+Alt+G"
     } else {
         Start-Process $Ahk
         Write-Host "Launched via file association: $Ahk"

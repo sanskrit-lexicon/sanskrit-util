@@ -18,6 +18,11 @@ Ctrl+Alt+S / G headword check / open MW gloss
 Open multi-platform toolkit (not a closed desktop-only writer app).  
 **One install:** [packaging/INSTALL.md](packaging/INSTALL.md).
 
+**Two Windows runtimes — pick one:** the legacy portable **`keyswap.exe`** (PE,
+optional under [vendor/](vendor/)) vs **AHK + `windows/KeySwap.ahk`** (default 2.x).
+Do **not** run both. Details: [packaging/VENDOR_PE.md](packaging/VENDOR_PE.md) ·
+[INSTALL.md](packaging/INSTALL.md).
+
 **Origin UX:** [Yes Vedanta Keyswap](https://www.yesvedanta.com/keyswap/)  
 (`=` cycle). Analysis: [UPSTREAM_KEYSWAP_ANALYSIS.md](UPSTREAM_KEYSWAP_ANALYSIS.md).
 

@@ -1,6 +1,6 @@
 # Vendor PE vs open shells (backlog #10)
 
-_Created: 23-07-2026 · Last updated: 23-07-2026_
+_Created: 23-07-2026 · Last updated: 24-07-2026_
 
 ## Policy (KeySwap 2.1+)
 
@@ -12,6 +12,25 @@ _Created: 23-07-2026 · Last updated: 23-07-2026_
 
 Upstream (Yes Vedanta) documents **2021-09** fixes (“complex 2-bit characters”).
 The vendored PE may predate that build (see [PROVENANCE.md](../PROVENANCE.md)).
+
+## Portable?
+
+Both are portable; they are **not** the same product.
+
+| | Vendor PE | Toolkit 2.x |
+|--|-----------|-------------|
+| Portable | Yes — one `.exe` (or zip) | Yes — AHK portable/user install + repo scripts |
+| Single-file | Yes | No (AHK + `.ahk` + optional Python) |
+| Full 2.x features | No | Yes |
+
+A copy outside the repo (e.g. `Documents\KeySwap\keyswap.exe`) is still the
+**legacy PE**, not a second install of 2.x. Install docs:
+[INSTALL.md](INSTALL.md) § “Two different Keyswaps”.
+
+## Do not run both
+
+If `keyswap.exe` and `AutoHotkey` + `KeySwap.ahk` are both running, keyboard
+hooks conflict. Use one path only.
 
 ## Recommended action
 
