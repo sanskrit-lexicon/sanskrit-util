@@ -125,6 +125,7 @@ public struct CycleEngine: Sendable {
 public enum KeySwapProfile: String, CaseIterable, Sendable, Identifiable {
     case iastClassic = "iast-classic"
     case writerScheme = "writer-scheme"
+    case paliLite = "pali-lite"
     case iso15919 = "iso15919"
     case vedicDraft = "vedic-draft"
     case vedicSvara = "vedic-svara"
@@ -136,6 +137,7 @@ public enum KeySwapProfile: String, CaseIterable, Sendable, Identifiable {
         switch self {
         case .iastClassic: return "IAST classic"
         case .writerScheme: return "Writer-scheme (SW-style)"
+        case .paliLite: return "Pali-lite"
         case .iso15919: return "ISO 15919"
         case .vedicDraft: return "Vedic draft"
         case .vedicSvara: return "Vedic svara"

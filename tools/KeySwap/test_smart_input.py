@@ -98,5 +98,12 @@ class TestVedicSvaraProfile(unittest.TestCase):
         self.assertIsNotNone(eng.next_form("a"))
 
 
+class TestPaliLiteProfile(unittest.TestCase):
+    def test_loads(self):
+        eng = CycleEngine.from_path(ROOT / "configs" / "pali-lite.txt")
+        self.assertGreater(len(eng.chains), 8)
+        self.assertIsNotNone(eng.next_form("a"))
+
+
 if __name__ == "__main__":
     unittest.main()

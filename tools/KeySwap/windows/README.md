@@ -44,6 +44,8 @@ Requires Python + repo `py/sanskrit_util`:
 | Ctrl+Alt+V | Clipboard → current script mode |
 | Ctrl+Alt+S | Clipboard **headword check** (Cologne API → local wordlist fallback, HUD) |
 | Ctrl+Alt+G | Open Cologne **webtc gloss** (full MW entry) |
+| Ctrl+Alt+K | Copy **SLP1 + normkey** of clipboard |
+| Shift+= | Literal `=` (does not cycle) |
 
 Also:
 

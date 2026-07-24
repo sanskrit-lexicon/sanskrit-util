@@ -1,0 +1,25 @@
+# Pāli-lite IAST subset (Buddhist / Pali texts).
+# Fewer retroflexes than classical Sanskrit; long vowels + ṃ ṅ ñ ṭ ḍ ṇ ḷ.
+# Use with cycle (=) or smart doubles (aa, ii, …).
+a > ā
+i > ī
+u > ū
+e > ē
+o > ō
+m > ṃ
+n > ṅ > ñ > ṇ
+t > ṭ
+d > ḍ
+l > ḷ
+s > ś
+A > Ā
+I > Ī
+U > Ū
+E > Ē
+O > Ō
+M > Ṃ
+N > Ṅ > Ñ > Ṇ
+T > Ṭ
+D > Ḍ
+L > Ḷ
+S > Ś

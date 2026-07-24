@@ -7,6 +7,7 @@
 ;
 ; Hotkeys:
 ;   =                 cycle last form
+;   +=                literal = (Shift+= escape; does not cycle)
 ;   ^!=               clipboard → Devanāgarī
 ;   ^!i               clipboard → IAST
 ;   ^!h               clipboard HK/ITRANS/auto → IAST
@@ -15,6 +16,7 @@
 ;   ^!c               open Cologne Simple Search for clipboard (auto scheme)
 ;   ^!s               light headword check (Cologne API → HUD)
 ;   ^!g               open Cologne webtc full entry / gloss for clipboard
+;   ^!k               copy SLP1 + normkey of clipboard (no browser)
 ;   F6                reload config + allowlist
 ;   F7                toggle teaching HUD
 ;
@@ -64,6 +66,7 @@ Loop Parse "-~.'" {
 }
 
 =:: OnEquals()
++=:: SendLiteralEquals()   ; Shift+= → literal = (escape cycle)
 ^!=:: ConvertClipboard("deva", "auto")
 ^!i:: ConvertClipboard("iast", "auto")
 ^!h:: ConvertClipboard("iast", "auto")  ; scheme auto → IAST
@@ -72,8 +75,18 @@ Loop Parse "-~.'" {
 ^!c:: OpenCologneSearch()
 ^!s:: CheckClipboardHeadword()
 ^!g:: OpenCologneGloss()
+^!k:: CopySlp1Normkey()
 F6:: LoadAll()
 F7:: ToggleHud()
+
+SendLiteralEquals() {
+    if !AppAllowed() {
+        SendInput("{Text}=")
+        return
+    }
+    SendInput("{Text}=")
+    ShowHud("literal =")
+}
 
 OnMark(mark, *) {
     global LastForm, Mode
@@ -284,7 +297,7 @@ LoadAll() {
     LoadAllowList()
     ConfigMTime := FileGetTime(ConfigPath, "M")
     al := AllowList.Length ? (AllowList.Length " apps") : "all apps"
-    StatusText := "KeySwap 2.6 | " Mode " | " ConfigLabel(ConfigPath) " | " Chains.Length " chains | " al
+    StatusText := "KeySwap 2.7 | " Mode " | " ConfigLabel(ConfigPath) " | " Chains.Length " chains | " al
     A_IconTip := StatusTip()
     ShowHud("Reloaded · " al)
 }
@@ -452,31 +465,86 @@ UseClassicProfile() {
     TrayTip("KeySwap", "IAST classic + smart digraphs", "Iconi")
 }
 
+UsePaliProfile() {
+    global ConfigPath, Mode
+    ConfigPath := A_ScriptDir "\..\configs\pali-lite.txt"
+    Mode := "smart"
+    InitSmartPairs("smart")
+    LoadAll()
+    TrayTip("KeySwap", "Pali-lite profile", "Iconi")
+}
+
+; Copy SLP1 + dalnorm key of clipboard (no browser)
+CopySlp1Normkey() {
+    py := "python"
+    script := A_ScriptDir "\..\cologne_search.py"
+    if !FileExist(script) {
+        MsgBox("Missing cologne_search.py", "KeySwap", "Iconx")
+        return
+    }
+    tmpIn := A_Temp "\keyswap_keys_in.txt"
+    tmpOut := A_Temp "\keyswap_keys_out.txt"
+    try FileDelete(tmpIn)
+    try FileDelete(tmpOut)
+    FileAppend(A_Clipboard, tmpIn, "UTF-8")
+    ps := Format(
+        "Get-Content -Raw -Encoding UTF8 '{1}' | & {2} '{3}' --from auto --print-keys | Set-Content -Encoding UTF8 '{4}'",
+        tmpIn, py, script, tmpOut
+    )
+    RunWait('powershell -NoProfile -Command ' ps, , "Hide")
+    if FileExist(tmpOut) {
+        txt := FileRead(tmpOut, "UTF-8")
+        A_Clipboard := txt
+        ShowHud("SLP1+normkey → clipboard")
+        TrayTip("KeySwap keys", txt, "Iconi")
+    } else {
+        ShowHud("keys failed (Python?)")
+    }
+}
+
+OpenUrl(url) {
+    Run(url)
+}
+
 BuildTray() {
     A_TrayMenu.Delete()
-    A_TrayMenu.Add("KeySwap 2.6", (*) => 0)
-    A_TrayMenu.Disable("KeySwap 2.6")
+    A_TrayMenu.Add("KeySwap 2.7", (*) => 0)
+    A_TrayMenu.Disable("KeySwap 2.7")
     A_TrayMenu.Add()
     A_TrayMenu.Add("Mode: cycle", (*) => SetMode("cycle"))
     A_TrayMenu.Add("Mode: smart (default)", (*) => SetMode("smart"))
-    A_TrayMenu.Add("Mode: writer (Sanskrit Writer–style)", (*) => SetMode("writer"))
+    A_TrayMenu.Add("Mode: writer (Sanskrit Writer-style)", (*) => SetMode("writer"))
     A_TrayMenu.Add("Mode: deadkey", (*) => SetMode("deadkey"))
     A_TrayMenu.Add()
     A_TrayMenu.Add("Profile: IAST classic", (*) => UseClassicProfile())
     A_TrayMenu.Add("Profile: Writer-scheme", (*) => UseWriterProfile())
+    A_TrayMenu.Add("Profile: Pali-lite", (*) => UsePaliProfile())
     A_TrayMenu.Add()
-    A_TrayMenu.Add("Toggle script mode IAST⇄Deva (Ctrl+Alt+D)", (*) => ToggleScriptMode())
+    A_TrayMenu.Add("Toggle script mode IAST/Deva (Ctrl+Alt+D)", (*) => ToggleScriptMode())
     A_TrayMenu.Add("Clipboard → script mode (Ctrl+Alt+V)", (*) => ConvertToScriptMode())
+    A_TrayMenu.Add("Copy SLP1+normkey (Ctrl+Alt+K)", (*) => CopySlp1Normkey())
     A_TrayMenu.Add("Reload config (F6)", (*) => LoadAll())
     A_TrayMenu.Add("Toggle teaching HUD (F7)", (*) => ToggleHud())
     A_TrayMenu.Add("Open configs folder", (*) => Run('explorer.exe "' A_ScriptDir '\..\configs"'))
     A_TrayMenu.Add("Edit allowlist", (*) => EditAllowList())
     A_TrayMenu.Add()
-    A_TrayMenu.Add("Clipboard → Devanāgarī", (*) => ConvertClipboard("deva", "auto"))
+    A_TrayMenu.Add("Clipboard → Devanagari", (*) => ConvertClipboard("deva", "auto"))
     A_TrayMenu.Add("Clipboard → IAST (auto scheme)", (*) => ConvertClipboard("iast", "auto"))
     A_TrayMenu.Add("Clipboard → Cologne Simple Search (Ctrl+Alt+C)", (*) => OpenCologneSearch())
     A_TrayMenu.Add("Clipboard headword check (Ctrl+Alt+S)", (*) => CheckClipboardHeadword())
     A_TrayMenu.Add("Clipboard → MW gloss page (Ctrl+Alt+G)", (*) => OpenCologneGloss())
+    A_TrayMenu.Add()
+    eco := Menu()
+    eco.Add("Sanscript (learnsanskrit.org)", (*) => OpenUrl("https://www.learnsanskrit.org/tools/sanscript/"))
+    eco.Add("Aksharamukha (scripts / Brahmi)", (*) => OpenUrl("https://www.aksharamukha.com/converter"))
+    eco.Add("Lexilogos Sanskrit Latin", (*) => OpenUrl("https://www.lexilogos.com/keyboard/sanskrit_latin.htm"))
+    eco.Add("Dunning ABC Extended (Windows layouts)", (*) => OpenUrl("https://github.com/adunning/Mac-Keyboard-Layouts-for-Windows"))
+    eco.Add("EasyUnicode (Mac)", (*) => OpenUrl("https://www.yogicstudies.com/blog/how-to-type-transliterated-sanskrit-with-diacritics-in-mac-osx"))
+    eco.Add("Keyman Heidelberg Input Solution", (*) => OpenUrl("https://keyman.com/keyboards/heidelberginputsolution"))
+    eco.Add("Sanskrit Writer (Auroville)", (*) => OpenUrl("https://sri.auroville.org/projects/sanskrit-writer/"))
+    eco.Add("UBC Sanskrit tools", (*) => OpenUrl("https://blogs.ubc.ca/ubcsanskrit/tools/"))
+    eco.Add("Cologne Simple Search", (*) => OpenUrl("https://sanskrit-lexicon.uni-koeln.de/simple/"))
+    A_TrayMenu.Add("Ecosystem (peers)", eco)
     A_TrayMenu.Add()
     A_TrayMenu.Add("Exit", (*) => ExitApp())
 }
@@ -494,12 +562,12 @@ SetMode(m) {
     if (m = "writer" || m = "smart")
         InitSmartPairs(m)
     A_IconTip := StatusTip()
-    TrayTip("KeySwap 2.6", "Mode: " m, "Iconi")
+    TrayTip("KeySwap 2.7", "Mode: " m, "Iconi")
 }
 
 StatusTip() {
     global StatusText, Mode, ScriptMode
-    base := StatusText != "" ? StatusText : ("KeySwap 2.6 | " Mode)
+    base := StatusText != "" ? StatusText : ("KeySwap 2.7 | " Mode)
     return base " | script=" ScriptMode
 }
 
