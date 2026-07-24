@@ -324,8 +324,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return Unmanaged.passUnretained(event)
         }
 
-        // kVK_ANSI_Equal = 0x18
-        if keycode == 0x18 {
+        // Cycle trigger: default equals (0x18); override via KEYSWAP_TRIGGER
+        // equals|bracket|slash|backtick (same ids as Windows 2.8).
+        if keycode == Self.triggerKeycode {
+            // Shift+trigger → literal (pass through); bare key → cycle
+            if flags.contains(.maskShift) {
+                return Unmanaged.passUnretained(event)
+            }
             return handleTrigger(event: event)
         }
 
@@ -352,19 +357,36 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return Unmanaged.passUnretained(event)
     }
 
+    /// ANSI keycodes aligned with `tools/KeySwap/trigger_presets.py` (KeySwap 2.8).
+    private static var triggerKeycode: Int64 {
+        let raw = (ProcessInfo.processInfo.environment["KEYSWAP_TRIGGER"] ?? "equals")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+        switch raw {
+        case "bracket", "]", "rbrack", "right-bracket":
+            return 0x1E // kVK_ANSI_RightBracket
+        case "slash", "/":
+            return 0x2C // kVK_ANSI_Slash
+        case "backtick", "grave", "tick", "`":
+            return 0x32 // kVK_ANSI_Grave
+        default:
+            return 0x18 // kVK_ANSI_Equal
+        }
+    }
+
     private func handleTrigger(event: CGEvent) -> Unmanaged<CGEvent>? {
         let last = model.lastForm
         guard !last.isEmpty, let next = model.engine.nextForm(of: last) else {
-            // Pass through literal =
+            // Pass through literal trigger char
             return Unmanaged.passUnretained(event)
         }
-        // Swallow =, send backspaces + next form
+        // Swallow trigger, send backspaces + next form
         let del = last.utf16.count
         DispatchQueue.main.async { [weak self] in
             self?.typeReplacement(deleteUTF16: del, insert: next)
             self?.model.lastForm = next
         }
-        return nil // swallow equals
+        return nil // swallow trigger
     }
 
     private func typeReplacement(deleteUTF16: Int, insert: String) {

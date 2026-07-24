@@ -1,13 +1,14 @@
-; KeySwap 2.6 for Windows — AutoHotkey v2
+; KeySwap 2.8 for Windows — AutoHotkey v2
 ; MIT — sanskrit-util tools/KeySwap
 ;
 ; Modes: cycle | smart (default) | deadkey | writer (Writer-scheme digraphs)
 ; Script mode: iast | deva (Ctrl+Alt+D toggles; Ctrl+Alt+V converts clipboard)
 ; Guards: Keyman process warn; optional allowlist.txt; teaching HUD tooltips
+; Trigger presets (2.8): equals | bracket | slash | backtick  (trigger.ini / tray)
 ;
 ; Hotkeys:
-;   =                 cycle last form
-;   +=                literal = (Shift+= escape; does not cycle)
+;   <trigger>         cycle last form (default =)
+;   Shift+<trigger>   literal trigger char (escape cycle)
 ;   ^!=               clipboard → Devanāgarī
 ;   ^!i               clipboard → IAST
 ;   ^!h               clipboard HK/ITRANS/auto → IAST
@@ -17,7 +18,7 @@
 ;   ^!s               light headword check (Cologne API → HUD)
 ;   ^!g               open Cologne webtc full entry / gloss for clipboard
 ;   ^!k               copy SLP1 + normkey of clipboard (no browser)
-;   F6                reload config + allowlist
+;   F6                reload config + allowlist + trigger
 ;   F7                toggle teaching HUD
 ;
 ; Args: KeySwap.ahk [configPath] [mode]
@@ -39,9 +40,16 @@ global AllowList := []
 global HudOn := true
 global KeymanWarned := false
 global ScriptMode := "iast"  ; iast | deva — target for Ctrl+Alt+V
+; 2.8 trigger preset
+global TriggerId := "equals"
+global TriggerChar := "="
+global TriggerHotkey := "="
+global LiteralHotkey := "+="
+global TriggerHotkeysBound := false
 
 InitSmartPairs(Mode)
 LoadAll()
+RegisterTriggerHotkeys()
 BuildTray()
 CheckKeyman()
 SetTimer(WatchConfig, 2000)
@@ -65,8 +73,6 @@ Loop Parse "-~.'" {
         LastForm := "'"
 }
 
-=:: OnEquals()
-+=:: SendLiteralEquals()   ; Shift+= → literal = (escape cycle)
 ^!=:: ConvertClipboard("deva", "auto")
 ^!i:: ConvertClipboard("iast", "auto")
 ^!h:: ConvertClipboard("iast", "auto")  ; scheme auto → IAST
@@ -76,16 +82,130 @@ Loop Parse "-~.'" {
 ^!s:: CheckClipboardHeadword()
 ^!g:: OpenCologneGloss()
 ^!k:: CopySlp1Normkey()
-F6:: LoadAll()
+F6:: {
+    LoadAll()
+    RegisterTriggerHotkeys()
+    BuildTray()
+}
 F7:: ToggleHud()
 
-SendLiteralEquals() {
+; --- 2.8 trigger presets -------------------------------------------------
+
+LoadTriggerPreset() {
+    global TriggerId, TriggerChar, TriggerHotkey, LiteralHotkey
+    ; Env KEYSWAP_TRIGGER wins (process / user env)
+    envId := EnvGet("KEYSWAP_TRIGGER")
+    id := ""
+    if (envId != "") {
+        id := NormalizeTriggerId(envId)
+    } else {
+        path := A_ScriptDir "\trigger.ini"
+        if !FileExist(path) {
+            ex := A_ScriptDir "\trigger.example.ini"
+            if FileExist(ex)
+                FileCopy(ex, path)
+        }
+        if FileExist(path) {
+            for line in StrSplit(FileRead(path, "UTF-8"), "`n", "`r") {
+                s := Trim(line)
+                if (s = "" || SubStr(s, 1, 1) = "#" || SubStr(s, 1, 1) = ";")
+                    continue
+                if RegExMatch(s, "i)^preset\s*=\s*(\S+)", &m) {
+                    id := NormalizeTriggerId(m[1])
+                    break
+                }
+            }
+        }
+    }
+    if (id = "")
+        id := "equals"
+    ApplyTriggerPreset(id, false)
+}
+
+NormalizeTriggerId(raw) {
+    s := StrLower(Trim(raw))
+    switch s {
+        case "=", "equal", "equals", "plus":
+            return "equals"
+        case "]", "bracket", "rbrack", "right-bracket":
+            return "bracket"
+        case "/", "slash", "solidus":
+            return "slash"
+        case "``", "backtick", "grave", "tick":
+            return "backtick"
+        default:
+            return s
+    }
+}
+
+ApplyTriggerPreset(id, persist := true) {
+    global TriggerId, TriggerChar, TriggerHotkey, LiteralHotkey
+    id := NormalizeTriggerId(id)
+    switch id {
+        case "bracket":
+            TriggerId := "bracket"
+            TriggerChar := "]"
+            TriggerHotkey := "]"
+            LiteralHotkey := "+]"
+        case "slash":
+            TriggerId := "slash"
+            TriggerChar := "/"
+            TriggerHotkey := "/"
+            LiteralHotkey := "+/"
+        case "backtick":
+            TriggerId := "backtick"
+            TriggerChar := "``"
+            TriggerHotkey := "``"
+            LiteralHotkey := "+``"
+        default:
+            TriggerId := "equals"
+            TriggerChar := "="
+            TriggerHotkey := "="
+            LiteralHotkey := "+="
+    }
+    if persist {
+        path := A_ScriptDir "\trigger.ini"
+        body := "# KeySwap 2.8 trigger preset (auto-written from tray)`r`n"
+            . "preset=" TriggerId "`r`n"
+        try FileDelete(path)
+        FileAppend(body, path, "UTF-8")
+    }
+}
+
+RegisterTriggerHotkeys() {
+    global TriggerHotkey, LiteralHotkey, TriggerHotkeysBound
+    static prevTrig := "", prevLit := ""
+    if TriggerHotkeysBound {
+        try Hotkey(prevTrig, "Off")
+        try Hotkey(prevLit, "Off")
+    }
+    LoadTriggerPreset()
+    global TriggerHotkey, LiteralHotkey
+    Hotkey(TriggerHotkey, OnTrigger)
+    Hotkey(LiteralHotkey, SendLiteralTrigger)
+    prevTrig := TriggerHotkey
+    prevLit := LiteralHotkey
+    TriggerHotkeysBound := true
+}
+
+SetTriggerPreset(id) {
+    ApplyTriggerPreset(id, true)
+    RegisterTriggerHotkeys()
+    BuildTray()
+    A_IconTip := StatusTip()
+    global TriggerId, TriggerChar
+    TrayTip("KeySwap 2.8", "Trigger: " TriggerId " (" TriggerChar ")", "Iconi")
+    ShowHud("trigger " TriggerId " → " TriggerChar)
+}
+
+SendLiteralTrigger(*) {
+    global TriggerChar
     if !AppAllowed() {
-        SendInput("{Text}=")
+        SendInput("{Text}" TriggerChar)
         return
     }
-    SendInput("{Text}=")
-    ShowHud("literal =")
+    SendInput("{Text}" TriggerChar)
+    ShowHud("literal " TriggerChar)
 }
 
 OnMark(mark, *) {
@@ -160,18 +280,18 @@ TrySmartAfterLetter() {
     prev := cur
 }
 
-OnEquals(*) {
-    global Mode, LastForm, FormIndex, Chains
+OnTrigger(*) {
+    global Mode, LastForm, FormIndex, Chains, TriggerChar
     if !AppAllowed() {
-        SendInput("=")
+        SendInput("{Text}" TriggerChar)
         return
     }
     if (Mode = "deadkey") {
-        SendInput("=")
+        SendInput("{Text}" TriggerChar)
         return
     }
     if (LastForm = "" || !FormIndex.Has(LastForm)) {
-        SendInput("=")
+        SendInput("{Text}" TriggerChar)
         return
     }
     info := FormIndex[LastForm]
@@ -507,14 +627,22 @@ OpenUrl(url) {
 }
 
 BuildTray() {
+    global TriggerId
     A_TrayMenu.Delete()
-    A_TrayMenu.Add("KeySwap 2.7", (*) => 0)
-    A_TrayMenu.Disable("KeySwap 2.7")
+    A_TrayMenu.Add("KeySwap 2.8", (*) => 0)
+    A_TrayMenu.Disable("KeySwap 2.8")
     A_TrayMenu.Add()
     A_TrayMenu.Add("Mode: cycle", (*) => SetMode("cycle"))
     A_TrayMenu.Add("Mode: smart (default)", (*) => SetMode("smart"))
     A_TrayMenu.Add("Mode: writer (Sanskrit Writer-style)", (*) => SetMode("writer"))
     A_TrayMenu.Add("Mode: deadkey", (*) => SetMode("deadkey"))
+    A_TrayMenu.Add()
+    trig := Menu()
+    trig.Add("Equals (=) — default US", (*) => SetTriggerPreset("equals"))
+    trig.Add("Bracket (]) — non-US / Word", (*) => SetTriggerPreset("bracket"))
+    trig.Add("Slash (/)", (*) => SetTriggerPreset("slash"))
+    trig.Add("Backtick (`)", (*) => SetTriggerPreset("backtick"))
+    A_TrayMenu.Add("Trigger: " TriggerId, trig)
     A_TrayMenu.Add()
     A_TrayMenu.Add("Profile: IAST classic", (*) => UseClassicProfile())
     A_TrayMenu.Add("Profile: Writer-scheme", (*) => UseWriterProfile())
@@ -523,10 +651,15 @@ BuildTray() {
     A_TrayMenu.Add("Toggle script mode IAST/Deva (Ctrl+Alt+D)", (*) => ToggleScriptMode())
     A_TrayMenu.Add("Clipboard → script mode (Ctrl+Alt+V)", (*) => ConvertToScriptMode())
     A_TrayMenu.Add("Copy SLP1+normkey (Ctrl+Alt+K)", (*) => CopySlp1Normkey())
-    A_TrayMenu.Add("Reload config (F6)", (*) => LoadAll())
+    A_TrayMenu.Add("Reload config (F6)", (*) => {
+        LoadAll()
+        RegisterTriggerHotkeys()
+        BuildTray()
+    })
     A_TrayMenu.Add("Toggle teaching HUD (F7)", (*) => ToggleHud())
     A_TrayMenu.Add("Open configs folder", (*) => Run('explorer.exe "' A_ScriptDir '\..\configs"'))
     A_TrayMenu.Add("Edit allowlist", (*) => EditAllowList())
+    A_TrayMenu.Add("Edit trigger.ini", (*) => EditTriggerIni())
     A_TrayMenu.Add()
     A_TrayMenu.Add("Clipboard → Devanagari", (*) => ConvertClipboard("deva", "auto"))
     A_TrayMenu.Add("Clipboard → IAST (auto scheme)", (*) => ConvertClipboard("iast", "auto"))
@@ -549,6 +682,18 @@ BuildTray() {
     A_TrayMenu.Add("Exit", (*) => ExitApp())
 }
 
+EditTriggerIni() {
+    path := A_ScriptDir "\trigger.ini"
+    if !FileExist(path) {
+        ex := A_ScriptDir "\trigger.example.ini"
+        if FileExist(ex)
+            FileCopy(ex, path)
+        else
+            FileAppend("preset=equals`r`n", path, "UTF-8")
+    }
+    Run("notepad.exe " path)
+}
+
 EditAllowList() {
     path := A_ScriptDir "\allowlist.txt"
     if !FileExist(path)
@@ -562,13 +707,13 @@ SetMode(m) {
     if (m = "writer" || m = "smart")
         InitSmartPairs(m)
     A_IconTip := StatusTip()
-    TrayTip("KeySwap 2.7", "Mode: " m, "Iconi")
+    TrayTip("KeySwap 2.8", "Mode: " m, "Iconi")
 }
 
 StatusTip() {
-    global StatusText, Mode, ScriptMode
-    base := StatusText != "" ? StatusText : ("KeySwap 2.7 | " Mode)
-    return base " | script=" ScriptMode
+    global StatusText, Mode, ScriptMode, TriggerId, TriggerChar
+    base := StatusText != "" ? StatusText : ("KeySwap 2.8 | " Mode)
+    return base " | script=" ScriptMode " | trig=" TriggerId "(" TriggerChar ")"
 }
 
 ConfigLabel(path) {
