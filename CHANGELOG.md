@@ -5,6 +5,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.8] - 2026-07-24
+
+### Added
+
+- **tools/KeySwap 2.8** (`2.8.0`) — non-US **cycle trigger presets**
+  (`equals` / `bracket` / `slash` / `backtick`): tray submenu, `windows/trigger.ini`,
+  env `KEYSWAP_TRIGGER`, shared table [`trigger_presets.py`](tools/KeySwap/trigger_presets.py);
+  PWA trigger select + Mac `KEYSWAP_TRIGGER` keycode. Shift+trigger = literal.
+
 ## [0.8.7] - 2026-07-24
 
 ### Added

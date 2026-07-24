@@ -47,7 +47,7 @@ From the post-2.6 comparison read of SIMILARS (ranked):
 | 2 | Ecosystem tray links | Sanscript, Aksharamukha, Dunning, … | S | = L2; includes #9 Brāhmī link-out |
 | 3 | Literal-`=` escape | Upstream PE pain | S | = L3 |
 | 4 | `pali-lite` profile | Pāli / Buddhist IAST subset | S | = L4 |
-| 5 | Scancode / non-US **trigger presets** | Layout peers, PE comments | M | Alternate triggers: `]`, `/`, `` ` `` |
+| 5 | Scancode / non-US **trigger presets** | Layout peers, PE comments | M | **shipped 2.8** `trigger_presets.py` + tray / `trigger.ini` / `KEYSWAP_TRIGGER` |
 | 6 | **Classroom pack** one-pager | ABC Extended, EasyUnicode, MSKLC | S | **shipped 2.7** `docs/CLASSROOM_LAYOUT_VS_KEYSWAP.md` |
 | 7 | **iOS long-press ↔ Writer digraphs** parity | SanskritTypist | M | Soft keyboard honesty |
 | 8 | Optional **live Deva type-out** (not only clipboard) | SW / Typist dual output | M–H | Opt-in; keep off by default |
@@ -87,7 +87,7 @@ plugin tree: [plugins/](plugins/).
 | Tag | Contents |
 |-----|----------|
 | **2.7.x** | Highest-leverage pack L1–L5 |
-| **2.8.x** | #5 trigger presets + #6 classroom pack |
+| **2.8.x** | #5 trigger presets (**shipped**) + #6 classroom pack (already 2.7) |
 | **2.9.x** | #7 iOS Writer parity + #8 opt-in live Deva (or slip to 3.0 if too heavy) |
 | **3.0.0** | First v3 capability: **V3-2** offline fuzzy (scaffold H1581 → full index follow-up); V3-8 stays sibling |
 

@@ -141,13 +141,35 @@ S > Ṣ > Ś
 
   const ta = document.getElementById("t");
   const profileSel = document.getElementById("profile");
+  const triggerSel = document.getElementById("trigger");
   const smartCb = document.getElementById("smart");
   const menu = document.getElementById("menu");
   const hud = document.getElementById("hud");
+  const cycleBtn = document.getElementById("cycle");
   let engine = buildEngine(parseChains(EMBEDDED_CLASSIC));
   const profiles = {
     "iast-classic": EMBEDDED_CLASSIC,
   };
+
+  function triggerChar() {
+    return (triggerSel && triggerSel.value) || "=";
+  }
+
+  function refreshCycleLabel() {
+    if (cycleBtn) cycleBtn.textContent = triggerChar() + " cycle";
+  }
+  if (triggerSel) {
+    try {
+      const saved = localStorage.getItem("keyswap_trigger");
+      if (saved && ["=", "]", "/", "`"].includes(saved)) triggerSel.value = saved;
+    } catch (_) { /* private mode */ }
+    triggerSel.addEventListener("change", () => {
+      try { localStorage.setItem("keyswap_trigger", triggerChar()); } catch (_) {}
+      refreshCycleLabel();
+      setHud("trigger → " + triggerChar());
+    });
+    refreshCycleLabel();
+  }
 
   function setHud(msg) {
     if (hud) hud.textContent = msg;
@@ -208,7 +230,7 @@ S > Ṣ > Ś
     const after = ta.value.slice(pos);
     const cycled = engine.applyTrigger(before);
     if (cycled == null) {
-      insert("=");
+      insert(triggerChar());
       return;
     }
     ta.value = cycled + after;
@@ -218,13 +240,14 @@ S > Ṣ > Ś
   }
 
   ta.addEventListener("keydown", (e) => {
-    if (e.key === "=" && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
+    if (e.key === triggerChar()) {
       e.preventDefault();
       doCycle();
     }
   });
 
-  document.getElementById("cycle").onclick = doCycle;
+  if (cycleBtn) cycleBtn.onclick = doCycle;
   const toIastBtn = document.getElementById("toIast");
   if (toIastBtn) {
     toIastBtn.onclick = () => {

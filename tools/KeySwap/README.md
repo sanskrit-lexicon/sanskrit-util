@@ -1,7 +1,7 @@
 # KeySwap **2.6** — scholarly IAST anywhere + open Cologne dictionary layer
 
 _Created: 23-07-2026 · Last updated: 24-07-2026_  
-_Version: [2.6.0](VERSION)_
+_Version: [2.8.0](VERSION)_
 
 **Type IAST (and Devanagari) in any app** — cycle, smart digraphs, or
 [Sanskrit Writer](https://sri.auroville.org/projects/sanskrit-writer/)-style
@@ -69,6 +69,15 @@ See **[ROADMAP_KEYSWAP_V2_V3.md](ROADMAP_KEYSWAP_V2_V3.md)**:
   — **V3-2 offline_fuzzy** (opt-in): `--plugin offline_fuzzy` /
     `KEYSWAP_PLUGINS=offline_fuzzy` — exact + prefix + edit-distance over the
     local wordlist ([plugins/offline_fuzzy/](plugins/offline_fuzzy/))
+
+### What's in 2.8 (trigger presets)
+
+| Item | Detail |
+|------|--------|
+| **Cycle trigger** | Default `=`; also `]`, `/`, `` ` `` |
+| **Tray / ini / env** | Tray submenu · `windows/trigger.ini` · `KEYSWAP_TRIGGER` |
+| **Literal escape** | Shift+trigger inserts the raw character |
+| **PWA + Mac** | Trigger select (PWA); Mac reads `KEYSWAP_TRIGGER` |
 
 ### What's in 2.7 (highest-leverage pack)
 
@@ -219,7 +228,7 @@ python tools/KeySwap/test_local_wordlist.py
 
 Copy [`windows/allowlist.example.txt`](windows/allowlist.example.txt) → `allowlist.txt` to restrict apps.
 
-**Non-US keyboards:** on Spanish layouts the physical key may be `+` not `=`; set another trigger (upstream users use `]`, `/`, `` ` ``, `|`). Layout often only affects the **trigger**, not the base letters (Hakon / Norway).
+**Non-US keyboards (2.8):** on Spanish layouts the physical key may be `+` not `=`. Set another **cycle trigger** via tray **Trigger:**, `windows/trigger.ini` (`preset=bracket`), or env `KEYSWAP_TRIGGER=bracket|slash|backtick`. Shift+trigger still types the raw character. Layout often only affects the **trigger**, not the base letters (Hakon / Norway).
 
 ---
 

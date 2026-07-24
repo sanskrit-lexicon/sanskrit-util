@@ -1,6 +1,6 @@
-# KeySwap 2.1 for Windows (AutoHotkey v2)
+# KeySwap 2.8 for Windows (AutoHotkey v2)
 
-_Created: 23-07-2026 · Last updated: 23-07-2026_
+_Created: 23-07-2026 · Last updated: 24-07-2026_
 
 ## Run
 
@@ -45,7 +45,27 @@ Requires Python + repo `py/sanskrit_util`:
 | Ctrl+Alt+S | Clipboard **headword check** (Cologne API → local wordlist fallback, HUD) |
 | Ctrl+Alt+G | Open Cologne **webtc gloss** (full MW entry) |
 | Ctrl+Alt+K | Copy **SLP1 + normkey** of clipboard |
-| Shift+= | Literal `=` (does not cycle) |
+| **Trigger** (default `=`) | Cycle last form |
+| Shift+**Trigger** | Literal trigger char (does not cycle) |
+
+## 2.8 trigger presets (non-US)
+
+When `=` is wrong for your layout (or Word steals it), pick another cycle key:
+
+| Preset | Key | How |
+|--------|-----|-----|
+| `equals` | `=` | Default US |
+| `bracket` | `]` | Common PE workaround |
+| `slash` | `/` | Alternate |
+| `backtick` | `` ` `` | Alternate |
+
+**Ways to set:**
+
+1. Tray → **Trigger: …** submenu (writes `trigger.ini`)  
+2. Edit [`trigger.ini`](trigger.ini) (copy from [`trigger.example.ini`](trigger.example.ini)): `preset=bracket`  
+3. Env `KEYSWAP_TRIGGER=bracket` (wins over file)
+
+Canonical table: [`../trigger_presets.py`](../trigger_presets.py).
 
 Also:
 
