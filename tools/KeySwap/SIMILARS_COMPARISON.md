@@ -70,6 +70,8 @@ See [ROADMAP_KEYSWAP_V2_V3.md](ROADMAP_KEYSWAP_V2_V3.md) § Version 2:
 
 Aksharamukha embed · local hwnorm1c/MW SQLite · Keyman IME · OCR · TTS · Heritage segmenter · always-on autocomplete · SW-class morphology DB — all **planned under v3**, not 2.x default path.
 
+Design + first plugin pick (V3-2 `offline_fuzzy` scaffold): [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md) · [plugins/](plugins/) (H1581).
+
 ## Skip in 2.x (still true for default install)
 
 - Embed Aksharamukha or full script matrix  

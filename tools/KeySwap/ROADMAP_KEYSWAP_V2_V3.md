@@ -2,7 +2,7 @@
 
 _Created: 24-07-2026 · Last updated: 24-07-2026_  
 _Source: [SIMILARS_COMPARISON.md](SIMILARS_COMPARISON.md) peer survey + shipped 2.0–2.6_  
-_Model: Grok 4.5 (`grok-4.5`)_
+_Model: Grok 4.5 (`grok-4.5`) · v3 design: [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md)_
 
 **Constraint (until v3):** keep KeySwap a **light scholar typing companion** —
 hooks + small data files + link-outs. No Keyman-class IME, no full script matrix,
@@ -62,18 +62,23 @@ From the post-2.6 comparison read of SIMILARS (ranked):
 
 These were banned under the light constraint; **v3 reopens them** as opt-in / separate installers where possible.
 
-| # | Item | Why it was skipped in 2.x | v3 direction |
-|---|------|---------------------------|--------------|
-| V3-1 | **Embed Aksharamukha** (or full script matrix) | Weight / 100+ scripts | Optional module or sidecar; not core tray |
-| V3-2 | **Local MW / hwnorm1c SQLite** always-on DB | Multi-MB; server role | Optional offline fuzzy search pack |
-| V3-3 | **Full Keyman-class IME** | Competing stack; dual-hook hell | Documented dual install only, or thin Keyman bridge |
-| V3-4 | **OCR** | Out of typing scope | Link-out or separate tool |
-| V3-5 | **TTS** | Out of typing scope | Link-out (SRI TTS, etc.) |
-| V3-6 | **Sanskrit Heritage segmenter** | Heavy grammar engine | Microservice / link-out |
-| V3-7 | **Always-on network autocomplete** | Latency + privacy + false confidence | Optional after offline index (V3-2) |
-| V3-8 | **Full morphology / forms dictionary** (SW-class) | Product-sized DB | Separate “compose” companion, not KeySwap core |
+Architecture (H1581): [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md) ·
+plugin tree: [plugins/](plugins/).
+
+| # | Item | Why it was skipped in 2.x | v3 direction | Status (24-07-2026) |
+|---|------|---------------------------|--------------|---------------------|
+| V3-1 | **Embed Aksharamukha** (or full script matrix) | Weight / 100+ scripts | Optional module or sidecar; not core tray | planned (link-out until pack) |
+| V3-2 | **Local MW / hwnorm1c SQLite** always-on DB | Multi-MB; server role | Optional offline fuzzy search pack | **first pick** — scaffold `plugins/offline_fuzzy/` (no full index yet) |
+| V3-3 | **Full Keyman-class IME** | Competing stack; dual-hook hell | Documented dual install only, or thin Keyman bridge | planned (docs only) |
+| V3-4 | **OCR** | Out of typing scope | Link-out or separate tool | planned (link-out) |
+| V3-5 | **TTS** | Out of typing scope | Link-out (SRI TTS, etc.) | planned (link-out) |
+| V3-6 | **Sanskrit Heritage segmenter** | Heavy grammar engine | Microservice / link-out | planned (link-out) |
+| V3-7 | **Always-on network autocomplete** | Latency + privacy + false confidence | Optional after offline index (V3-2) | blocked on V3-2 index |
+| V3-8 | **Full morphology / forms dictionary** (SW-class) | Product-sized DB | Separate “compose” companion, not KeySwap core | **parked** (sibling app; not tray plugin) |
 
 **v3 principle:** core KeySwap stays the typing shell; heavy capabilities are **plugins or sibling apps**, never forced into the default Startup path.
+
+**First cut (3.0.0 path):** V3-2 offline fuzzy plugin scaffold landed under H1581; full SQLite/fuzzy pack is a follow-up. V3-8 remains a sibling design, not default KeySwap.
 
 ---
 
@@ -84,7 +89,7 @@ These were banned under the light constraint; **v3 reopens them** as opt-in / se
 | **2.7.x** | Highest-leverage pack L1–L5 |
 | **2.8.x** | #5 trigger presets + #6 classroom pack |
 | **2.9.x** | #7 iOS Writer parity + #8 opt-in live Deva (or slip to 3.0 if too heavy) |
-| **3.0.0** | First v3 capability (likely V3-2 offline fuzzy **or** V3-8 compose companion design) |
+| **3.0.0** | First v3 capability: **V3-2** offline fuzzy (scaffold H1581 → full index follow-up); V3-8 stays sibling |
 
 ---
 

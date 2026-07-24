@@ -64,7 +64,9 @@ Legacy PE: [vendor/](vendor/) — prefer AHK.
 See **[ROADMAP_KEYSWAP_V2_V3.md](ROADMAP_KEYSWAP_V2_V3.md)**:
 
 - **v2** — 10 light peer-survey items + highest-leverage pack (2.7+)  
-- **v3** — former explicit skips (Aksharamukha embed, local SQLite, morphology DB, …)
+- **v3** — former explicit skips as **plugins / siblings** (never default Startup)  
+  — design: [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md)  
+  — first scaffold: [plugins/offline_fuzzy/](plugins/offline_fuzzy/) (V3-2; H1581)
 
 ### What's in 2.7 (highest-leverage pack)
 

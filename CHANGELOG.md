@@ -5,6 +5,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.6] - 2026-07-24
+
+### Added
+
+- **tools/KeySwap v3 design (H1581)** — plugin/sibling architecture memo
+  ([`docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md`](tools/KeySwap/docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md));
+  first-pick **V3-2** scaffold [`plugins/offline_fuzzy/`](tools/KeySwap/plugins/offline_fuzzy/)
+  (`never_autoload`, seed exact-match only; no SQLite pack / no default AHK load);
+  ROADMAP Version 3 status rows updated.
+
 ## [0.8.5] - 2026-07-24
 
 ### Added
