@@ -41,6 +41,8 @@ cd js && npm test                     # full JS suite (as CI runs it)
 | `vectors/slp1_roundtrip_sample.txt` | 1000 real MW `<k1>` headwords used for the SLP1⇄Devanāgarī round-trip property test |
 | `tools/gen_vectors.py` | Regenerates vectors + locks `SLP1_VOWELS/MARKS/CONSONANTS` against the SanskritSpellCheck `slp1util.py` donor + runs the round-trip test |
 | `tools/crosscheck.py` / `tools/crosscheck_js.mjs` | Cross-language adversarial-input parity checks |
+| `tools/KeySwap/` | Optional scholar typing toolkit (AHK/PWA/Apple + Cologne check). **Not** part of the `sanskrit_util` library API / PyPI / npm |
+| `tools/KeySwap/plugins/` | v3 **opt-in only** heavy packs (`offline_fuzzy` V3-2, `network_autocomplete` V3-7). Enable via `--plugin` / `KEYSWAP_PLUGINS` — never import from default `windows/KeySwap.ahk` or install scripts |
 
 ## CI workflows
 
@@ -78,6 +80,21 @@ cd js && npm test                     # full JS suite (as CI runs it)
   [`../WhitneyRoots/scripts/sanskrit_util.py`](../WhitneyRoots/scripts/sanskrit_util.py).
   Do not copy/fork the implementation into a new repo — that's exactly the
   duplication this package exists to end.
+
+## KeySwap (tools/) — agent rules
+
+- **Core shell stays light** (hooks + seed wordlist + Cologne link-outs). Heavy
+  capabilities are plugins under `tools/KeySwap/plugins/<id>/` with
+  `"never_autoload": true` — see
+  [KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](tools/KeySwap/docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md).
+- **Sync rule:** any new/changed KeySwap plugin ⇒ update
+  `tools/KeySwap/plugins/README.md`, ROADMAP Version 3 status row, architecture
+  memo status, root README “Related tools”, and `CHANGELOG.md` in the **same PR**.
+  Never wire plugins into `packaging/install-windows.ps1` or default tray without
+  an explicit opt-in path.
+- **V3-7 cascade:** `network_autocomplete` implies offline fuzzy first; network
+  only when local is not confident. Do not reintroduce always-on network
+  autocomplete on the default Startup path.
 
 ## What not to touch
 
