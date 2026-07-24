@@ -96,10 +96,12 @@ Leverage pack (2.7):
 Read C:\Users\user\Documents\GitHub\sanskrit-util\tools\KeySwap\ROADMAP_KEYSWAP_V2_V3.md and implement the Version 2 highest-leverage pack L1–L5.
 ```
 
-v3 design (when opened):
+v3 design / first plugin wave (H1581):
 
 ```
-Read C:\Users\user\Documents\GitHub\sanskrit-util\tools\KeySwap\ROADMAP_KEYSWAP_V2_V3.md Version 3 section and draft a design for the first v3 plugin (V3-2 or V3-8) without embedding it in the default AHK path.
+Read C:\Users\user\Documents\GitHub\Uprava\handoffs\H1581-Sonnet_sanskrit-util_keyswap-v3-former-skips-heavy-wave_24.07.26.md and execute it.
 ```
+
+On Sonnet 5 (`claude-sonnet-5`); design memo + first plugin scaffold (V3-2 or V3-8); never load into default Startup AHK.
 
 _Dr. Mārcis Gasūns_
