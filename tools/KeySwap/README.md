@@ -59,19 +59,16 @@ Legacy PE: [vendor/](vendor/) — prefer AHK.
 
 ---
 
-## Roadmap (v2 remainder vs v3 heavy)
+## Roadmap (v2 free portable · v3 heavy open · v4 paid full)
 
-See **[ROADMAP_KEYSWAP_V2_V3.md](ROADMAP_KEYSWAP_V2_V3.md)**:
+See **[ROADMAP_KEYSWAP_V2_V3.md](ROADMAP_KEYSWAP_V2_V3.md)** and peer survey
+**[SIMILARS_COMPARISON.md](SIMILARS_COMPARISON.md)**:
 
-- **v2** — 10 light peer-survey items + highest-leverage pack (2.7+)  
-- **v3** — former explicit skips as **plugins / siblings** (never default Startup)  
-  — design: [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md)  
-  — **V3-2 offline_fuzzy** (opt-in): `--plugin offline_fuzzy` /
-    `KEYSWAP_PLUGINS=offline_fuzzy` — exact + prefix + edit-distance over the
-    local wordlist ([plugins/offline_fuzzy/](plugins/offline_fuzzy/))  
-  — **V3-7 network_autocomplete** (opt-in): `--plugin network_autocomplete` —
-    offline first, Cologne only when local is not confident
-    ([plugins/network_autocomplete/](plugins/network_autocomplete/))
+- **v2 (free, mostly portable)** — light shell; residual 2.9: iOS Writer parity + live Deva  
+- **v3 (free, heavier, not max)** — opt-in plugins (never default Startup)  
+  — [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md)  
+  — **V3-2 offline_fuzzy** · **V3-7 network_autocomplete** (shipped opt-in)  
+- **v4 (paid)** — most peer features: forms/morphology, advanced **Mac + iOS**, signed builds
 
 ### What's in 2.8 (trigger presets)
 

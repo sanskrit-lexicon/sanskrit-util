@@ -5,6 +5,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **tools/KeySwap product tiers** — [SIMILARS_COMPARISON.md](tools/KeySwap/SIMILARS_COMPARISON.md)
+  and [ROADMAP_KEYSWAP_V2_V3.md](tools/KeySwap/ROADMAP_KEYSWAP_V2_V3.md) refreshed:
+  **v2 free portable** · **v3 free heavy (not max)** · **v4 paid full** (Mac/iOS + forms).
+  Umbrella handoff H1619.
+
 ## [0.8.9] - 2026-07-24
 
 ### Added
