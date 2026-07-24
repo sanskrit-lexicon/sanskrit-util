@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.5] - 2026-07-24
+
 ### Added
 
 - **tools/KeySwap 2.7** (`2.7.0`) — v2 highest-leverage pack: SLP1+normkey copy (Ctrl+Alt+K), Ecosystem tray, Shift+= literal equals, pali-lite profile, SIMILARS refresh + ROADMAP_KEYSWAP_V2_V3, classroom pack doc.
