@@ -1,0 +1,26 @@
+# Sanskrit Writer–style profile (Auroville SRI “draw diacritic top→bottom”).
+# Use with smart mode: type the mark then the letter (e.g. -a → ā, ~n → ñ, 's → ś).
+# Cycle (=) still works on the same classical IAST chains as iast-classic.
+# See smart_input.WriterTables / AHK InitWriterSmartPairs.
+a > ā
+i > ī
+u > ū
+r > ṛ > ṝ
+l > ḷ > ḹ
+m > ṃ > ṁ
+h > ḥ
+n > ṇ > ṅ > ñ
+t > ṭ
+d > ḍ
+s > ṣ > ś
+A > Ā
+I > Ī
+U > Ū
+R > Ṛ > Ṝ
+L > Ḷ > Ḹ
+M > Ṃ > Ṁ
+H > Ḥ
+N > Ṇ > Ṅ > Ñ
+T > Ṭ
+D > Ḍ
+S > Ṣ > Ś

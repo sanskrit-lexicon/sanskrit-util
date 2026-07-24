@@ -16,7 +16,7 @@ _Survey: 23-07-2026 · Model: Grok 4.5 · constraint: keep KeySwap light / fast 
 | Heidelberg Input Solution | IAST layout (Keyman) | Multi via Keyman | Keyman stack |
 | SIL Indic Roman | Roman diacritics (Keyman) | Multi via Keyman | Keyman stack |
 | SanskritTypist (2025) | Long-press + `aa`→ā + Deva | iOS | App Store keyboard |
-| Sanskrit Writer | Gesture / multi-output | Mac | App + dict hotkey |
+| Sanskrit Writer | Gesture / multi-output | Mac | App + dict hotkey — KeySwap 2.6 answers with Writer-scheme + script mode + Cologne gloss (see README) |
 | ArshaDrishti | Dual Deva + IAST layout | Mac bundle | Layout install |
 
 ### Convert / paste (not OS typing)

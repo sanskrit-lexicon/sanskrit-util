@@ -15,6 +15,14 @@ from cologne_search import format_api_error
 from typing_check import TypingCheck, check_word, last_token
 
 
+class TestGlossUrl(unittest.TestCase):
+    def test_local_known_has_gloss(self):
+        r = check_word("rāma", local_only=True, verify=True)
+        self.assertTrue(r.known)
+        self.assertIn("getword.php", r.gloss_url)
+        self.assertIn("Ctrl+Alt+G", r.hud_line())
+
+
 class TestLastToken(unittest.TestCase):
     def test_simple(self):
         self.assertEqual(last_token("rāma"), "rāma")

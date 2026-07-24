@@ -48,6 +48,26 @@ COLOGNE_API = (
     "https://www.sanskrit-lexicon.uni-koeln.de/scans/csl-apidev/"
     "simple-search/v1.1/getword_list_1.0.php"
 )
+# MW webtc display (deep-link to full entry / gloss page)
+COLOGNE_WEBTC = (
+    "https://www.sanskrit-lexicon.uni-koeln.de/scans/{scan}/2020/web/webtc/"
+    "getword.php"
+)
+# dict code → scan folder (common CDSL codes)
+_DICT_SCAN = {
+    "mw": "MWScan",
+    "pw": "PWScan",
+    "pwg": "PWGScan",
+    "ap90": "AP90Scan",
+    "cae": "CAEScan",
+    "md": "MDScan",
+    "sch": "SCHScan",
+    "bhs": "BHSScan",
+    "wil": "WILScan",
+    "yat": "YATScan",
+    "skd": "SKDScan",
+    "vcp": "VCPScan",
+}
 
 # Input schemes accepted by Cologne simple-search (precise modes)
 COLOGNE_INPUTS = ("default", "slp1", "deva", "iast", "hk", "itrans")
@@ -293,6 +313,30 @@ def prepare(
         api_url=api_url,
         freqsrc=freq,
     )
+
+
+def webtc_url(
+    slp1_key: str,
+    *,
+    dict_code: str = "mw",
+    output: str = "iast",
+) -> str:
+    """Build a Cologne webtc getword deep-link for a headword (SLP1 key).
+
+    Opens the full dictionary entry (gloss) in the browser — companion to
+    Simple Search existence checks.
+    """
+    code = (dict_code or "mw").lower()
+    scan = _DICT_SCAN.get(code, f"{code.upper()}Scan")
+    base = COLOGNE_WEBTC.format(scan=scan)
+    qs = urllib.parse.urlencode(
+        {
+            "key": slp1_key,
+            "filter": "sanskrit01",
+            "output": output,
+        }
+    )
+    return f"{base}?{qs}"
 
 
 def format_api_error(exc: BaseException) -> str:

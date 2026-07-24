@@ -1,45 +1,70 @@
-# KeySwap **2.5** — IAST typing + Cologne headword check (+ offline + optional DCS freq)
+# KeySwap **2.6** — scholarly IAST anywhere + open Cologne dictionary layer
 
 _Created: 23-07-2026 · Last updated: 24-07-2026_  
-_Version: [2.5.0](VERSION)_
+_Version: [2.6.0](VERSION)_
 
-**Add IAST diacritics by cycling a letter** (default trigger `=`), or type smart
-digraphs (`aa`→ā, `sh`→ś). Works in Word, browser, chat — not only one app.
+**Type IAST (and Devanagari) in any app** — cycle, smart digraphs, or
+[Sanskrit Writer](https://sri.auroville.org/projects/sanskrit-writer/)-style
+mark-then-letter (`-a` long a, `~n`, `'s`). Then check the word against
+**Cologne** (headword check, optional DCS frequency, full **gloss** page).
 
 ```text
-n  =  =  =     →  ṇ → ṅ → ñ
-r  =  =        →  ṛ → ṝ
-s  =  =        →  ṣ → ś
-kṛṣṇa · Rāmāyaṇam · saṃsāra · śiṣyāḥ
+n  =  =  =     cycle diacritics
+-a  ~n  's  h. Writer-scheme digraphs
+Ctrl+Alt+D / V script mode IAST / Devanagari
+Ctrl+Alt+S / G headword check / open MW gloss
 ```
 
-Also: HK/ITRANS/Velthuis paste → IAST, IAST↔Devanāgarī, Cologne Simple Search
-prep. Not part of the PyPI/npm package API.
+Open multi-platform toolkit (not a closed desktop-only writer app).  
+**One install:** [packaging/INSTALL.md](packaging/INSTALL.md).
 
-**Origin UX:** [Andre Vas / Yes Vedanta Keyswap](https://www.yesvedanta.com/keyswap/)
-(Windows cycle + `config.txt`). This folder is the **open multi-platform 2.x**
-toolkit. Feedback analysis: [UPSTREAM_KEYSWAP_ANALYSIS.md](UPSTREAM_KEYSWAP_ANALYSIS.md).
+**Origin UX:** [Yes Vedanta Keyswap](https://www.yesvedanta.com/keyswap/)  
+(`=` cycle). Analysis: [UPSTREAM_KEYSWAP_ANALYSIS.md](UPSTREAM_KEYSWAP_ANALYSIS.md).
 
-> **If `=` breaks Microsoft Word** (jumps to Draft view, splits the window, or
-> turns `t` into ™): set the **system** keyboard to **English (US)** (Settings →
-> Time & language → Typing — not Word’s language), **or change the trigger key**,
-> **or use** [`windows/KeySwap.ahk`](windows/KeySwap.ahk) / PWA. This is the #1
-> community failure mode on the upstream page.
+### KeySwap vs Sanskrit Writer
+
+| | **KeySwap 2.6** | **Sanskrit Writer** (Auroville SRI) |
+|--|-----------------|-------------------------------------|
+| Job | Scholar **IAST anywhere** + **Cologne** | Compose Sanskrit with **morphology dict** |
+| Input | `=` cycle · smart · **Writer-scheme** · deadkey | Gesture digraphs only |
+| Output | IAST + Devanagari (script mode hotkey) | IAST · Devanagari · Brahmi |
+| Dictionary | Cologne Simple Search + webtc **gloss** · optional DCS · local MW | Built-in conversational / form dictionary |
+| Platforms | Windows AHK · Mac · iOS · PWA | Desktop app focus |
+| Open source | Yes (this repo) | Product app |
+| Weight | Light (hooks + data files) | Heavier app + forms DB |
+
+> **Sanskrit Writer** helps you *compose* Sanskrit with forms.  
+> **KeySwap** helps you *type scholarly IAST in any app*, with **Cologne** as the open dictionary layer.
+
+> **If `=` breaks Microsoft Word**: system keyboard **English (US)**, change trigger, or use AHK/PWA. #1 upstream failure mode.
 
 ---
 
 ## First 60 seconds (Windows)
 
-1. Install [AutoHotkey v2](https://www.autohotkey.com/) (preferred) **or** use PWA.  
-2. Double-click [`windows/KeySwap.ahk`](windows/KeySwap.ahk) — **no main window**; look for the **tray icon**.  
-3. Open Notepad → type `n` → press `=` a few times → `ṇ` `ṅ` `ñ`.  
-4. Optional: tray → change mode (cycle / smart / deadkey).
+1. **One install:**  
+   `powershell -ExecutionPolicy Bypass -File tools\KeySwap\packaging\install-windows.ps1`  
+   (or double-click [windows/KeySwap.ahk](windows/KeySwap.ahk) after [AHK v2](https://www.autohotkey.com/)).  
+2. Tray icon — type in Notepad: `n` then `=` · or Writer mode: `-` then `a`.  
+3. Tray → **Profile: Writer-scheme** or **Mode: smart**.  
+4. Ctrl+Alt+D toggles script mode; Ctrl+Alt+V converts clipboard.
 
-Legacy PE: [`vendor/keyswap.exe`](vendor/) — unsigned; SmartScreen “More info → Run anyway”. Prefer AHK.
+Full install notes: [packaging/INSTALL.md](packaging/INSTALL.md).  
+Legacy PE: [vendor/](vendor/) — prefer AHK.
 
 ---
 
-## What’s in 2.5 (optional DCS-2026 frequencies)
+## What's in 2.6 (vs Sanskrit Writer roadmap)
+
+| # | Deliverable | Detail |
+|---|-------------|--------|
+| 1 | **Writer-scheme** | `configs/writer-scheme.txt` + smart digraphs |
+| 2 | **Script mode** | Ctrl+Alt+D toggle · Ctrl+Alt+V convert clipboard |
+| 3 | **Gloss deep-link** | Ctrl+Alt+G / `--open-gloss` → Cologne webtc |
+| 4 | **One install** | `packaging/install-windows.ps1` · `install-macos.sh` · INSTALL.md |
+| 5 | **Landing blurb** | This README comparison table |
+
+### 2.5 (optional DCS-2026 frequencies)
 
 | Feature | Detail |
 |---------|--------|
@@ -177,6 +202,7 @@ Copy [`windows/allowlist.example.txt`](windows/allowlist.example.txt) → `allow
 | Profile | Who |
 |---------|-----|
 | `iast-classic` (default) | Classical IAST; capitals included |
+| `writer-scheme` | Same cycles + **Writer-style** digraphs |
 | `iso15919` | ē ō ḻ ṉ, vocalic r̥-style extras |
 | `vedic-draft` / `vedic-svara` | Accents / svara experiments (Rudram, etc.) |
 | `personal-legacy` | Upstream personal map (ç, æ, …) |
@@ -223,7 +249,7 @@ Full comment analysis: [UPSTREAM_KEYSWAP_ANALYSIS.md](UPSTREAM_KEYSWAP_ANALYSIS.
 
 ```text
 KeySwap/
-  VERSION  (2.5.0)
+  VERSION  (2.6.0)
   typing_check.py       # headword check: Cologne API + local fallback + optional DCS
   local_wordlist.py     # load/lookup SLP1 wordlist
   dcs_freq.py           # optional DCS-2026 frequency table

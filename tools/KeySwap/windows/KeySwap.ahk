@@ -1,7 +1,8 @@
-; KeySwap 2.1 for Windows — AutoHotkey v2
+; KeySwap 2.6 for Windows — AutoHotkey v2
 ; MIT — sanskrit-util tools/KeySwap
 ;
-; Modes: cycle | smart (default) | deadkey
+; Modes: cycle | smart (default) | deadkey | writer (Writer-scheme digraphs)
+; Script mode: iast | deva (Ctrl+Alt+D toggles; Ctrl+Alt+V converts clipboard)
 ; Guards: Keyman process warn; optional allowlist.txt; teaching HUD tooltips
 ;
 ; Hotkeys:
@@ -9,8 +10,11 @@
 ;   ^!=               clipboard → Devanāgarī
 ;   ^!i               clipboard → IAST
 ;   ^!h               clipboard HK/ITRANS/auto → IAST
+;   ^!d               toggle script mode (IAST ⇄ Devanāgarī)
+;   ^!v               clipboard → current script mode
 ;   ^!c               open Cologne Simple Search for clipboard (auto scheme)
 ;   ^!s               light headword check (Cologne API → HUD)
+;   ^!g               open Cologne webtc full entry / gloss for clipboard
 ;   F6                reload config + allowlist
 ;   F7                toggle teaching HUD
 ;
@@ -32,8 +36,9 @@ global StatusText := ""
 global AllowList := []
 global HudOn := true
 global KeymanWarned := false
+global ScriptMode := "iast"  ; iast | deva — target for Ctrl+Alt+V
 
-InitSmartPairs()
+InitSmartPairs(Mode)
 LoadAll()
 BuildTray()
 CheckKeyman()
@@ -45,21 +50,40 @@ bases := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 Loop Parse bases {
     Hotkey("~*" A_LoopField, OnLetter.Bind(A_LoopField))
 }
+; Writer-scheme punctuation prefixes (- ~ . ') participate in smart digraphs
+Loop Parse "-~.'" {
+    Hotkey("~*" A_LoopField, OnMark.Bind(A_LoopField))
+}
 
 ~*':: {
-    global Mode, DeadArmed
+    global Mode, DeadArmed, LastForm
     if (Mode = "deadkey" && AppAllowed())
         DeadArmed := true
+    else if ((Mode = "smart" || Mode = "writer") && AppAllowed())
+        LastForm := "'"
 }
 
 =:: OnEquals()
 ^!=:: ConvertClipboard("deva", "auto")
 ^!i:: ConvertClipboard("iast", "auto")
 ^!h:: ConvertClipboard("iast", "auto")  ; scheme auto → IAST
+^!d:: ToggleScriptMode()
+^!v:: ConvertToScriptMode()
 ^!c:: OpenCologneSearch()
 ^!s:: CheckClipboardHeadword()
+^!g:: OpenCologneGloss()
 F6:: LoadAll()
 F7:: ToggleHud()
+
+OnMark(mark, *) {
+    global LastForm, Mode
+    if !AppAllowed()
+        return
+    if (Mode = "smart" || Mode = "writer") {
+        LastForm := mark
+        SetTimer(TrySmartAfterLetter, -10)
+    }
+}
 
 AppAllowed() {
     global AllowList
@@ -100,7 +124,7 @@ OnLetter(letter, *) {
         }
     }
     LastForm := letter
-    if (Mode = "smart")
+    if (Mode = "smart" || Mode = "writer")
         SetTimer(TrySmartAfterLetter, -10)
 }
 
@@ -159,17 +183,51 @@ DeadMap(letter) {
     return m.Has(letter) ? m[letter] : ""
 }
 
-InitSmartPairs() {
+InitSmartPairs(mode := "smart") {
     global SmartPairs
     SmartPairs := []
-    raw := [
+    classic := [
         ["aa", "ā"], ["ii", "ī"], ["uu", "ū"], ["rr", "ṛ"], ["ll", "ḷ"],
         ["mm", "ṃ"], ["hh", "ḥ"], ["AA", "Ā"], ["II", "Ī"], ["UU", "Ū"],
         ["sh", "ś"], ["ss", "ṣ"], ["ng", "ṅ"], ["ny", "ñ"], ["nn", "ṇ"],
         ["tt", "ṭ"], ["dd", "ḍ"]
     ]
+    ; Sanskrit Writer–style top→bottom digraphs (mark then letter)
+    writer := [
+        ["-a", "ā"], ["-i", "ī"], ["-u", "ū"], ["-A", "Ā"], ["-I", "Ī"], ["-U", "Ū"],
+        ["~n", "ñ"], ["~N", "Ñ"], ["~m", "ṃ"], ["~M", "Ṃ"],
+        ["'s", "ś"], ["'S", "Ś"],
+        ["h.", "ḥ"], ["H.", "Ḥ"], ["r.", "ṛ"], ["R.", "Ṛ"], ["l.", "ḷ"], ["L.", "Ḷ"],
+        ["m.", "ṃ"], ["M.", "Ṃ"], ["n.", "ṇ"], ["N.", "Ṇ"], ["t.", "ṭ"], ["T.", "Ṭ"],
+        ["d.", "ḍ"], ["D.", "Ḍ"], ["s.", "ṣ"], ["S.", "Ṣ"],
+        [".h", "ḥ"], [".H", "Ḥ"], [".r", "ṛ"], [".R", "Ṛ"], [".l", "ḷ"], [".L", "Ḷ"],
+        [".m", "ṃ"], [".M", "Ṃ"], [".n", "ṇ"], [".N", "Ṇ"], [".t", "ṭ"], [".T", "Ṭ"],
+        [".d", "ḍ"], [".D", "Ḍ"], [".s", "ṣ"], [".S", "Ṣ"]
+    ]
+    raw := classic
+    if (mode = "writer") {
+        raw := []
+        for item in writer
+            raw.Push(item)
+        for item in classic
+            raw.Push(item)
+    }
     for item in raw
         SmartPairs.Push({src: item[1], dst: item[2]})
+}
+
+ToggleScriptMode() {
+    global ScriptMode
+    ScriptMode := (ScriptMode = "iast") ? "deva" : "iast"
+    label := (ScriptMode = "deva") ? "Devanāgarī" : "IAST"
+    ShowHud("Script mode: " label)
+    TrayTip("KeySwap", "Script mode: " label " — Ctrl+Alt+V converts clipboard", "Iconi")
+    A_IconTip := StatusTip()
+}
+
+ConvertToScriptMode() {
+    global ScriptMode
+    ConvertClipboard(ScriptMode, "auto")
 }
 
 LoadAllowList() {
@@ -226,7 +284,7 @@ LoadAll() {
     LoadAllowList()
     ConfigMTime := FileGetTime(ConfigPath, "M")
     al := AllowList.Length ? (AllowList.Length " apps") : "all apps"
-    StatusText := "KeySwap 2.1 | " Mode " | " ConfigLabel(ConfigPath) " | " Chains.Length " chains | " al
+    StatusText := "KeySwap 2.6 | " Mode " | " ConfigLabel(ConfigPath) " | " Chains.Length " chains | " al
     A_IconTip := StatusTip()
     ShowHud("Reloaded · " al)
 }
@@ -330,7 +388,6 @@ OpenCologneSearch() {
 
 ; Typing-tool: last clipboard token → Cologne API, then local wordlist if offline
 CheckClipboardHeadword() {
-
     py := "python"
     script := A_ScriptDir "\..\typing_check.py"
     if !FileExist(script) {
@@ -357,15 +414,59 @@ CheckClipboardHeadword() {
     }
 }
 
+; Open Cologne webtc full entry (gloss) for clipboard headword
+OpenCologneGloss() {
+    py := "python"
+    script := A_ScriptDir "\..\typing_check.py"
+    if !FileExist(script) {
+        MsgBox("Missing typing_check.py", "KeySwap", "Iconx")
+        return
+    }
+    tmpIn := A_Temp "\keyswap_gloss_in.txt"
+    try FileDelete(tmpIn)
+    FileAppend(A_Clipboard, tmpIn, "UTF-8")
+    ps := Format(
+        "Get-Content -Raw -Encoding UTF8 '{1}' | & {2} '{3}' --from auto --dict mw --no-verify --open-gloss --hud",
+        tmpIn, py, script
+    )
+    ShowHud("opening gloss…")
+    RunWait('powershell -NoProfile -Command ' ps, , "Hide")
+    TrayTip("KeySwap", "Opened Cologne webtc entry (gloss)", "Iconi")
+}
+
+UseWriterProfile() {
+    global ConfigPath, Mode
+    ConfigPath := A_ScriptDir "\..\configs\writer-scheme.txt"
+    Mode := "writer"
+    InitSmartPairs("writer")
+    LoadAll()
+    TrayTip("KeySwap", "Writer-scheme profile + digraphs (-a, ~n, 's, h.)", "Iconi")
+}
+
+UseClassicProfile() {
+    global ConfigPath, Mode
+    ConfigPath := A_ScriptDir "\..\configs\iast-classic.txt"
+    Mode := "smart"
+    InitSmartPairs("smart")
+    LoadAll()
+    TrayTip("KeySwap", "IAST classic + smart digraphs", "Iconi")
+}
+
 BuildTray() {
     A_TrayMenu.Delete()
-    A_TrayMenu.Add("KeySwap 2.1", (*) => 0)
-    A_TrayMenu.Disable("KeySwap 2.1")
+    A_TrayMenu.Add("KeySwap 2.6", (*) => 0)
+    A_TrayMenu.Disable("KeySwap 2.6")
     A_TrayMenu.Add()
     A_TrayMenu.Add("Mode: cycle", (*) => SetMode("cycle"))
     A_TrayMenu.Add("Mode: smart (default)", (*) => SetMode("smart"))
+    A_TrayMenu.Add("Mode: writer (Sanskrit Writer–style)", (*) => SetMode("writer"))
     A_TrayMenu.Add("Mode: deadkey", (*) => SetMode("deadkey"))
     A_TrayMenu.Add()
+    A_TrayMenu.Add("Profile: IAST classic", (*) => UseClassicProfile())
+    A_TrayMenu.Add("Profile: Writer-scheme", (*) => UseWriterProfile())
+    A_TrayMenu.Add()
+    A_TrayMenu.Add("Toggle script mode IAST⇄Deva (Ctrl+Alt+D)", (*) => ToggleScriptMode())
+    A_TrayMenu.Add("Clipboard → script mode (Ctrl+Alt+V)", (*) => ConvertToScriptMode())
     A_TrayMenu.Add("Reload config (F6)", (*) => LoadAll())
     A_TrayMenu.Add("Toggle teaching HUD (F7)", (*) => ToggleHud())
     A_TrayMenu.Add("Open configs folder", (*) => Run('explorer.exe "' A_ScriptDir '\..\configs"'))
@@ -375,6 +476,7 @@ BuildTray() {
     A_TrayMenu.Add("Clipboard → IAST (auto scheme)", (*) => ConvertClipboard("iast", "auto"))
     A_TrayMenu.Add("Clipboard → Cologne Simple Search (Ctrl+Alt+C)", (*) => OpenCologneSearch())
     A_TrayMenu.Add("Clipboard headword check (Ctrl+Alt+S)", (*) => CheckClipboardHeadword())
+    A_TrayMenu.Add("Clipboard → MW gloss page (Ctrl+Alt+G)", (*) => OpenCologneGloss())
     A_TrayMenu.Add()
     A_TrayMenu.Add("Exit", (*) => ExitApp())
 }
@@ -389,13 +491,16 @@ EditAllowList() {
 SetMode(m) {
     global Mode
     Mode := m
+    if (m = "writer" || m = "smart")
+        InitSmartPairs(m)
     A_IconTip := StatusTip()
-    TrayTip("KeySwap 2.1", "Mode: " m, "Iconi")
+    TrayTip("KeySwap 2.6", "Mode: " m, "Iconi")
 }
 
 StatusTip() {
-    global StatusText, Mode
-    return StatusText != "" ? StatusText : ("KeySwap 2.1 | " Mode)
+    global StatusText, Mode, ScriptMode
+    base := StatusText != "" ? StatusText : ("KeySwap 2.6 | " Mode)
+    return base " | script=" ScriptMode
 }
 
 ConfigLabel(path) {

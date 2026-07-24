@@ -23,9 +23,11 @@ final class AppModel: ObservableObject {
     @Published var status: String = "Starting…"
     @Published var trusted: Bool = false
     @Published var smartOn: Bool = true
+    /// Target script for convert-to-mode (IAST ⇄ Devanāgarī), like Sanskrit Writer output toggle.
+    @Published var scriptModeIsDeva: Bool = false
 
     private(set) var engine: CycleEngine
-    let smart = SmartTables.default
+    var smart: SmartTables = .default
     var lastForm: String = ""
     /// Previous letter for digraph smart mode (aa, sh, …)
     var prevLetter: String = ""
@@ -35,6 +37,7 @@ final class AppModel: ObservableObject {
     }
 
     func reloadEngine() {
+        smart = SmartTables.forProfile(profile.rawValue)
         if let url = Bundle.main.url(forResource: profile.rawValue, withExtension: "txt"),
            let eng = try? CycleEngine.load(url: url) {
             engine = eng
@@ -53,6 +56,12 @@ final class AppModel: ObservableObject {
             engine = (try? CycleEngine.parse(text: Self.embeddedClassic))!
             status = "KeySwap \(KeySwapVersion.current) · embedded classic"
         }
+    }
+
+    func toggleScriptMode() {
+        scriptModeIsDeva.toggle()
+        let label = scriptModeIsDeva ? "Devanāgarī" : "IAST"
+        status = "Script mode: \(label) — convert clipboard to apply"
     }
 
     static let embeddedClassic = """
@@ -111,10 +120,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem.separator())
+        menu.addItem(withTitle: "Toggle script mode IAST⇄Deva", action: #selector(toggleScriptMode), keyEquivalent: "d")
+        menu.addItem(withTitle: "Clipboard → script mode", action: #selector(clipToScriptMode), keyEquivalent: "v")
         menu.addItem(withTitle: "Clipboard → IAST (auto scheme)", action: #selector(clipToIast), keyEquivalent: "i")
         menu.addItem(withTitle: "Clipboard → Devanāgarī", action: #selector(clipToDeva), keyEquivalent: "=")
         menu.addItem(withTitle: "Clipboard → Cologne Simple Search", action: #selector(clipCologne), keyEquivalent: "c")
         menu.addItem(withTitle: "Clipboard headword check (Cologne)", action: #selector(clipHeadwordCheck), keyEquivalent: "k")
+        menu.addItem(withTitle: "Clipboard → MW gloss page", action: #selector(clipGloss), keyEquivalent: "g")
         menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: "Open Accessibility Settings", action: #selector(openAccessibility), keyEquivalent: "")
         menu.addItem(withTitle: "Quit KeySwap \(KeySwapVersion.current)", action: #selector(quit), keyEquivalent: "q")
@@ -123,6 +135,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func clipToIast() { runConvert(to: "iast") }
     @objc private func clipToDeva() { runConvert(to: "deva") }
+    @objc private func toggleScriptMode() { model.toggleScriptMode() }
+    @objc private func clipToScriptMode() {
+        runConvert(to: model.scriptModeIsDeva ? "deva" : "iast")
+    }
+    @objc private func clipGloss() {
+        let script = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("typing_check.py")
+        guard FileManager.default.fileExists(atPath: script.path) else {
+            model.status = "typing_check.py not found"
+            return
+        }
+        let src = NSPasteboard.general.string(forType: .string) ?? ""
+        let proc = Process()
+        proc.executableURL = URL(fileURLWithPath: "/usr/bin/python3")
+        proc.arguments = [script.path, "--from", "auto", "--dict", "mw", "--no-verify", "--open-gloss", "--hud", src]
+        do {
+            try proc.run()
+            model.status = "Opened Cologne webtc gloss"
+        } catch {
+            model.status = "gloss open failed: \(error.localizedDescription)"
+        }
+    }
     @objc private func clipCologne() {
         let script = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
