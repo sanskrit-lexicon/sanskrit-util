@@ -1,0 +1,9 @@
+{
+  "id": "offline_fuzzy",
+  "title": "Offline fuzzy headword index",
+  "version": "0.1.0",
+  "never_autoload": true,
+  "v3_item": "V3-2",
+  "entry": "fuzzy_lookup:lookup",
+  "data_note": "SQLite / full MW key1 pack not vendored; scaffold API only until a follow-up implements the index"
+}
