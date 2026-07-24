@@ -52,6 +52,70 @@ _SMART_DEFAULT: list[tuple[str, str]] = [
     ("DD", "Ḍ"),
 ]
 
+# Sanskrit Writer–style: “draw” diacritic top→bottom then letter
+# (Auroville SRI scheme; also used by Bhasha “IAST Simplified”).
+_WRITER_SCHEME: list[tuple[str, str]] = [
+    # macron / long vowels: -a → ā
+    ("-a", "ā"),
+    ("-i", "ī"),
+    ("-u", "ū"),
+    ("-A", "Ā"),
+    ("-I", "Ī"),
+    ("-U", "Ū"),
+    # tilde: ~n → ñ, ~m → ṃ (common SW-adjacent)
+    ("~n", "ñ"),
+    ("~N", "Ñ"),
+    ("~m", "ṃ"),
+    ("~M", "Ṃ"),
+    # acute / apostrophe: 's → ś
+    ("'s", "ś"),
+    ("'S", "Ś"),
+    # underdot after letter: h. → ḥ (SW “h.”)
+    ("h.", "ḥ"),
+    ("H.", "Ḥ"),
+    ("r.", "ṛ"),
+    ("R.", "Ṛ"),
+    ("l.", "ḷ"),
+    ("L.", "Ḷ"),
+    ("m.", "ṃ"),
+    ("M.", "Ṃ"),
+    ("n.", "ṇ"),
+    ("N.", "Ṇ"),
+    ("t.", "ṭ"),
+    ("T.", "Ṭ"),
+    ("d.", "ḍ"),
+    ("D.", "Ḍ"),
+    ("s.", "ṣ"),
+    ("S.", "Ṣ"),
+    # underdot before letter (alternate order)
+    (".h", "ḥ"),
+    (".H", "Ḥ"),
+    (".r", "ṛ"),
+    (".R", "Ṛ"),
+    (".l", "ḷ"),
+    (".L", "Ḷ"),
+    (".m", "ṃ"),
+    (".M", "Ṃ"),
+    (".n", "ṇ"),
+    (".N", "Ṇ"),
+    (".t", "ṭ"),
+    (".T", "Ṭ"),
+    (".d", "ḍ"),
+    (".D", "Ḍ"),
+    (".s", "ṣ"),
+    (".S", "Ṣ"),
+    # keep classic doubles too
+    ("aa", "ā"),
+    ("ii", "ī"),
+    ("uu", "ū"),
+    ("rr", "ṛ"),
+    ("ll", "ḷ"),
+    ("sh", "ś"),
+    ("ss", "ṣ"),
+    ("ng", "ṅ"),
+    ("ny", "ñ"),
+]
+
 
 @dataclass(frozen=True)
 class SmartTables:
@@ -64,6 +128,27 @@ class SmartTables:
         # longest keys first
         pairs = tuple(sorted(_SMART_DEFAULT, key=lambda kv: (-len(kv[0]), kv[0])))
         return cls(pairs=pairs)
+
+    @classmethod
+    def writer(cls) -> "SmartTables":
+        """Sanskrit Writer–style top-to-bottom digraphs (+ classic doubles)."""
+        # de-dupe while preserving first occurrence
+        seen: set[str] = set()
+        raw: list[tuple[str, str]] = []
+        for src, dst in _WRITER_SCHEME + _SMART_DEFAULT:
+            if src in seen:
+                continue
+            seen.add(src)
+            raw.append((src, dst))
+        pairs = tuple(sorted(raw, key=lambda kv: (-len(kv[0]), kv[0])))
+        return cls(pairs=pairs)
+
+    @classmethod
+    def for_profile(cls, name: str) -> "SmartTables":
+        n = (name or "").lower().replace("_", "-")
+        if "writer" in n:
+            return cls.writer()
+        return cls.default()
 
     def apply(self, text_before_caret: str) -> tuple[str, bool]:
         t = _nfc(text_before_caret)

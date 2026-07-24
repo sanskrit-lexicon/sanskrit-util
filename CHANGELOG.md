@@ -5,6 +5,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **tools/KeySwap 2.6** (`2.6.0`) — beat-Sanskrit-Writer roadmap (all five):
+  1. **Writer-scheme** profile + digraphs (`-a` for long a, `~n`, `'s`, `h.`)
+  2. **Script mode** Ctrl+Alt+D / V (IAST / Devanagari clipboard)
+  3. **Gloss** Ctrl+Alt+G / `--open-gloss` opens Cologne webtc full entry
+  4. **One install** `packaging/install-windows.ps1`, `install-macos.sh`, INSTALL.md
+  5. README landing blurb + comparison table vs Sanskrit Writer
+
 ## [0.8.3] - 2026-07-24
 
 ### Added

@@ -41,6 +41,7 @@ from cologne_search import (  # noqa: E402
     fetch_results_detailed,
     format_api_error,
     prepare,
+    webtc_url,
 )
 from dcs_freq import dcs_freq_enabled, freq_of  # noqa: E402
 from local_wordlist import get_wordlist, lookup, wordlist_label  # noqa: E402
@@ -62,6 +63,7 @@ class TypingCheck:
     source: str = ""  # "api" | "local" | "keys" | ""
     dcs_n: int | None = None  # DCS-2026 token count when --dcs-freq
     freq_source: str = ""  # server freq_source or "local-dcs"
+    gloss_url: str = ""  # Cologne webtc deep-link for full entry/gloss
 
     def hud_line(self, *, max_hits: int = 3) -> str:
         """One short line for tray ToolTip / status bar."""
@@ -69,6 +71,7 @@ class TypingCheck:
         dcs = ""
         if self.dcs_n is not None and self.dcs_n >= 0:
             dcs = f"  ·  dcs={self.dcs_n}"
+        gloss = "  ·  Ctrl+Alt+G" if self.known and self.gloss_url else ""
         if self.error and self.known is None:
             # Keep rate-limit message short and actionable (no slp1 clutter)
             if self.error.startswith("rate-limited"):
@@ -78,10 +81,16 @@ class TypingCheck:
             return f"· {q}  ·  slp1={self.slp1}  norm={self.normkey}{dcs}"
         if self.known:
             if self.source == "local":
-                return f"✓ {q}  ·  local ({self.dict})  ·  {wordlist_label()}{dcs}"
+                return (
+                    f"✓ {q}  ·  local ({self.dict})  ·  "
+                    f"{wordlist_label()}{dcs}{gloss}"
+                )
             sample = ", ".join(self.top[:max_hits])
             extra = f" +{self.n_hits - max_hits}" if self.n_hits > max_hits else ""
-            return f"✓ {q}  ·  {self.dict} {self.n_hits} hit(s): {sample}{extra}{dcs}"
+            return (
+                f"✓ {q}  ·  {self.dict} {self.n_hits} hit(s): "
+                f"{sample}{extra}{dcs}{gloss}"
+            )
         if self.source == "local":
             if self.error and self.error.startswith("rate-limited"):
                 return f"? {q}  ·  {self.error}"
@@ -120,6 +129,13 @@ def _attach_dcs(result: TypingCheck, *, dcs: bool) -> TypingCheck:
     return result
 
 
+def _attach_gloss(result: TypingCheck) -> TypingCheck:
+    """Add Cologne webtc deep-link when we have an SLP1 key."""
+    if result.slp1 and result.known is not False:
+        result.gloss_url = webtc_url(result.slp1, dict_code=result.dict or "mw")
+    return result
+
+
 def _local_result(
     query: str,
     q,
@@ -145,7 +161,7 @@ def _local_result(
         error="" if hit else (api_error or ""),
         source="local",
     )
-    return _attach_dcs(r, dcs=dcs)
+    return _attach_gloss(_attach_dcs(r, dcs=dcs))
 
 
 def check_word(
@@ -207,7 +223,7 @@ def check_word(
             dict=dict_code.lower(),
             source="keys",
         )
-        return _attach_dcs(r, dcs=dcs)
+        return _attach_gloss(_attach_dcs(r, dcs=dcs))
 
     if local_only:
         local = _local_result(
@@ -253,7 +269,7 @@ def check_word(
                 dcs_n=dcs_n if dcs_n is not None else None,
                 freq_source=str(meta.get("freq_source") or "local-dcs"),
             )
-            return r
+            return _attach_gloss(r)
         hits = fetch_results(q, timeout=timeout, dcs_freq=False)
     except Exception as e:  # noqa: BLE001 — surface any network/parse failure to HUD
         api_err = format_api_error(e)
@@ -297,7 +313,7 @@ def check_word(
         dict=dict_code.lower(),
         source="api",
     )
-    return _attach_dcs(r, dcs=dcs)
+    return _attach_gloss(_attach_dcs(r, dcs=dcs))
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -336,6 +352,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--hud", action="store_true", help="print one-line HUD status only")
     ap.add_argument("--json", action="store_true", help="print JSON result")
     ap.add_argument("--open-if-unknown", action="store_true", help="open Simple Search if unknown")
+    ap.add_argument(
+        "--open-gloss",
+        action="store_true",
+        help="open Cologne webtc full-entry (gloss) page for the key",
+    )
     args = ap.parse_args(argv)
 
     text = " ".join(args.text) if args.text else sys.stdin.read()
@@ -376,6 +397,11 @@ def main(argv: list[str] | None = None) -> int:
 
         q = prepare(result.query, scheme=args.frm, dict_code=args.dict)
         webbrowser.open(q.ui_url)
+
+    if args.open_gloss and result.gloss_url:
+        import webbrowser
+
+        webbrowser.open(result.gloss_url)
 
     if result.error == "empty":
         return 2

@@ -124,6 +124,7 @@ public struct CycleEngine: Sendable {
 /// Bundled profile names used by the Apple apps.
 public enum KeySwapProfile: String, CaseIterable, Sendable, Identifiable {
     case iastClassic = "iast-classic"
+    case writerScheme = "writer-scheme"
     case iso15919 = "iso15919"
     case vedicDraft = "vedic-draft"
     case vedicSvara = "vedic-svara"
@@ -134,6 +135,7 @@ public enum KeySwapProfile: String, CaseIterable, Sendable, Identifiable {
     public var displayName: String {
         switch self {
         case .iastClassic: return "IAST classic"
+        case .writerScheme: return "Writer-scheme (SW-style)"
         case .iso15919: return "ISO 15919"
         case .vedicDraft: return "Vedic draft"
         case .vedicSvara: return "Vedic svara"

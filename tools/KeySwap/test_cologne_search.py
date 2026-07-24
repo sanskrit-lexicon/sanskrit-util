@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 
-from cologne_search import dalnorm_normalize, prepare, to_slp1
+from cologne_search import dalnorm_normalize, prepare, to_slp1, webtc_url
 
 
 class TestDalnorm(unittest.TestCase):
@@ -68,6 +68,14 @@ class TestPrepare(unittest.TestCase):
         # śiva → Siva in SLP1
         self.assertIn("S", q.slp1)
         self.assertEqual(q.cologne_input, "hk")
+
+
+class TestWebtc(unittest.TestCase):
+    def test_mw_gloss_url(self):
+        u = webtc_url("rAma", dict_code="mw")
+        self.assertIn("MWScan", u)
+        self.assertIn("getword.php", u)
+        self.assertIn("key=rAma", u)
 
 
 if __name__ == "__main__":
