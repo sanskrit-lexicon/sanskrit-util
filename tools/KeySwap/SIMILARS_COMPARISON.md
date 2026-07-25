@@ -1,7 +1,7 @@
 # KeySwap vs similar tools (web survey)
 
-_Created: 23-07-2026 · Last updated: 24-07-2026_  
-_Survey: 23-07-2026 · Refresh: 24-07-2026 (post V3-2/V3-7 + product tiers) · Model: Grok 4.5 (`grok-4.5`)_
+_Created: 23-07-2026 · Last updated: 25-07-2026_  
+_Survey: 23-07-2026 · Refresh: 24-07-2026 (post V3-2/V3-7 + product tiers) · 25-07-2026 (post 2.9 residual, H1638) · Model: Grok 4.5 (`grok-4.5`); H1638 update: Fable 5 (`claude-fable-5`)_
 
 **Roadmap:** [ROADMAP_KEYSWAP_V2_V3.md](ROADMAP_KEYSWAP_V2_V3.md) — **v2 free/portable** · **v3 heavy open** · **v4 paid full** (Mac/iOS advanced).  
 **Architecture (v3 plugins):** [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md).
@@ -44,7 +44,7 @@ on **script matrix/OCR**; Keyman on **system IME**. Closing those gaps is staged
 | EasyUnicode (Unebe) | Option layout | Mac | Free, layout only | Ecosystem link-out |
 | Heidelberg Input Solution | IAST via Keyman | Multi | Free+Keyman stack | Link-out; never dual-hook default |
 | SIL Indic Roman | Roman diacritics (Keyman) | Multi | Free+Keyman | Same |
-| SanskritTypist (2025) | Long-press + `aa`→ā + Deva | iOS | App Store keyboard | We have smart digraphs + iOS long-press scaffold; **parity gaps** (Writer digraphs, polish) → v2.9 / **v4 Apple** |
+| SanskritTypist (2025) | Long-press + `aa`→ā + Deva | iOS | App Store keyboard | We have smart digraphs + iOS long-press scaffold; Writer-digraph parity **shipped v2.9**; App-Store-quality polish → **v4 Apple** |
 | Sanskrit Writer (SRI) | Gesture / multi-output + **forms dict** | Desktop (Mac-focused) | Product app | Writer-scheme + script mode + Cologne gloss; **no forms DB** until **v4** (v3 parks sibling design) |
 | ArshaDrishti | Dual Deva + IAST layout | Mac | Layout bundle | Classroom / ecosystem link |
 
@@ -76,13 +76,13 @@ Legend: **Y** = shipped default or easy path · **P** = opt-in plugin · **L** =
 |------------|-------------|-----|-----|-----|--------------|-----------|
 | `=` cycle | **Y** | Y | Y | Y | Keyswap, Lexilogos | — |
 | Smart digraphs | **Y** | Y | Y | Y | SanskritTypist | — |
-| Writer-scheme digraphs | **Y** | Y | partial | partial | Sanskrit Writer | **v2.9** Apple parity |
+| Writer-scheme digraphs | **Y** | Y | partial | **Y** 2.9 | Sanskrit Writer | — |
 | Long-press menus | **Y** | — | — | Y/PWA | SanskritTypist | polish **v4** |
 | Dead-key / layout path | docs + AHK | Y | docs | — | ABC Extended, EasyUnicode | classroom **v2** |
 | Non-US cycle trigger | **Y** 2.8 | Y | env | PWA | PE comments | — |
 | HK/ITRANS/Velthuis → IAST | **Y** | Y | Y* | Y* | Sanscript | — |
-| IAST ↔ Deva (clipboard / mode) | **Y** | Y | Y* | partial | SW, Typist | live type-out **v2.9** |
-| Live Deva type-out (not only clipboard) | — | — | — | — | SW / Typist | **v2.9** opt-in |
+| IAST ↔ Deva (clipboard / mode) | **Y** | Y | Y* | partial | SW, Typist | — |
+| Live Deva type-out (not only clipboard) | **P** 2.9 (Win) | **P** 2.9 | — | — | SW / Typist | Mac/iOS parked — see ROADMAP 2.9 notes |
 | Cologne search / gloss | **Y** | Y | Y* | Y* | Browser Cologne | Mac UX polish **v4** |
 | Offline headword seed | **Y** 2.4 | Y | Y* | — | SW local (different) | — |
 | Offline fuzzy / full MW index | **P** V3-2 | Y | Y* | — | SW local dict | full pack **v3** |
@@ -115,12 +115,12 @@ Legend: **Y** = shipped default or easy path · **P** = opt-in plugin · **L** =
 | Keyman keyboards | Coexist; do not dual-hook | **Met** (docs + ecosystem link) |
 | Browser converters | Keep portable convert path | **Met** (`scheme_bridge` / PWA) |
 
-**v2 residual (must finish for “best free portable typing companion”):**
+**v2 residual — closed 25-07-2026 (H1638):**
 
-1. **#7** iOS long-press ↔ Writer digraphs parity  
-2. **#8** Opt-in live Deva type-out (off by default)  
-3. Portable packaging hygiene (one zip / one script; PE vs AHK still clear)  
-4. Keep default Startup free of plugins  
+1. **#7** iOS long-press ↔ Writer digraphs parity — **shipped**  
+2. **#8** Opt-in live Deva type-out (off by default) — **shipped on Windows** (selection-in-place, `Ctrl+Alt+Shift+D`); Mac/iOS parked with reason  
+3. Portable packaging hygiene (one zip / one script; PE vs AHK still clear) — **audited, already clean**  
+4. Keep default Startup free of plugins — **held** (nothing in this pass touches default Startup)  
 
 ---
 
@@ -156,9 +156,9 @@ v3 = **heavier open toolkit**, still **not maximum**.
 
 | Platform | Today | v2 free portable | v3 free heavy | v4 paid |
 |----------|--------|------------------|---------------|---------|
-| **Windows** | Flagship AHK tray + Python helpers | Polish portable install; residual #7–#8 where applicable | Plugins wired behind opt-in tray | Optional paid pack installer |
+| **Windows** | Flagship AHK tray + Python helpers | Portable install audited; #7–#8 shipped 2.9 | Plugins wired behind opt-in tray | Optional paid pack installer |
 | **Mac** | Menu-bar cycle/smart; Accessibility | Improve install script; env triggers | Same Python plugins if PATH set | **Notarized app**, full tray parity, advanced UX |
-| **iOS** | Keyboard scaffold + long-press | Writer digraph parity | Limited (sandbox) | **App Store** keyboard + host; advanced features |
+| **iOS** | Keyboard scaffold + long-press | Writer digraph parity **shipped 2.9** | Limited (sandbox) | **App Store** keyboard + host; advanced features |
 
 ---
 
@@ -166,7 +166,7 @@ v3 = **heavier open toolkit**, still **not maximum**.
 
 | Capability gap | Owner version |
 |----------------|---------------|
-| Residual light UX (#7, #8), portable free story | **v2.9** |
+| Residual light UX (#7, #8), portable free story | **v2.9** (shipped) |
 | Offline fuzzy pack, network autocomplete, link-out sidecars | **v3** (partly shipped) |
 | Morphology/forms, advanced Mac/iOS, paid SKU, signed builds | **v4** |
 

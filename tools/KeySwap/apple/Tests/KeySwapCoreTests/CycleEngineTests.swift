@@ -45,7 +45,21 @@ final class CycleEngineTests: XCTestCase {
         XCTAssertEqual(eng.longPressMenu(for: "n"), ["n", "ṇ", "ṅ", "ñ"])
     }
 
+    func testForProfileSelectsWriterTable() {
+        XCTAssertEqual(SmartTables.forProfile("writer-scheme").pairs.count, SmartTables.writer.pairs.count)
+        XCTAssertEqual(SmartTables.forProfile("iast-classic").pairs.count, SmartTables.default.pairs.count)
+    }
+
+    func testWriterProfileDigraphParity() {
+        let (t, ok) = SmartTables.forProfile("writer-scheme").apply(to: "r-a")
+        XCTAssertTrue(ok)
+        XCTAssertEqual(t, "rā")
+        let (t2, ok2) = SmartTables.forProfile("writer-scheme").apply(to: "s.")
+        XCTAssertTrue(ok2)
+        XCTAssertEqual(t2, "ṣ")
+    }
+
     func testVersion() {
-        XCTAssertEqual(KeySwapVersion.current, "2.3.0")
+        XCTAssertEqual(KeySwapVersion.current, "2.9.0")
     }
 }

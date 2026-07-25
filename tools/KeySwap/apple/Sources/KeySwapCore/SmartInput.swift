@@ -79,5 +79,5 @@ public extension CycleEngine {
 }
 
 public enum KeySwapVersion {
-    public static let current = "2.7.0"
+    public static let current = "2.9.0"
 }

@@ -1,4 +1,4 @@
-; KeySwap 2.8 for Windows — AutoHotkey v2
+; KeySwap 2.9 for Windows — AutoHotkey v2
 ; MIT — sanskrit-util tools/KeySwap
 ;
 ; Modes: cycle | smart (default) | deadkey | writer (Writer-scheme digraphs)
@@ -14,6 +14,7 @@
 ;   ^!h               clipboard HK/ITRANS/auto → IAST
 ;   ^!d               toggle script mode (IAST ⇄ Devanāgarī)
 ;   ^!v               clipboard → current script mode
+;   ^!+d              selection → Devanāgarī, pasted in place (opt-in; select text first)
 ;   ^!c               open Cologne Simple Search for clipboard (auto scheme)
 ;   ^!s               light headword check (Cologne API → HUD)
 ;   ^!g               open Cologne webtc full entry / gloss for clipboard
@@ -78,6 +79,7 @@ Loop Parse "-~.'" {
 ^!h:: ConvertClipboard("iast", "auto")  ; scheme auto → IAST
 ^!d:: ToggleScriptMode()
 ^!v:: ConvertToScriptMode()
+^!+d:: ConvertSelectionInPlace("deva", "auto")
 ^!c:: OpenCologneSearch()
 ^!s:: CheckClipboardHeadword()
 ^!g:: OpenCologneGloss()
@@ -417,7 +419,7 @@ LoadAll() {
     LoadAllowList()
     ConfigMTime := FileGetTime(ConfigPath, "M")
     al := AllowList.Length ? (AllowList.Length " apps") : "all apps"
-    StatusText := "KeySwap 2.7 | " Mode " | " ConfigLabel(ConfigPath) " | " Chains.Length " chains | " al
+    StatusText := "KeySwap 2.9 | " Mode " | " ConfigLabel(ConfigPath) " | " Chains.Length " chains | " al
     A_IconTip := StatusTip()
     ShowHud("Reloaded · " al)
 }
@@ -491,6 +493,55 @@ ConvertClipboard(to, frm) {
     } else {
         MsgBox("Convert failed (Python + sanskrit-util py/ required).", "KeySwap 2.1", "Iconx")
     }
+}
+
+; Live, in-place conversion of the current text selection — no manual
+; copy → convert → switch-app → paste round trip. Off by default: nothing
+; happens unless the user selects text and presses the hotkey/tray item.
+ConvertSelectionInPlace(to, frm) {
+    if !AppAllowed()
+        return
+    saved := ClipboardAll()
+    A_Clipboard := ""
+    SendInput("^c")
+    if !ClipWait(0.5) {
+        A_Clipboard := saved
+        ShowHud("nothing selected")
+        return
+    }
+    src := A_Clipboard
+    out := ConvertTextViaBridge(src, to, frm)
+    if (out = "") {
+        A_Clipboard := saved
+        ShowHud("live convert failed (Python + sanskrit-util py/ required)")
+        return
+    }
+    A_Clipboard := out
+    SendInput("^v")
+    Sleep(80)
+    A_Clipboard := saved
+    ShowHud("selection → " to)
+}
+
+; Same bridge as ConvertClipboard, but on explicit text — never touches A_Clipboard.
+ConvertTextViaBridge(text, to, frm) {
+    py := "python"
+    script := A_ScriptDir "\..\convert_bridge.py"
+    if !FileExist(script)
+        return ""
+    tmpIn := A_Temp "\keyswap_live_in.txt"
+    tmpOut := A_Temp "\keyswap_live_out.txt"
+    try FileDelete(tmpIn)
+    try FileDelete(tmpOut)
+    FileAppend(text, tmpIn, "UTF-8")
+    ps := Format(
+        "$in = Get-Content -Raw -Encoding UTF8 '{1}'; $in | & {2} '{3}' --from {4} --to {5} | Set-Content -Encoding UTF8 -NoNewline '{6}'",
+        tmpIn, py, script, frm, to, tmpOut
+    )
+    RunWait('powershell -NoProfile -Command ' ps, , "Hide")
+    if FileExist(tmpOut)
+        return FileRead(tmpOut, "UTF-8")
+    return ""
 }
 
 ToggleHud() {
@@ -629,8 +680,8 @@ OpenUrl(url) {
 BuildTray() {
     global TriggerId
     A_TrayMenu.Delete()
-    A_TrayMenu.Add("KeySwap 2.8", (*) => 0)
-    A_TrayMenu.Disable("KeySwap 2.8")
+    A_TrayMenu.Add("KeySwap 2.9", (*) => 0)
+    A_TrayMenu.Disable("KeySwap 2.9")
     A_TrayMenu.Add()
     A_TrayMenu.Add("Mode: cycle", (*) => SetMode("cycle"))
     A_TrayMenu.Add("Mode: smart (default)", (*) => SetMode("smart"))
@@ -663,6 +714,7 @@ BuildTray() {
     A_TrayMenu.Add()
     A_TrayMenu.Add("Clipboard → Devanagari", (*) => ConvertClipboard("deva", "auto"))
     A_TrayMenu.Add("Clipboard → IAST (auto scheme)", (*) => ConvertClipboard("iast", "auto"))
+    A_TrayMenu.Add("Selection → Devanagari in place (Ctrl+Alt+Shift+D)", (*) => ConvertSelectionInPlace("deva", "auto"))
     A_TrayMenu.Add("Clipboard → Cologne Simple Search (Ctrl+Alt+C)", (*) => OpenCologneSearch())
     A_TrayMenu.Add("Clipboard headword check (Ctrl+Alt+S)", (*) => CheckClipboardHeadword())
     A_TrayMenu.Add("Clipboard → MW gloss page (Ctrl+Alt+G)", (*) => OpenCologneGloss())
@@ -712,7 +764,7 @@ SetMode(m) {
 
 StatusTip() {
     global StatusText, Mode, ScriptMode, TriggerId, TriggerChar
-    base := StatusText != "" ? StatusText : ("KeySwap 2.8 | " Mode)
+    base := StatusText != "" ? StatusText : ("KeySwap 2.9 | " Mode)
     return base " | script=" ScriptMode " | trig=" TriggerId "(" TriggerChar ")"
 }
 
