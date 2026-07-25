@@ -1,7 +1,7 @@
 # KeySwap v3 — plugin / sibling architecture
 
-_Created: 24-07-2026 · Last updated: 24-07-2026_  
-_Handoff: [H1581](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1581-Sonnet_sanskrit-util_keyswap-v3-former-skips-heavy-wave_24.07.26.md) · [H1583](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1583-Sonnet_sanskrit-util_keyswap-v3-7-network-autocomplete_24.07.26.md) · Model: Grok 4.5 (`grok-4.5`)_  
+_Created: 24-07-2026 · Last updated: 25-07-2026_  
+_Handoff: [H1581](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1581-Sonnet_sanskrit-util_keyswap-v3-former-skips-heavy-wave_24.07.26.md) · [H1583](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1583-Sonnet_sanskrit-util_keyswap-v3-7-network-autocomplete_24.07.26.md) · [H1639](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1639-Sonnet_sanskrit-util_keyswap-v3-free-heavy-residual_25.07.26.md) · Model: Grok 4.5 (`grok-4.5`); H1639 update: Sonnet 5 (`claude-sonnet-5`)_  
 _Roadmap: [ROADMAP_KEYSWAP_V2_V3.md](../ROADMAP_KEYSWAP_V2_V3.md) · Peers: [SIMILARS_COMPARISON.md](../SIMILARS_COMPARISON.md)_
 
 ## Hard principle
@@ -90,12 +90,12 @@ tools/KeySwap/plugins/
 
 | ID | Capability | External dep | Ship form | Default path |
 |----|------------|--------------|-----------|--------------|
-| **V3-1** | Full script matrix | [Aksharamukha](https://aksharamukha.com/) (or embed) | Sidecar / optional Python dep; else Ecosystem URL | Link-out only until opt-in module |
+| **V3-1** | Full script matrix | [Aksharamukha](https://www.aksharamukha.com/converter) (or embed) | Sidecar / optional Python dep; else Ecosystem URL | **Link-out shipped** (tray "Ecosystem" ▸ "Aksharamukha") until an opt-in module exists |
 | **V3-2** | Offline fuzzy / full MW index | MW key1 export, optional hwnorm1c-class DB | Optional data pack + plugin code | Seed list stays core; full index = plugin |
 | **V3-3** | Keyman-class IME | [Keyman](https://keyman.com/) | Dual-install docs; thin bridge if ever | Never dual-hook with KeySwap default |
-| **V3-4** | OCR | Aksharamukha OCR / other | Link-out or sibling | Link-out |
-| **V3-5** | TTS | e.g. SRI TTS | Link-out | Link-out |
-| **V3-6** | Heritage segmenter | [Sanskrit Heritage](https://sanskrit.inria.fr/) | Microservice / link-out | Link-out |
+| **V3-4** | OCR | [Aksharamukha's own OCR upload](https://www.aksharamukha.com/converter) — same converter page as V3-1, not a separate tool | Link-out (no separate integration needed) | **Link-out shipped** — same tray "Aksharamukha" entry covers both |
+| **V3-5** | TTS | [Sanskrit Text-to-Speech (SRI Auroville)](https://sri.auroville.org/projects/sanskrit-text-to-speech/) | Link-out | **Link-out shipped** (tray "Ecosystem" ▸ "Sanskrit Text-to-Speech") — the former "e.g. SRI TTS" placeholder in SIMILARS_COMPARISON.md now names a concrete tool |
+| **V3-6** | Heritage segmenter | [Sanskrit Heritage](https://sanskrit.inria.fr/) | Microservice / link-out | **Link-out shipped** (tray "Ecosystem" ▸ "Sanskrit Heritage segmenter") |
 | **V3-7** | Network autocomplete | Cologne API (or other) | **shipped** opt-in plugin after V3-2 | Off by default; offline-first cascade |
 | **V3-8** | Morphology / forms dict | SW-class lexical DB | **Sibling app** (“compose companion”) | Not a KeySwap plugin load |
 
@@ -155,6 +155,9 @@ later packs per the table above.
 | `plugins/` discovery + `offline_fuzzy` scaffold | **shipped** (H1581) |
 | Fuzzy index (exact/prefix/edit) + `typing_check --plugin` | **shipped** |
 | V3-7 `network_autocomplete` offline-first cascade | **shipped** (H1583) |
-| V3-8 sibling app | **parked** (design-only pointer in ROADMAP) |
+| V3-8 sibling app | **parked** (design-only pointer in ROADMAP; owned by v4, child C3) |
+| Tray opt-in (Windows menu + Mac status-bar menu) for V3-2/V3-7 | **shipped** (H1639) — `plugins/tray_state.py` persistence, `$env:KEYSWAP_PLUGINS` handoff, still off by default |
+| Full-MW pack docs (offline_fuzzy README) | **shipped** (H1639) |
+| V3-1/V3-4/V3-5/V3-6 link-out polish (accurate URLs in tray + docs) | **shipped** (H1639) |
 
 _Dr. Mārcis Gasūns_

@@ -1,7 +1,7 @@
 # KeySwap vs similar tools (web survey)
 
 _Created: 23-07-2026 · Last updated: 25-07-2026_  
-_Survey: 23-07-2026 · Refresh: 24-07-2026 (post V3-2/V3-7 + product tiers) · 25-07-2026 (post 2.9 residual, H1638) · Model: Grok 4.5 (`grok-4.5`); H1638 update: Fable 5 (`claude-fable-5`)_
+_Survey: 23-07-2026 · Refresh: 24-07-2026 (post V3-2/V3-7 + product tiers) · 25-07-2026 (post 2.9 residual, H1638; post V3 tray/link-out residual, H1639) · Model: Grok 4.5 (`grok-4.5`); H1638 update: Fable 5 (`claude-fable-5`); H1639 update: Sonnet 5 (`claude-sonnet-5`)_
 
 **Roadmap:** [ROADMAP_KEYSWAP_V2_V3.md](ROADMAP_KEYSWAP_V2_V3.md) — **v2 free/portable** · **v3 heavy open** · **v4 paid full** (Mac/iOS advanced).  
 **Architecture (v3 plugins):** [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md).
@@ -64,7 +64,7 @@ on **script matrix/OCR**; Keyman on **system IME**. Closing those gaps is staged
 | Offline fuzzy / full MW list | Seed + opt-in full wordlist | **v2** seed · **v3** `offline_fuzzy` plugin |
 | Network autocomplete | Offline-first then Cologne | **v3** `network_autocomplete` (opt-in) |
 | SW forms / morphology DB | Product-sized | **v4** paid (v3 design-only / sibling) |
-| Sanskrit Heritage segmenter | Grammar engine | **v3** link-out/service · **v4** integrated if paid product needs it |
+| Sanskrit Heritage segmenter | Grammar engine | **v3** link-out (tray "Ecosystem" ▸ Sanskrit Heritage segmenter, shipped H1639) · **v4** integrated if paid product needs it |
 
 ---
 
@@ -94,11 +94,11 @@ Legend: **Y** = shipped default or easy path · **P** = opt-in plugin · **L** =
 | `pali-lite` profile | **Y** 2.7 | Y | Y | Y | — | — |
 | Portable free install | **Y** | AHK+scripts | scripts | — | PE Keyswap | keep **v2** |
 | Full morphology / forms DB | — | — | — | — | Sanskrit Writer | **v4 paid** |
-| Full script matrix | **L** | L | L | L | Aksharamukha | embed **v3** · product **v4** |
-| OCR | **L** | L | L | L | Aksharamukha | **v3** link · **v4** if paid |
-| TTS | **L** | L | L | L | SRI TTS etc. | same |
-| Heritage segmenter | **L** | L | L | L | Heritage | **v3** service · **v4** |
-| Keyman-class system IME | **L** | dual-docs | dual-docs | — | Keyman | never dual-default; bridge **v3** |
+| Full script matrix | **L** shipped | L | L | L | Aksharamukha | tray link done H1639; embed **v3** later · product **v4** |
+| OCR | **L** shipped | L | L | L | Aksharamukha (same converter page — has an OCR upload feature, not a separate tool) | tray link done H1639 (shares the Aksharamukha entry) · **v4** if paid |
+| TTS | **L** shipped | L | L | L | [Sanskrit Text-to-Speech (SRI Auroville)](https://sri.auroville.org/projects/sanskrit-text-to-speech/) | tray link done H1639 (was a vague "SRI TTS etc." placeholder; now a real URL) |
+| Heritage segmenter | **L** shipped | L | L | L | [Sanskrit Heritage](https://sanskrit.inria.fr/) | tray link done H1639 · **v4** if integrated |
+| Keyman-class system IME | **L** | dual-docs | dual-docs | — | Keyman (already linked, tray "Ecosystem" ▸ Keyman Heidelberg Input Solution) | never dual-default; bridge **v3** |
 | Signed / notarized Mac app | — | — | dev-only | — | SW, Typist | **v4 paid** |
 | App Store iOS keyboard polish | scaffold | — | — | scaffold | SanskritTypist | **v4 paid** |
 
@@ -196,6 +196,8 @@ Full backlog tables: [ROADMAP_KEYSWAP_V2_V3.md](ROADMAP_KEYSWAP_V2_V3.md).
 - [Keyman Heidelberg Input Solution](https://keyman.com/keyboards/heidelberginputsolution)  
 - [SanskritTypist](https://www.gingersunrise.com/p/sanskrit-type-devanagari-iast-iphone-ipad)  
 - [Sanskrit Writer](https://sri.auroville.org/projects/sanskrit-writer/)  
+- [Sanskrit Text-to-Speech (SRI Auroville)](https://sri.auroville.org/projects/sanskrit-text-to-speech/) — H1639, replaces the earlier "SRI TTS etc." placeholder  
+- [Sanskrit Heritage Site (INRIA)](https://sanskrit.inria.fr/) — H1639  
 - r/sanskrit typing threads (IAST setup, diacritics, Windows/Mac)
 
 _Dr. Mārcis Gasūns_

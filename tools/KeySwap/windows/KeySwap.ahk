@@ -47,10 +47,17 @@ global TriggerChar := "="
 global TriggerHotkey := "="
 global LiteralHotkey := "+="
 global TriggerHotkeysBound := false
+; V3 plugin tray opt-in (H1639) — ids the user toggled on from the Plugins
+; submenu, persisted outside the repo tree by plugins/tray_state.py. Empty =
+; none, same default-off state as never touching the tray. Never wired to any
+; default-Startup path — only CheckClipboardHeadword() reads this, and only
+; to build the same $env:KEYSWAP_PLUGINS the CLI/env path already reads.
+global EnabledPlugins := []
 
 InitSmartPairs(Mode)
 LoadAll()
 RegisterTriggerHotkeys()
+LoadPluginsState()
 BuildTray()
 CheckKeyman()
 SetTimer(WatchConfig, 2000)
@@ -87,6 +94,7 @@ Loop Parse "-~.'" {
 F6:: {
     LoadAll()
     RegisterTriggerHotkeys()
+    LoadPluginsState()
     BuildTray()
 }
 F7:: ToggleHud()
@@ -583,8 +591,11 @@ CheckClipboardHeadword() {
     try FileDelete(tmpIn)
     try FileDelete(tmpOut)
     FileAppend(A_Clipboard, tmpIn, "UTF-8")
+    ; Tray-toggled v3 plugins (H1639) ride along as $env:KEYSWAP_PLUGINS —
+    ; the same env surface typing_check.py already reads; empty when the
+    ; user has never opted in via the tray.
     ps := Format(
-        "Get-Content -Raw -Encoding UTF8 '{1}' | & {2} '{3}' --from auto --dict mw --hud --timeout 12 | Set-Content -Encoding UTF8 -NoNewline '{4}'",
+        PluginsEnvPrefix() . "Get-Content -Raw -Encoding UTF8 '{1}' | & {2} '{3}' --from auto --dict mw --hud --timeout 12 | Set-Content -Encoding UTF8 -NoNewline '{4}'",
         tmpIn, py, script, tmpOut
     )
     ShowHud("checking Cologne…")
@@ -596,6 +607,101 @@ CheckClipboardHeadword() {
     } else {
         ShowHud("check failed (Python / network?)")
     }
+}
+
+; --- V3 plugin tray opt-in (H1639) ---------------------------------------
+;
+; Persistence is a subprocess call into ..\plugins\tray_state — its own
+; docstring names the exact state-file path (outside the repo tree) so the
+; state survives restarts and can be shared with a future Mac tray. This
+; code never imports plugin *code* — it only toggles which ids ride along as
+; $env:KEYSWAP_PLUGINS on the one call that consumes them
+; (CheckClipboardHeadword). Still off by default; still one explicit user
+; click per plugin; never touches default Startup / install scripts.
+
+PluginsStateScript() {
+    return A_ScriptDir "\..\plugins\tray_state.py"
+}
+
+LoadPluginsState() {
+    global EnabledPlugins
+    EnabledPlugins := []
+    py := "python"
+    script := PluginsStateScript()
+    if !FileExist(script)
+        return
+    tmpOut := A_Temp "\keyswap_plugins_list.txt"
+    try FileDelete(tmpOut)
+    ps := Format("& {1} '{2}' --list | Set-Content -Encoding UTF8 -NoNewline '{3}'", py, script, tmpOut)
+    RunWait('powershell -NoProfile -Command ' ps, , "Hide")
+    if !FileExist(tmpOut)
+        return
+    raw := Trim(FileRead(tmpOut, "UTF-8"))
+    if (raw = "")
+        return
+    for id in StrSplit(raw, ",") {
+        t := Trim(id)
+        if (t != "")
+            EnabledPlugins.Push(t)
+    }
+}
+
+TogglePlugin(id) {
+    global EnabledPlugins
+    py := "python"
+    script := PluginsStateScript()
+    if !FileExist(script) {
+        MsgBox("Missing plugins\tray_state.py", "KeySwap", "Iconx")
+        return
+    }
+    tmpOut := A_Temp "\keyswap_plugins_toggle.txt"
+    try FileDelete(tmpOut)
+    ps := Format(
+        "& {1} '{2}' --toggle {3} | Set-Content -Encoding UTF8 -NoNewline '{4}'",
+        py, script, id, tmpOut
+    )
+    RunWait('powershell -NoProfile -Command ' ps, , "Hide")
+    EnabledPlugins := []
+    if FileExist(tmpOut) {
+        raw := Trim(FileRead(tmpOut, "UTF-8"))
+        if (raw != "") {
+            for pid in StrSplit(raw, ",") {
+                t := Trim(pid)
+                if (t != "")
+                    EnabledPlugins.Push(t)
+            }
+        }
+    }
+    BuildTray()
+    on := false
+    for pid in EnabledPlugins {
+        if (pid = id) {
+            on := true
+            break
+        }
+    }
+    TrayTip("KeySwap plugins", id " " (on ? "enabled" : "disabled") " (opt-in; not default Startup)", "Iconi")
+    ShowHud("plugin " id ": " (on ? "on" : "off"))
+}
+
+PluginEnabled(id) {
+    global EnabledPlugins
+    for pid in EnabledPlugins {
+        if (pid = id)
+            return true
+    }
+    return false
+}
+
+; "" when no plugin is opted in — identical to today's behaviour.
+PluginsEnvPrefix() {
+    global EnabledPlugins
+    if EnabledPlugins.Length = 0
+        return ""
+    list := ""
+    for i, id in EnabledPlugins
+        list .= (i = 1 ? "" : ",") id
+    return "$env:KEYSWAP_PLUGINS='" list "'; "
 }
 
 ; Open Cologne webtc full entry (gloss) for clipboard headword
@@ -705,6 +811,7 @@ BuildTray() {
     A_TrayMenu.Add("Reload config (F6)", (*) => {
         LoadAll()
         RegisterTriggerHotkeys()
+        LoadPluginsState()
         BuildTray()
     })
     A_TrayMenu.Add("Toggle teaching HUD (F7)", (*) => ToggleHud())
@@ -719,14 +826,27 @@ BuildTray() {
     A_TrayMenu.Add("Clipboard headword check (Ctrl+Alt+S)", (*) => CheckClipboardHeadword())
     A_TrayMenu.Add("Clipboard → MW gloss page (Ctrl+Alt+G)", (*) => OpenCologneGloss())
     A_TrayMenu.Add()
+    plug := Menu()
+    plug.Add("offline_fuzzy — local fuzzy lookup (V3-2)", (*) => TogglePlugin("offline_fuzzy"))
+    plug.Add("network_autocomplete — Cologne fallback (V3-7)", (*) => TogglePlugin("network_autocomplete"))
+    if PluginEnabled("offline_fuzzy")
+        plug.Check("offline_fuzzy — local fuzzy lookup (V3-2)")
+    if PluginEnabled("network_autocomplete")
+        plug.Check("network_autocomplete — Cologne fallback (V3-7)")
+    plug.Add()
+    plug.Add("Full-MW pack docs…", (*) => Run(A_ScriptDir "\..\plugins\offline_fuzzy\README.md"))
+    A_TrayMenu.Add("Plugins (opt-in; off by default)", plug)
+    A_TrayMenu.Add()
     eco := Menu()
     eco.Add("Sanscript (learnsanskrit.org)", (*) => OpenUrl("https://www.learnsanskrit.org/tools/sanscript/"))
-    eco.Add("Aksharamukha (scripts / Brahmi)", (*) => OpenUrl("https://www.aksharamukha.com/converter"))
+    eco.Add("Aksharamukha (scripts / Brahmi / OCR upload)", (*) => OpenUrl("https://www.aksharamukha.com/converter"))
     eco.Add("Lexilogos Sanskrit Latin", (*) => OpenUrl("https://www.lexilogos.com/keyboard/sanskrit_latin.htm"))
     eco.Add("Dunning ABC Extended (Windows layouts)", (*) => OpenUrl("https://github.com/adunning/Mac-Keyboard-Layouts-for-Windows"))
     eco.Add("EasyUnicode (Mac)", (*) => OpenUrl("https://www.yogicstudies.com/blog/how-to-type-transliterated-sanskrit-with-diacritics-in-mac-osx"))
     eco.Add("Keyman Heidelberg Input Solution", (*) => OpenUrl("https://keyman.com/keyboards/heidelberginputsolution"))
     eco.Add("Sanskrit Writer (Auroville)", (*) => OpenUrl("https://sri.auroville.org/projects/sanskrit-writer/"))
+    eco.Add("Sanskrit Text-to-Speech (SRI Auroville)", (*) => OpenUrl("https://sri.auroville.org/projects/sanskrit-text-to-speech/"))
+    eco.Add("Sanskrit Heritage segmenter (INRIA)", (*) => OpenUrl("https://sanskrit.inria.fr/"))
     eco.Add("UBC Sanskrit tools", (*) => OpenUrl("https://blogs.ubc.ca/ubcsanskrit/tools/"))
     eco.Add("Cologne Simple Search", (*) => OpenUrl("https://sanskrit-lexicon.uni-koeln.de/simple/"))
     A_TrayMenu.Add("Ecosystem (peers)", eco)
