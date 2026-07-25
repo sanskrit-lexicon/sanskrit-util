@@ -2,7 +2,7 @@
 
 _Created: 24-07-2026 · Last updated: 25-07-2026_  
 _Source: [SIMILARS_COMPARISON.md](SIMILARS_COMPARISON.md) peer survey + shipped 2.0–2.9 + V3-2/V3-7_  
-_Model: Grok 4.5 (`grok-4.5`) · v3 design: [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md) · 2.9 residual (H1638): Fable 5 (`claude-fable-5`)_
+_Model: Grok 4.5 (`grok-4.5`) · v3 design: [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md) · 2.9 residual (H1638): Fable 5 (`claude-fable-5`) · v3 free-heavy residual (H1639): Sonnet 5 (`claude-sonnet-5`)_
 
 ## Product principles
 
@@ -20,8 +20,9 @@ _Model: Grok 4.5 (`grok-4.5`) · v3 design: [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE
 
 | Line | Scope | Version identity |
 |------|--------|------------------|
-| **Shipped** | 2.0–2.9 + V3-2 offline_fuzzy + V3-7 network_autocomplete | `tools/KeySwap` **2.9.x** · package **0.8.9** |
+| **Shipped** | 2.0–2.9 + V3-2 offline_fuzzy + V3-7 network_autocomplete + tray opt-in/full-MW docs/link-out polish | `tools/KeySwap` **2.9.x** · package **0.8.10** |
 | **v2 remainder** | none — #7/#8/P shipped in 2.9 (H1638) | closed |
+| **v3 free-heavy residual** | none — tray opt-in, full-MW pack docs, V3-1/4/5/6 link-out polish shipped (H1639) | closed |
 | **v3** | Free heavy plugins / sidecars (former explicit skips) | **3.x** open |
 | **v4** | Paid product + advanced Apple + morphology | **4.x** paid SKUs |
 
@@ -63,16 +64,22 @@ Writer-scheme; script mode; gloss; one-install; PE vs AHK; trigger presets; V3 p
 
 Architecture: [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md) · [plugins/](plugins/).
 
-| # | Item | Status (24-07-2026) | Next |
+| # | Item | Status (25-07-2026) | Next |
 |---|------|---------------------|------|
-| V3-1 | Aksharamukha / script matrix | link-out | optional free sidecar (not default) |
-| V3-2 | Offline fuzzy / MW index | **shipped** opt-in | full-MW pack docs; tray opt-in without default load |
-| V3-3 | Keyman-class IME | dual-install docs | thin bridge doc only |
-| V3-4 | OCR | link-out | stay link-out in free v3 |
-| V3-5 | TTS | link-out | stay link-out |
-| V3-6 | Heritage segmenter | link-out | optional microservice later |
-| V3-7 | Network autocomplete | **shipped** opt-in offline-first | tray opt-in; never always-on default |
-| V3-8 | Morphology / forms DB | **parked** (sibling design) | **owned by v4 paid**, not free maximum |
+| V3-1 | Aksharamukha / script matrix | **link-out shipped** (tray "Ecosystem" ▸ Aksharamukha, H1639) | optional free sidecar (not default) |
+| V3-2 | Offline fuzzy / MW index | **shipped** opt-in + **tray opt-in shipped** (H1639) + **full-MW pack docs shipped** (H1639) | none — residual closed |
+| V3-3 | Keyman-class IME | dual-install docs (already tray-linked) | thin bridge doc only |
+| V3-4 | OCR | **link-out shipped** — shares the Aksharamukha tray entry (same tool's upload feature, H1639) | stay link-out in free v3 |
+| V3-5 | TTS | **link-out shipped** (tray "Ecosystem" ▸ Sanskrit Text-to-Speech, H1639 — replaces the former vague "SRI TTS etc." mention) | stay link-out |
+| V3-6 | Heritage segmenter | **link-out shipped** (tray "Ecosystem" ▸ Sanskrit Heritage segmenter, H1639) | optional microservice later |
+| V3-7 | Network autocomplete | **shipped** opt-in offline-first + **tray opt-in shipped** (H1639) | none — residual closed |
+| V3-8 | Morphology / forms DB | **parked** (sibling design) | **owned by v4 paid**, child C3 ([H1640](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1640-Fable_sanskrit-util_keyswap-v4-paid-sku-and-apple_25.07.26.md)), not free maximum |
+
+**v3 free-heavy residual — closed 25-07-2026 (H1639):** tray opt-in for
+offline_fuzzy/network_autocomplete (Windows menu + Mac status-bar menu,
+`$env:KEYSWAP_PLUGINS`, still off by default); full-MW pack docs pointing at
+`SanskritLexicography/HeadwordLists/` (not vendored); V3-1/3-4/3-5/3-6
+link-out polish (accurate, tested URLs replacing stale/vague mentions).
 
 **v3 principle:** free users may opt into heavy packs; default Startup stays v2-light.  
 **v3 is not the product ceiling** — that is v4.
@@ -111,8 +118,8 @@ Paid SKUs must get **most** features that free/paid peers have, especially:
 |-----|----------|
 | **2.7.x–2.8.x** | Leverage + triggers (**shipped**) |
 | **2.9.x** | #7 iOS Writer parity + #8 live Deva + portable free pass (**shipped**) |
-| **3.0.x** | V3 plugin UX (tray opt-in) + remaining free sidecars as opt-in |
-| **3.x later** | Full-MW pack story; dual-install Keyman docs only |
+| **3.0.x** | V3 plugin UX (tray opt-in) + remaining free sidecars as opt-in (**shipped**, H1639) |
+| **3.x later** | dual-install Keyman docs only |
 | **4.0.0** | First paid SKU + Mac **or** iOS advanced slice (pick after V4-A) |
 | **4.x** | Forms/morphology + second Apple platform + pack polish |
 
@@ -121,6 +128,8 @@ Paid SKUs must get **most** features that free/paid peers have, especially:
 ## Session starters
 
 v2 residual (2.9): 🔴 EXECUTED: [H1638-Sonnet_sanskrit-util_keyswap-v2-9-free-portable-residual_25.07.26.md](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1638-Sonnet_sanskrit-util_keyswap-v2-9-free-portable-residual_25.07.26.md)
+
+v3 free-heavy residual: 🔴 EXECUTED: [H1639-Sonnet_sanskrit-util_keyswap-v3-free-heavy-residual_25.07.26.md](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1639-Sonnet_sanskrit-util_keyswap-v3-free-heavy-residual_25.07.26.md)
 
 Full improvement programme (this plan’s umbrella):
 

@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **tools/KeySwap V3 free-heavy residual** (H1639, closes child C2 of the
+  keyswap-v2-v3-v4 programme):
+  - **Tray opt-in for V3-2/V3-7 plugins** — a "Plugins (opt-in; off by
+    default)" submenu (Windows `windows/KeySwap.ahk` tray menu, Mac
+    `apple/macos/KeySwapMacApp.swift` status-bar menu) toggles
+    `offline_fuzzy` / `network_autocomplete` on and off. Persistence is a new
+    `plugins/tray_state.py` (`%APPDATA%\KeySwap\plugins.ini` on Windows /
+    `UserDefaults` on Mac — never inside the repo tree); the tray click
+    writes the exact same `KEYSWAP_PLUGINS` env surface the CLI/env path
+    already reads, never a parallel enable mechanism. Still one explicit
+    click; still absent from default Startup.
+  - **Full-MW pack docs** — `plugins/offline_fuzzy/README.md` now documents
+    pointing `KEYSWAP_WORDLIST` (or `build_local_wordlist.py --out`, sent
+    outside the repo tree) at the org's existing
+    `SanskritLexicography/HeadwordLists/` MW key1 exports (~194k entries),
+    instead of the ~1k shipped seed. Nothing vendored into git.
+  - **V3-1/V3-3/V3-4/V3-5/V3-6 link-out polish** — the Windows tray
+    "Ecosystem" submenu gained two real links that were missing (Sanskrit
+    Text-to-Speech at SRI Auroville for V3-5, replacing a vague "SRI TTS
+    etc." mention; the Sanskrit Heritage Site at INRIA for V3-6) and a
+    clarified label for V3-1/V3-4 (Aksharamukha's converter page covers both
+    script conversion *and* OCR upload — one tool, not two). Doc rows in
+    `ROADMAP_KEYSWAP_V2_V3.md`, `docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md`,
+    and `SIMILARS_COMPARISON.md` updated to match. No new integrations.
+  - Tests: `test_tray_state.py` (persistence round trip + CLI).
+
 - **tools/KeySwap 2.9 — v2 free-portable residual** (H1638, closes the v2 tier):
   - **#7 iOS Writer digraph parity** — `KeyboardViewController` resolved smart-digraph
     substitution from the active profile (`SmartTables.forProfile`) instead of a

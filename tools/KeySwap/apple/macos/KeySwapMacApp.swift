@@ -25,6 +25,22 @@ final class AppModel: ObservableObject {
     @Published var smartOn: Bool = true
     /// Target script for convert-to-mode (IAST ⇄ Devanāgarī), like Sanskrit Writer output toggle.
     @Published var scriptModeIsDeva: Bool = false
+    /// V3 plugin tray opt-in (H1639) — mirrors windows/KeySwap.ahk's EnabledPlugins.
+    /// Persisted via UserDefaults (per-user, never in the repo tree); still off by
+    /// default, still one explicit click. Only clipHeadwordCheck() reads this, and
+    /// only to set the same KEYSWAP_PLUGINS env surface typing_check.py already reads.
+    @Published var enabledPlugins: Set<String> = Set(
+        UserDefaults.standard.stringArray(forKey: "KeySwapEnabledPlugins") ?? []
+    )
+
+    func togglePlugin(_ id: String) {
+        if enabledPlugins.contains(id) {
+            enabledPlugins.remove(id)
+        } else {
+            enabledPlugins.insert(id)
+        }
+        UserDefaults.standard.set(Array(enabledPlugins), forKey: "KeySwapEnabledPlugins")
+    }
 
     private(set) var engine: CycleEngine
     var smart: SmartTables = .default
@@ -128,9 +144,49 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(withTitle: "Clipboard headword check (Cologne)", action: #selector(clipHeadwordCheck), keyEquivalent: "k")
         menu.addItem(withTitle: "Clipboard → MW gloss page", action: #selector(clipGloss), keyEquivalent: "g")
         menu.addItem(NSMenuItem.separator())
+        menu.addItem(buildPluginsMenuItem())
+        menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: "Open Accessibility Settings", action: #selector(openAccessibility), keyEquivalent: "")
         menu.addItem(withTitle: "Quit KeySwap \(KeySwapVersion.current)", action: #selector(quit), keyEquivalent: "q")
         statusItem?.menu = menu
+    }
+
+    /// V3 plugin tray opt-in (H1639) — "Plugins (opt-in; off by default)" submenu,
+    /// checkmarks reflecting model.enabledPlugins. Never imports plugin code; only
+    /// toggles the ids clipHeadwordCheck() rides along as $env:KEYSWAP_PLUGINS.
+    private func buildPluginsMenuItem() -> NSMenuItem {
+        let pluginIds: [(id: String, label: String)] = [
+            ("offline_fuzzy", "offline_fuzzy — local fuzzy lookup (V3-2)"),
+            ("network_autocomplete", "network_autocomplete — Cologne fallback (V3-7)"),
+        ]
+        let submenu = NSMenu()
+        for (id, label) in pluginIds {
+            let item = NSMenuItem(title: label, action: #selector(togglePluginMenuItem(_:)), keyEquivalent: "")
+            item.representedObject = id
+            item.state = model.enabledPlugins.contains(id) ? .on : .off
+            submenu.addItem(item)
+        }
+        submenu.addItem(NSMenuItem.separator())
+        submenu.addItem(withTitle: "Full-MW pack docs…", action: #selector(openFullMwPackDocs), keyEquivalent: "")
+        let root = NSMenuItem(title: "Plugins (opt-in; off by default)", action: nil, keyEquivalent: "")
+        root.submenu = submenu
+        return root
+    }
+
+    @objc private func togglePluginMenuItem(_ sender: NSMenuItem) {
+        guard let id = sender.representedObject as? String else { return }
+        model.togglePlugin(id)
+        setupStatusItem()
+        model.status = "plugin \(id): \(model.enabledPlugins.contains(id) ? "on" : "off")"
+    }
+
+    @objc private func openFullMwPackDocs() {
+        let readme = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("plugins/offline_fuzzy/README.md")
+        NSWorkspace.shared.open(readme)
     }
 
     @objc private func clipToIast() { runConvert(to: "iast") }
@@ -198,6 +254,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let proc = Process()
         proc.executableURL = URL(fileURLWithPath: "/usr/bin/python3")
         proc.arguments = [script.path, "--from", "auto", "--dict", "mw", "--hud", "--timeout", "12", src]
+        // Tray-toggled v3 plugins (H1639) ride along as KEYSWAP_PLUGINS — the same
+        // env surface typing_check.py already reads; unset when never opted in.
+        if !model.enabledPlugins.isEmpty {
+            var env = ProcessInfo.processInfo.environment
+            env["KEYSWAP_PLUGINS"] = model.enabledPlugins.sorted().joined(separator: ",")
+            proc.environment = env
+        }
         proc.standardOutput = try? FileHandle(forWritingTo: tmpOut)
         do {
             try proc.run()
