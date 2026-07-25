@@ -1,8 +1,8 @@
 # KeySwap product roadmap — **v2 free portable** · **v3 heavy open** · **v4 paid full**
 
-_Created: 24-07-2026 · Last updated: 24-07-2026_  
-_Source: [SIMILARS_COMPARISON.md](SIMILARS_COMPARISON.md) peer survey + shipped 2.0–2.8 + V3-2/V3-7_  
-_Model: Grok 4.5 (`grok-4.5`) · v3 design: [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md)_
+_Created: 24-07-2026 · Last updated: 25-07-2026_  
+_Source: [SIMILARS_COMPARISON.md](SIMILARS_COMPARISON.md) peer survey + shipped 2.0–2.9 + V3-2/V3-7_  
+_Model: Grok 4.5 (`grok-4.5`) · v3 design: [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md) · 2.9 residual (H1638): Fable 5 (`claude-fable-5`)_
 
 ## Product principles
 
@@ -20,8 +20,8 @@ _Model: Grok 4.5 (`grok-4.5`) · v3 design: [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE
 
 | Line | Scope | Version identity |
 |------|--------|------------------|
-| **Shipped** | 2.0–2.8 + V3-2 offline_fuzzy + V3-7 network_autocomplete | `tools/KeySwap` **2.8.x** · package **0.8.9** |
-| **v2 remainder** | Free portable residual (#7, #8) + packaging | finish **2.9** |
+| **Shipped** | 2.0–2.9 + V3-2 offline_fuzzy + V3-7 network_autocomplete | `tools/KeySwap` **2.9.x** · package **0.8.9** |
+| **v2 remainder** | none — #7/#8/P shipped in 2.9 (H1638) | closed |
 | **v3** | Free heavy plugins / sidecars (former explicit skips) | **3.x** open |
 | **v4** | Paid product + advanced Apple + morphology | **4.x** paid SKUs |
 
@@ -47,15 +47,15 @@ Writer-scheme; script mode; gloss; one-install; PE vs AHK; trigger presets; V3 p
 | L4 | **`pali-lite`** profile | **shipped 2.7** |
 | L5 | SIMILARS / roadmap hygiene | **shipped 2.7**; **refreshed 24-07-2026** (tiers) |
 
-### Residual free backlog → **2.9**
+### Residual free backlog → **2.9** — shipped 25-07-2026 (H1638)
 
-| # | Item | Peer driver | Effort | Notes |
+| # | Item | Peer driver | Effort | Status |
 |---|------|-------------|--------|-------|
-| 7 | **iOS long-press ↔ Writer digraphs** parity | SanskritTypist | M | Soft keyboard honesty |
-| 8 | Optional **live Deva type-out** (not only clipboard) | SW / Typist | M–H | Opt-in; off by default |
-| P | Portable free packaging pass | PE / classroom users | M | One zip story; no dual PE+AHK; INSTALL truth |
+| 7 | **iOS long-press ↔ Writer digraphs** parity | SanskritTypist | M | **shipped** — `KeyboardViewController` now resolves `SmartTables.forProfile(name)` instead of a hardcoded classic table |
+| 8 | Optional **live Deva type-out** (not only clipboard) | SW / Typist | M–H | **shipped, scoped down** — `Ctrl+Alt+Shift+D` converts the current **selection** to Devanāgarī in place (Windows). Continuous per-keystroke auto-flip was considered and **parked**: `convert_bridge.py` calls a real transliteration algorithm (`sanskrit_util.iast_to_devanagari`) via a PowerShell+Python subprocess per invocation — firing that on every keystroke (rather than on an explicit user action) would add per-character latency and was also impossible to validate in an environment with no AHK interpreter. A future session may revisit continuous mode once it can be tested live. |
+| P | Portable free packaging pass | PE / classroom users | M | **audited, no changes needed** — `packaging/INSTALL.md` + `VENDOR_PE.md` already give one clear path per platform and explicitly warn against dual PE+AHK; no drift found |
 
-**v2 exit criteria:** #7 + #8 shipped or parked with reason; free install still portable and plugin-free by default; SIMILARS matrix current.
+**v2 exit criteria — met:** #7 + #8 shipped (or parked with reason, disclosed above); free install still portable and plugin-free by default; SIMILARS matrix current (see below).
 
 ---
 
@@ -110,7 +110,7 @@ Paid SKUs must get **most** features that free/paid peers have, especially:
 | Tag | Contents |
 |-----|----------|
 | **2.7.x–2.8.x** | Leverage + triggers (**shipped**) |
-| **2.9.x** | #7 iOS Writer parity + #8 live Deva + portable free pass |
+| **2.9.x** | #7 iOS Writer parity + #8 live Deva + portable free pass (**shipped**) |
 | **3.0.x** | V3 plugin UX (tray opt-in) + remaining free sidecars as opt-in |
 | **3.x later** | Full-MW pack story; dual-install Keyman docs only |
 | **4.0.0** | First paid SKU + Mac **or** iOS advanced slice (pick after V4-A) |
@@ -120,11 +120,7 @@ Paid SKUs must get **most** features that free/paid peers have, especially:
 
 ## Session starters
 
-v2 residual (2.9):
-
-```
-Read C:\Users\user\Documents\GitHub\Uprava\handoffs\H###-…_keyswap-v2-free-portable-residual_….md and execute it.
-```
+v2 residual (2.9): 🔴 EXECUTED: [H1638-Sonnet_sanskrit-util_keyswap-v2-9-free-portable-residual_25.07.26.md](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1638-Sonnet_sanskrit-util_keyswap-v2-9-free-portable-residual_25.07.26.md)
 
 Full improvement programme (this plan’s umbrella):
 

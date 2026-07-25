@@ -8,7 +8,7 @@ open class KeyboardViewController: UIInputViewController {
         (try? CycleEngine.parse(text: Self.embeddedClassic))!
     }()
 
-    private let smart = SmartTables.default
+    private var smart = SmartTables.default
     private var shiftOn = false
     private var smartOn = true
     private var longPressBase: String?
@@ -58,6 +58,8 @@ open class KeyboardViewController: UIInputViewController {
     private func loadPreferredProfile() {
         let name = UserDefaults(suiteName: "group.keyswap")?.string(forKey: "profile")
             ?? KeySwapProfile.iastClassic.rawValue
+        // Digraph substitution must match the cycle profile below, or Writer users get classic "aa"→ā instead of "-a"→ā.
+        smart = SmartTables.forProfile(name)
         if let url = Bundle.main.url(forResource: name, withExtension: "txt"),
            let eng = try? CycleEngine.load(url: url) {
             engine = eng

@@ -64,11 +64,19 @@ Legacy PE: [vendor/](vendor/) — prefer AHK.
 See **[ROADMAP_KEYSWAP_V2_V3.md](ROADMAP_KEYSWAP_V2_V3.md)** and peer survey
 **[SIMILARS_COMPARISON.md](SIMILARS_COMPARISON.md)**:
 
-- **v2 (free, mostly portable)** — light shell; residual 2.9: iOS Writer parity + live Deva  
+- **v2 (free, mostly portable)** — light shell; residual **shipped in 2.9**: iOS Writer parity + live Deva (Windows)  
 - **v3 (free, heavier, not max)** — opt-in plugins (never default Startup)  
   — [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md)  
   — **V3-2 offline_fuzzy** · **V3-7 network_autocomplete** (shipped opt-in)  
 - **v4 (paid)** — most peer features: forms/morphology, advanced **Mac + iOS**, signed builds
+
+### What's in 2.9 (v2 free-portable residual)
+
+| Item | Detail |
+|------|--------|
+| **iOS Writer digraph parity (#7)** | `KeyboardViewController` now resolves smart-digraph substitution from the active profile (`SmartTables.forProfile`), not a hardcoded classic table — Writer-profile users get `-a`→ā, not `aa`→ā |
+| **Live Deva, in place (#8)** | `Ctrl+Alt+Shift+D` (Windows) — converts the current text **selection** to Devanāgarī and pastes it back in place; no manual clipboard round trip or app switch. Requires a selection first (`Ctrl+Shift+←` or your editor's own word-select); continuous per-keystroke auto-flip was considered and deferred — see ROADMAP 2.9 notes |
+| **Portable packaging** | Audited `packaging/INSTALL.md` / `VENDOR_PE.md` — already one clear path per platform, PE-vs-AHK conflict already documented; no drift found |
 
 ### What's in 2.8 (trigger presets)
 
@@ -223,6 +231,7 @@ python tools/KeySwap/test_local_wordlist.py
 | F7 | Toggle teaching HUD |
 | Ctrl+Alt+= | Clipboard → Devanāgarī |
 | Ctrl+Alt+I / H | Clipboard auto-scheme → IAST |
+| Ctrl+Alt+Shift+D | **Selection** → Devanāgarī, pasted in place (2.9; select text first) |
 | Ctrl+Alt+C | Clipboard → Cologne Simple Search |
 | Ctrl+Alt+S | Clipboard **headword check** (Cologne API → local wordlist fallback) |
 

@@ -5,6 +5,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **tools/KeySwap 2.9 — v2 free-portable residual** (H1638, closes the v2 tier):
+  - **#7 iOS Writer digraph parity** — `KeyboardViewController` resolved smart-digraph
+    substitution from the active profile (`SmartTables.forProfile`) instead of a
+    hardcoded classic table; Writer-profile users now get `-a`→ā, not `aa`→ā, matching
+    the cycle engine (already profile-correct) and the Mac app (already correct).
+  - **#8 live Deva, in place (Windows)** — `Ctrl+Alt+Shift+D` converts the current text
+    selection to Devanāgarī and pastes it back without a manual clipboard round trip.
+    Opt-in (nothing changes unless pressed); continuous per-keystroke auto-flip was
+    considered and parked — see [ROADMAP_KEYSWAP_V2_V3.md](tools/KeySwap/ROADMAP_KEYSWAP_V2_V3.md)
+    § "Residual free backlog" for the reason. Mac/iOS parked with the same reason.
+  - **Portable packaging** — audited `packaging/INSTALL.md` / `VENDOR_PE.md`; already
+    one clear path per platform, no changes needed.
+  - Swift `KeySwapVersion.current` and its stale test assertion ("2.3.0" vs the actual
+    "2.7.0") were both out of sync with the shipped product version; both now read "2.9.0".
+
 ### Changed
 
 - **tools/KeySwap product tiers** — [SIMILARS_COMPARISON.md](tools/KeySwap/SIMILARS_COMPARISON.md)
