@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.11] - 2026-07-26
+
 ### Added
 
 - **tools/KeySwap v4 paid SKU brief** (H1640, closes child C3 of the
