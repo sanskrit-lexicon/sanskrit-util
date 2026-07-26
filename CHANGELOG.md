@@ -5,6 +5,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **tools/KeySwap v4 paid SKU brief** (H1640, closes child C3 of the
+  keyswap-v2-v3-v4 programme):
+  [docs/V4_PAID_SKU_BRIEF.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/docs/V4_PAID_SKU_BRIEF.md)
+  (+ metadoc) — V4-A pricing/SKU options (one-time per platform vs subscription
+  vs à-la-carte packs, options only, human rules), ordered V4-B Mac and V4-C
+  iOS execution checklists scoped from
+  [SIMILARS_COMPARISON.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/SIMILARS_COMPARISON.md),
+  V4-D forms/morphology rights assessment naming
+  [`vidyut-prakriya`](https://github.com/ambuda-org/vidyut) (MIT code + MIT
+  ashtadhyayi.com Dhātupāṭha, verified against the repo 26-07-2026) as the
+  rights-clear primary candidate with Heritage/in-house fallbacks, and a V4-E
+  free→paid bridge note. Docs only — no v4 code, no builds; the two `@DECIDE`
+  rows (SKU shape · forms data source) land in Uprava
+  [GTD_NEXT_ACTIONS.md](https://github.com/gasyoun/Uprava/blob/main/GTD_NEXT_ACTIONS.md).
+  ROADMAP v4 section links the brief.
+
 ## [0.8.10] - 2026-07-25
 
 ### Added

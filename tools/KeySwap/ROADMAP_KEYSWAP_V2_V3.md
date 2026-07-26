@@ -110,6 +110,8 @@ Paid SKUs must get **most** features that free/paid peers have, especially:
 
 **v4 non-goals:** paywalling the free v2 shell; dual Keyman hooks; closing the free GitHub toolkit.
 
+**Brief (H1640, 26-07-2026):** [docs/V4_PAID_SKU_BRIEF.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/docs/V4_PAID_SKU_BRIEF.md) — V4-A SKU options + V4-B/C execution checklists + V4-D rights assessment (`vidyut-prakriya` MIT code + MIT Dhātupāṭha named rights-clear candidate). Two `@DECIDE` rows (SKU shape · forms data source) sit in [GTD_NEXT_ACTIONS.md](https://github.com/gasyoun/Uprava/blob/main/GTD_NEXT_ACTIONS.md); V4-B/C execution stays gated on the V4-A ruling.
+
 ---
 
 ## Suggested release cuts
