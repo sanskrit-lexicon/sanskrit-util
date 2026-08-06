@@ -7,3 +7,8 @@ dist/
 node_modules/
 .venv/
 venv/
+
+# Local copy of the tracked windows/allowlist.example.txt (README: copy to enable)
+tools/KeySwap/windows/allowlist.txt
+# Third-party upstream KeySwap binary bundle (reference download, not project source)
+tools/KeySwap.zip
