@@ -5,6 +5,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **tools/KeySwap Windows AHK** — two startup defects on AutoHotkey v2.0:
+  the tray "Reload config (F6)" fat-arrow used `=> { stmts }`, which v2.0
+  parses as an object literal (`Missing "propertyname" in object literal`)
+  and exits; writer-scheme `~` was registered as `Hotkey("~*" "~")` =
+  `~*~`, which AHK reports as `~^` and warns *will not be active* on
+  layouts that have no tilde (JCUKEN). Reload is now the named
+  `ReloadConfig`; the tilde mark is `{ ~ }` via `TryHotkey`.
+
 ## [0.8.11] - 2026-07-26
 
 ### Added

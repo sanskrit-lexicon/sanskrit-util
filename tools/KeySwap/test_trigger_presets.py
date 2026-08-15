@@ -77,6 +77,30 @@ class TriggerPresetTests(unittest.TestCase):
         self.assertIn("RegisterTriggerHotkeys", ahk)
         self.assertIn("2.8", ahk)
 
+    def test_ahk_no_fat_arrow_block(self) -> None:
+        """AHK v2.0 parses `=> { stmts }` as an object literal and exits.
+
+        Tray "Reload config (F6)" used to do that (Missing propertyname).
+        Multi-statement callbacks must be named functions.
+        """
+        ahk = (ROOT / "windows" / "KeySwap.ahk").read_text(encoding="utf-8")
+        self.assertNotRegex(ahk, r"=>\s*\{")
+        self.assertIn("ReloadConfig", ahk)
+        self.assertIn('A_TrayMenu.Add("Reload config (F6)", ReloadConfig)', ahk)
+        self.assertIn("F6:: ReloadConfig()", ahk)
+
+    def test_ahk_tilde_mark_is_braced(self) -> None:
+        """Unbraced Hotkey(\"~*\" \"~\") becomes \"~*~\" → warning \"~^\".
+
+        The tilde mark must be registered as {~}, and missing-layout
+        glyphs must go through TryHotkey so JCUKEN does not dialog.
+        """
+        ahk = (ROOT / "windows" / "KeySwap.ahk").read_text(encoding="utf-8")
+        self.assertIn('TryHotkey("~*{~}", OnMark.Bind("~"))', ahk)
+        self.assertIn("RegisterMarkHotkeys", ahk)
+        self.assertNotIn('Loop Parse "-~.\'"', ahk)
+        self.assertNotIn("~*'::", ahk)
+
 
 if __name__ == "__main__":
     unittest.main()
