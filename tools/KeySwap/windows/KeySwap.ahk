@@ -68,18 +68,10 @@ bases := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 Loop Parse bases {
     Hotkey("~*" A_LoopField, OnLetter.Bind(A_LoopField))
 }
-; Writer-scheme punctuation prefixes (- ~ . ') participate in smart digraphs
-Loop Parse "-~.'" {
-    Hotkey("~*" A_LoopField, OnMark.Bind(A_LoopField))
-}
-
-~*':: {
-    global Mode, DeadArmed, LastForm
-    if (Mode = "deadkey" && AppAllowed())
-        DeadArmed := true
-    else if ((Mode = "smart" || Mode = "writer") && AppAllowed())
-        LastForm := "'"
-}
+; Writer-scheme punctuation prefixes (- ~ . '). Brace AHK modifier
+; chars ({~}) so Hotkey() does not parse "~*~" as prefixes-only and
+; surface "hotkey ~^ will not be active" on non-US layouts (JCUKEN).
+RegisterMarkHotkeys()
 
 ^!=:: ConvertClipboard("deva", "auto")
 ^!i:: ConvertClipboard("iast", "auto")
@@ -91,12 +83,7 @@ Loop Parse "-~.'" {
 ^!s:: CheckClipboardHeadword()
 ^!g:: OpenCologneGloss()
 ^!k:: CopySlp1Normkey()
-F6:: {
-    LoadAll()
-    RegisterTriggerHotkeys()
-    LoadPluginsState()
-    BuildTray()
-}
+F6:: ReloadConfig()
 F7:: ToggleHud()
 
 ; --- 2.8 trigger presets -------------------------------------------------
@@ -226,6 +213,42 @@ OnMark(mark, *) {
         LastForm := mark
         SetTimer(TrySmartAfterLetter, -10)
     }
+}
+
+; Apostrophe is both the deadkey arm and the writer 's → ś mark.
+OnApostrophe(*) {
+    global Mode, DeadArmed, LastForm
+    if !AppAllowed()
+        return
+    if (Mode = "deadkey") {
+        DeadArmed := true
+        return
+    }
+    if (Mode = "smart" || Mode = "writer") {
+        LastForm := "'"
+        SetTimer(TrySmartAfterLetter, -10)
+    }
+}
+
+; AHK v2 Hotkey() throws (or, on some builds, Notes) when the glyph is
+; absent from the current layout. Swallow that so startup is not a dialog.
+TryHotkey(name, callback) {
+    try Hotkey(name, callback)
+}
+
+RegisterMarkHotkeys() {
+    TryHotkey("~*-", OnMark.Bind("-"))
+    TryHotkey("~*{~}", OnMark.Bind("~"))
+    TryHotkey("~*.", OnMark.Bind("."))
+    TryHotkey("~*'", OnApostrophe)
+}
+
+ReloadConfig(*) {
+    LoadAll()
+    RegisterTriggerHotkeys()
+    LoadPluginsState()
+    RegisterMarkHotkeys()
+    BuildTray()
 }
 
 AppAllowed() {
@@ -808,12 +831,9 @@ BuildTray() {
     A_TrayMenu.Add("Toggle script mode IAST/Deva (Ctrl+Alt+D)", (*) => ToggleScriptMode())
     A_TrayMenu.Add("Clipboard → script mode (Ctrl+Alt+V)", (*) => ConvertToScriptMode())
     A_TrayMenu.Add("Copy SLP1+normkey (Ctrl+Alt+K)", (*) => CopySlp1Normkey())
-    A_TrayMenu.Add("Reload config (F6)", (*) => {
-        LoadAll()
-        RegisterTriggerHotkeys()
-        LoadPluginsState()
-        BuildTray()
-    })
+    ; Fat-arrow bodies are a single expression in AHK v2.0 — `{ stmts }`
+    ; is parsed as an object literal ("Missing propertyname") and exits.
+    A_TrayMenu.Add("Reload config (F6)", ReloadConfig)
     A_TrayMenu.Add("Toggle teaching HUD (F7)", (*) => ToggleHud())
     A_TrayMenu.Add("Open configs folder", (*) => Run('explorer.exe "' A_ScriptDir '\..\configs"'))
     A_TrayMenu.Add("Edit allowlist", (*) => EditAllowList())

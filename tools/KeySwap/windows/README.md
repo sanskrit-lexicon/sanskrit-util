@@ -1,6 +1,6 @@
 # KeySwap 2.8 for Windows (AutoHotkey v2)
 
-_Created: 23-07-2026 · Last updated: 24-07-2026_
+_Created: 23-07-2026 · Last updated: 15-08-2026_
 
 ## Run
 
@@ -73,6 +73,18 @@ Also:
 python ..\scheme_bridge.py --from hk "saMskRta"
 python ..\cologne_search.py "rāma" --open --dict mw
 ```
+
+## Startup on non-US layouts
+
+Writer-scheme `~` (e.g. `~n` → ñ) is registered as the braced key `{~}`.
+If the active layout has no tilde (Russian JCUKEN), that one mark is
+skipped silently — switch to EN and press **F6** to bind it. Do not
+register `~` by string-concat (`"~*" "~"`): AutoHotkey parses that as
+`~*~` and warns that `~^` is missing.
+
+AHK v2.0 fat-arrows are a **single expression**. Tray items that need
+several calls (reload) must use a named function (`ReloadConfig`), not
+`(*) => { ... }`.
 
 ## Legacy PE
 
