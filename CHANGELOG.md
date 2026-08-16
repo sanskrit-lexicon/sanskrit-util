@@ -5,6 +5,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **German lexicographic-apparatus (metalanguage) detection** (H2876):
+  `classify_german_metalanguage(text) -> [{start, end, text, category}]` in
+  both ports, categories `grammar_label` / `recurring_formula` /
+  `function_word` / `uncertain`, plus the exported harvested inventories
+  (`GERMAN_GRAMMAR_AB`, `GERMAN_GRAMMAR_BARE`, `GERMAN_FORMULA_AB`,
+  `GERMAN_FORMULA_PHRASES`, `GERMAN_FUNCTION_WORDS`,
+  `GERMAN_AMBIGUOUS_TOKENS`). Tokens are harvested — not invented — from the
+  pwg_ru sources that owned them
+  ([pwg_tm_fragmentize.py](https://github.com/gasyoun/SanskritLexicography/blob/master/RussianTranslation/src/pwg_tm_fragmentize.py),
+  [compile_translatable.py](https://github.com/gasyoun/SanskritLexicography/blob/master/RussianTranslation/src/compile_translatable.py),
+  [microstructure.py](https://github.com/gasyoun/SanskritLexicography/blob/master/RussianTranslation/src/microstructure.py),
+  [pwg_mask.py](https://github.com/gasyoun/SanskritLexicography/blob/master/RussianTranslation/src/pwg_mask.py)),
+  the H2684 repair extras (`demin.`, `personif.`, `Uebertr.`), and the H2787
+  arm-B defect formulae (`eines`, `im Comp. vorangehend`, `so`, `Ergänzung`).
+  34 shared golden vectors pin Py==JS. Library versions resynced to **0.6.0**
+  in both `py/pyproject.toml` and `js/package.json` (they had drifted to
+  0.4.1 / 0.5.1).
+
 ### Fixed
 
 - **tools/KeySwap Windows AHK** — two startup defects on AutoHotkey v2.0:

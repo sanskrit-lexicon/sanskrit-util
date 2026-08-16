@@ -2162,5 +2162,352 @@
    "in": "QAmara",
    "out": "dhamara"
   }
+ ],
+ "classify_german_metalanguage": [
+  {
+   "in": "",
+   "out": []
+  },
+  {
+   "in": "eines",
+   "out": [
+    {
+     "start": 0,
+     "end": 5,
+     "text": "eines",
+     "category": "function_word"
+    }
+   ]
+  },
+  {
+   "in": "die",
+   "out": [
+    {
+     "start": 0,
+     "end": 3,
+     "text": "die",
+     "category": "function_word"
+    }
+   ]
+  },
+  {
+   "in": "so",
+   "out": [
+    {
+     "start": 0,
+     "end": 2,
+     "text": "so",
+     "category": "uncertain"
+    }
+   ]
+  },
+  {
+   "in": "so wie",
+   "out": [
+    {
+     "start": 0,
+     "end": 6,
+     "text": "so wie",
+     "category": "function_word"
+    }
+   ]
+  },
+  {
+   "in": "Ergänzung",
+   "out": [
+    {
+     "start": 0,
+     "end": 9,
+     "text": "Ergänzung",
+     "category": "uncertain"
+    }
+   ]
+  },
+  {
+   "in": "im Comp. vorangehend",
+   "out": [
+    {
+     "start": 0,
+     "end": 20,
+     "text": "im Comp. vorangehend",
+     "category": "recurring_formula"
+    }
+   ]
+  },
+  {
+   "in": "im Comp.",
+   "out": [
+    {
+     "start": 0,
+     "end": 8,
+     "text": "im Comp.",
+     "category": "recurring_formula"
+    }
+   ]
+  },
+  {
+   "in": "im Comp., vorangehend",
+   "out": [
+    {
+     "start": 0,
+     "end": 21,
+     "text": "im Comp., vorangehend",
+     "category": "recurring_formula"
+    }
+   ]
+  },
+  {
+   "in": "demin.",
+   "out": [
+    {
+     "start": 0,
+     "end": 6,
+     "text": "demin.",
+     "category": "recurring_formula"
+    }
+   ]
+  },
+  {
+   "in": "personif.",
+   "out": [
+    {
+     "start": 0,
+     "end": 9,
+     "text": "personif.",
+     "category": "recurring_formula"
+    }
+   ]
+  },
+  {
+   "in": "Uebertr.",
+   "out": [
+    {
+     "start": 0,
+     "end": 8,
+     "text": "Uebertr.",
+     "category": "recurring_formula"
+    }
+   ]
+  },
+  {
+   "in": "uebertr.",
+   "out": [
+    {
+     "start": 0,
+     "end": 8,
+     "text": "uebertr.",
+     "category": "recurring_formula"
+    }
+   ]
+  },
+  {
+   "in": "vgl.",
+   "out": [
+    {
+     "start": 0,
+     "end": 4,
+     "text": "vgl.",
+     "category": "recurring_formula"
+    }
+   ]
+  },
+  {
+   "in": "s. u. d. W.",
+   "out": [
+    {
+     "start": 0,
+     "end": 11,
+     "text": "s. u. d. W.",
+     "category": "recurring_formula"
+    }
+   ]
+  },
+  {
+   "in": "adj.",
+   "out": [
+    {
+     "start": 0,
+     "end": 4,
+     "text": "adj.",
+     "category": "grammar_label"
+    }
+   ]
+  },
+  {
+   "in": "m. f. n.",
+   "out": [
+    {
+     "start": 0,
+     "end": 8,
+     "text": "m. f. n.",
+     "category": "grammar_label"
+    }
+   ]
+  },
+  {
+   "in": "comp.",
+   "out": [
+    {
+     "start": 0,
+     "end": 5,
+     "text": "comp.",
+     "category": "grammar_label"
+    }
+   ]
+  },
+  {
+   "in": "Akk",
+   "out": [
+    {
+     "start": 0,
+     "end": 3,
+     "text": "Akk",
+     "category": "grammar_label"
+    }
+   ]
+  },
+  {
+   "in": "Subst mfn",
+   "out": [
+    {
+     "start": 0,
+     "end": 5,
+     "text": "Subst",
+     "category": "grammar_label"
+    },
+    {
+     "start": 6,
+     "end": 9,
+     "text": "mfn",
+     "category": "grammar_label"
+    }
+   ]
+  },
+  {
+   "in": "dass.",
+   "out": [
+    {
+     "start": 0,
+     "end": 5,
+     "text": "dass.",
+     "category": "recurring_formula"
+    }
+   ]
+  },
+  {
+   "in": "am Ende eines Comp.",
+   "out": [
+    {
+     "start": 0,
+     "end": 19,
+     "text": "am Ende eines Comp.",
+     "category": "recurring_formula"
+    }
+   ]
+  },
+  {
+   "in": "am Anf. eines Comp.",
+   "out": [
+    {
+     "start": 0,
+     "end": 19,
+     "text": "am Anf. eines Comp.",
+     "category": "recurring_formula"
+    }
+   ]
+  },
+  {
+   "in": "an der Spitze eines Comp.",
+   "out": [
+    {
+     "start": 0,
+     "end": 25,
+     "text": "an der Spitze eines Comp.",
+     "category": "recurring_formula"
+    }
+   ]
+  },
+  {
+   "in": "mit Ergänzung von",
+   "out": [
+    {
+     "start": 0,
+     "end": 17,
+     "text": "mit Ergänzung von",
+     "category": "recurring_formula"
+    }
+   ]
+  },
+  {
+   "in": "in Verbindung mit",
+   "out": [
+    {
+     "start": 0,
+     "end": 17,
+     "text": "in Verbindung mit",
+     "category": "recurring_formula"
+    }
+   ]
+  },
+  {
+   "in": "u.s.w.",
+   "out": [
+    {
+     "start": 0,
+     "end": 6,
+     "text": "u.s.w.",
+     "category": "recurring_formula"
+    }
+   ]
+  },
+  {
+   "in": "Name eines Baumes",
+   "out": []
+  },
+  {
+   "in": "gewachsen",
+   "out": []
+  },
+  {
+   "in": "Gabe, Geschenk",
+   "out": []
+  },
+  {
+   "in": "das Nichthandeln",
+   "out": []
+  },
+  {
+   "in": "Die Ergänzung geht im Comp. voran",
+   "out": [
+    {
+     "start": 19,
+     "end": 27,
+     "text": "im Comp.",
+     "category": "recurring_formula"
+    }
+   ]
+  },
+  {
+   "in": "  eines  ",
+   "out": [
+    {
+     "start": 2,
+     "end": 7,
+     "text": "eines",
+     "category": "function_word"
+    }
+   ]
+  },
+  {
+   "in": "vgl. das Vorhergehende",
+   "out": [
+    {
+     "start": 0,
+     "end": 4,
+     "text": "vgl.",
+     "category": "recurring_formula"
+    }
+   ]
+  }
  ]
 }

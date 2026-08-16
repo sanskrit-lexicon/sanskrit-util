@@ -29,6 +29,14 @@ slp1_to_devanagari(slp1) SLP1 -> Devanāgarī (real transcode: virāma conjuncts
                          round-trip partner of deva_to_slp1)
 slp1_simplify(slp1)      fuzzy-match key: fold all SLP1 distinctions to plain ASCII (R→n, K→kh, …)
 
+German-apparatus helpers (the PWG/PW dictionaries carry German lexicographic
+METALANGUAGE — grammar labels, recurring formulae, bare function words — that a
+translation pipeline must never treat as ordinary gloss prose; H2787 measured this
+as the dominant TM defect class):
+classify_german_metalanguage(text)   -> list of span dicts {start, end, text, category}
+GERMAN_GRAMMAR_AB / GERMAN_GRAMMAR_BARE / GERMAN_FORMULA_AB / GERMAN_FORMULA_PHRASES /
+GERMAN_FUNCTION_WORDS / GERMAN_AMBIGUOUS_TOKENS   the harvested token inventories
+
 Pick the right key:
   - norm / nfold        : reversible, diacritic-insensitive (search & index lookup)
   - form_key            : compare *generated* forms vs *recorded* forms (length matters)
@@ -37,7 +45,7 @@ Pick the right key:
 import re
 import unicodedata
 
-__version__ = "0.4.1"
+__version__ = "0.6.0"
 
 __all__ = [
     "to_slp1", "from_slp1", "to_roman", "deva_to_iast", "deva_to_slp1", "iast_to_devanagari",
@@ -49,6 +57,10 @@ __all__ = [
     "slp1_simplify",
     # CDSL raw-source-line display renderer (SLP1-in-markup -> readable IAST)
     "source_line_to_iast", "source_text_to_iast",
+    # German lexicographic-apparatus (metalanguage) detection for the PWG/PW pipelines
+    "classify_german_metalanguage",
+    "GERMAN_GRAMMAR_AB", "GERMAN_GRAMMAR_BARE", "GERMAN_FORMULA_AB",
+    "GERMAN_FORMULA_PHRASES", "GERMAN_FUNCTION_WORDS", "GERMAN_AMBIGUOUS_TOKENS",
 ]
 
 # ---- IAST -> SLP1 (longest-key-first; aspirates + diphthongs are digraphs) ----
@@ -457,3 +469,145 @@ def source_text_to_iast(text, code):
     if text is None:
         return ''
     return '\n'.join(source_line_to_iast(line, code) for line in str(text).split('\n'))
+
+
+# ---- German lexicographic-apparatus (metalanguage) detection -----------------
+# The PWG/PW dictionaries write their APPARATUS in German: grammar labels
+# (<ab>adj.</ab>, "m. f. n."), recurring formulae ("am Ende eines Comp.",
+# "mit Ergänzung von", "vgl."), and bare function words reused as placeholders
+# ("eines", "die"). A DE→RU translation pipeline that treats such a span as an
+# ordinary gloss produces the H2787 arm-B defect class ("eines" → «поручать
+# кому-л.», "die" → «боги»). The token inventories below are HARVESTED, not
+# invented, from the pwg_ru sources that already owned them:
+#   GERMAN_GRAMMAR_AB / GERMAN_FORMULA_AB / GERMAN_FORMULA_PHRASES
+#       ← SanskritLexicography RussianTranslation/src/pwg_tm_fragmentize.py
+#         (GRAMMAR_AB / FORMULA_AB / FORMULA_PHRASES), plus the H2684 repair
+#         extras (demin., personif., Uebertr.) and the corpus-measured
+#         "mit Ergänzung von" (82×) / "an der Spitze eines Comp." (43×) /
+#         "im Comp.(,) vorangehend" formulae (H2787 defect list).
+#   GERMAN_GRAMMAR_BARE ← compile_translatable.py GRAM (NWS-layer labels).
+#   GERMAN_FUNCTION_WORDS ← microstructure.py FUNC_DE ∪ pwg_mask.py DE_FUNCTION.
+# Ambiguity is explicit: "so" is both apparatus and a real gloss word, and a bare
+# "Ergänzung" is apparatus only inside its formula frame — as sole content each
+# classifies 'uncertain'; the CONSUMER treats uncertain as not-gloss and logs.
+GERMAN_GRAMMAR_AB = frozenset({
+    'adj.', 'adv.', 'm.', 'f.', 'n.', 'm. n.', 'f. n.', 'm. f.', 'm. f. n.',
+    'partic.', 'part.', 'caus.', 'desid.', 'intens.', 'pass.', 'med.', 'act.',
+    'nom.', 'acc.', 'instr.', 'dat.', 'abl.', 'gen.', 'loc.', 'voc.',
+    'sg.', 'du.', 'pl.', 'inf.', 'abs.', 'ger.', 'impf.', 'perf.', 'aor.',
+    'opt.', 'impv.', 'fut.', 'cond.', 'ppp.', 'pp.', 'subst.', 'interj.',
+    'pron.', 'num.', 'indecl.', 'comp.', 'superl.', 'denomin.', 'desid',
+    'partic', 'caus',
+})
+GERMAN_GRAMMAR_BARE = frozenset({
+    'Subst', 'Adj', 'Adv', 'Indekl', 'PostP', 'mfn', 'ifc', 'NPr',
+    'Pl', 'Sg', 'Du', 'Akk', 'Lok', 'Dat', 'Gen', 'Instr', 'Nom', 'Vok',
+})
+GERMAN_FORMULA_AB = frozenset({
+    'vgl.', 's. u.', 's. d.', 's. v.', 's. u. d.', 'fgg.', 'fg.', 'dass.',
+    'ebend.', 'u.s.w.', 'desgl.', 'dgl.', 'sc.', 'scil.', 's. u. d. W.',
+    # H2684 one-bounded-repair extras (PWG_TM_GROK46_WAVE1_TRACK_B_14-08-2026.md)
+    'demin.', 'personif.', 'uebertr.',
+})
+# Pattern STRINGS (compile with re.IGNORECASE); donor-shaped so
+# pwg_tm_fragmentize.FORMULA_PHRASES can compile these verbatim.
+GERMAN_FORMULA_PHRASES = (
+    r'am Anf(?:ange|\.) eines Comp(?:ositums?|\.)?',
+    r'am Ende eines Comp(?:ositums?|\.)?',
+    r'an der Spitze eines Comp(?:ositums?|\.)?',
+    r'mit Ergänzung von',
+    r'im Comp\.(?:,? vorangehend[a-z]*)?',
+    r'in Verbindung mit',
+    r's\.\s*u\.\s*d\.\s*W\.',
+)
+GERMAN_FUNCTION_WORDS = frozenset(
+    'der die das den dem des ein eine einen einem eines einer und oder aber auf '
+    'in an zu von mit bei nach für so als wie am im zum zur ist sind war wird '
+    'auch nur noch nicht wo wenn dass vor über unter durch ohne um bis'.split())
+GERMAN_AMBIGUOUS_TOKENS = frozenset({'so', 'ergänzung'})
+
+# Guards: no German letter directly before/after a match ("\b" mishandles umlauts,
+# and JS "\b" would disagree — explicit classes keep the two ports identical).
+_GM_L = '(?<![A-Za-zäöüßÄÖÜ])'
+_GM_R = '(?![A-Za-zäöüßÄÖÜ])'
+_GM_PHRASE_RES = tuple(re.compile(_GM_L + p + _GM_R, re.I) for p in GERMAN_FORMULA_PHRASES)
+
+
+def _gm_token_pattern(tok):
+    # '.' is literal; a single space matches any plain whitespace run (kept as
+    # [ \t\n\r]+, NOT \s+, because Python and JS disagree on the \s class edges).
+    return tok.replace('.', r'\.').replace(' ', '[ \t\n\r]+')
+
+
+_GM_DOTTED_RE = re.compile(
+    _GM_L + '(?:' + '|'.join(
+        _gm_token_pattern(t) for t in sorted(GERMAN_GRAMMAR_AB | GERMAN_FORMULA_AB,
+                                             key=lambda t: (-len(t), t))) + ')' + _GM_R,
+    re.I)
+_GM_BARE_RE = re.compile(
+    _GM_L + '(?:' + '|'.join(sorted(GERMAN_GRAMMAR_BARE, key=lambda t: (-len(t), t)))
+    + ')' + _GM_R)   # case-SENSITIVE: these are NWS-layer labels, exact form
+_GM_WORD_RE = re.compile('[A-Za-zäöüßÄÖÜ]+')
+_GM_WS_RUN = re.compile('[ \t\n\r]+')
+# dot-ensured lowercase lookup sets for classifying a dotted match
+_GM_FORMULA_NORM = frozenset(t if t.endswith('.') else t + '.' for t in GERMAN_FORMULA_AB)
+_GM_GRAMMAR_NORM = frozenset(t if t.endswith('.') else t + '.' for t in GERMAN_GRAMMAR_AB)
+
+
+def classify_german_metalanguage(text):
+    """Detect German lexicographic-apparatus (metalanguage) spans in ``text``.
+
+    Returns a list of span dicts ``{'start': int, 'end': int, 'text': str,
+    'category': str}`` sorted by position, categories:
+
+    - ``'grammar_label'``       — POS/case/number abbreviations (``adj.``, ``m. f. n.``, ``Akk``)
+    - ``'recurring_formula'``   — editorial formulae (``vgl.``, ``am Ende eines Comp.``,
+                                  ``mit Ergänzung von``, ``im Comp. vorangehend``, ``demin.``)
+    - ``'function_word'``       — the WHOLE text is bare German function words
+                                  (``eines``, ``die``) — an apparatus placeholder, not a gloss
+    - ``'uncertain'``           — the whole text is an ambiguous token (``so``,
+                                  ``Ergänzung``): apparatus in one reading, gloss in another.
+                                  Consumers treat uncertain as NOT-gloss and log it.
+
+    Mid-text function words ("Name eines Baumes") are NOT flagged — only a span
+    consisting entirely of function/ambiguous words is apparatus; ordinary German
+    gloss prose returns ``[]``. Offsets are code-unit-identical between the Python
+    and JS ports for BMP text (all German apparatus is BMP).
+    """
+    s = text or ''
+    spans = []
+
+    def _keep(start, end, txt, category):
+        for sp in spans:
+            if start < sp['end'] and sp['start'] < end:
+                return
+        spans.append({'start': start, 'end': end, 'text': txt, 'category': category})
+
+    for rx in _GM_PHRASE_RES:
+        for m in rx.finditer(s):
+            _keep(m.start(), m.end(), m.group(0), 'recurring_formula')
+    for m in _GM_DOTTED_RE.finditer(s):
+        tok = _GM_WS_RUN.sub(' ', m.group(0)).lower()
+        if not tok.endswith('.'):
+            tok += '.'
+        cat = 'recurring_formula' if tok in _GM_FORMULA_NORM else 'grammar_label'
+        _keep(m.start(), m.end(), m.group(0), cat)
+    for m in _GM_BARE_RE.finditer(s):
+        _keep(m.start(), m.end(), m.group(0), 'grammar_label')
+    if spans:
+        spans.sort(key=lambda sp: (sp['start'], sp['end']))
+        return spans
+
+    # nothing matched: is the WHOLE text an apparatus placeholder / ambiguous token?
+    words = [w.lower() for w in _GM_WORD_RE.findall(s)]
+    if words and all(w in GERMAN_FUNCTION_WORDS or w in GERMAN_AMBIGUOUS_TOKENS
+                     for w in words):
+        first = _GM_WORD_RE.search(s)
+        start = first.start()
+        end = len(s)
+        while end > start and s[end - 1] in ' \t\n\r':
+            end -= 1
+        cat = ('uncertain'
+               if all(w in GERMAN_AMBIGUOUS_TOKENS for w in words) else 'function_word')
+        return [{'start': start, 'end': end, 'text': s[start:end], 'category': cat}]
+    return []
