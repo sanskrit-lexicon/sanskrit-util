@@ -72,6 +72,20 @@ SLP1_SIMPLIFY_INPUTS = [
 ]
 # gaṇa-number lists for to_roman
 NUM_INPUTS = [[], [1], [1, 2, 3], [4, 9, 10], [11], [0, 1, 10, 99], [5, 5, 6]]
+# German-apparatus inputs for classify_german_metalanguage — the H2787 defect tokens
+# (eines, im Comp., so, Ergänzung), the H2684 repair extras (demin., personif.,
+# Uebertr.), the harvested grammar/formula inventories, and the negative cases that
+# pin mid-text function words / ordinary gloss prose to [] (Name eines Baumes).
+GERMAN_META_INPUTS = [
+    '', 'eines', 'die', 'so', 'so wie', 'Ergänzung',
+    'im Comp. vorangehend', 'im Comp.', 'im Comp., vorangehend',
+    'demin.', 'personif.', 'Uebertr.', 'uebertr.', 'vgl.', 's. u. d. W.',
+    'adj.', 'm. f. n.', 'comp.', 'Akk', 'Subst mfn', 'dass.',
+    'am Ende eines Comp.', 'am Anf. eines Comp.', 'an der Spitze eines Comp.',
+    'mit Ergänzung von', 'in Verbindung mit', 'u.s.w.',
+    'Name eines Baumes', 'gewachsen', 'Gabe, Geschenk', 'das Nichthandeln',
+    'Die Ergänzung geht im Comp. voran', '  eines  ', 'vgl. das Vorhergehende',
+]
 
 
 def build():
@@ -91,6 +105,8 @@ def build():
     v['slp1_form_key'] = [{'in': s, 'out': su.slp1_form_key(s)} for s in SLP1_NORM_INPUTS]
     v['slp1_to_devanagari'] = [{'in': s, 'out': su.slp1_to_devanagari(s)} for s in SLP1_TO_DEVA_INPUTS]
     v['slp1_simplify'] = [{'in': s, 'out': su.slp1_simplify(s)} for s in SLP1_SIMPLIFY_INPUTS]
+    v['classify_german_metalanguage'] = [
+        {'in': s, 'out': su.classify_german_metalanguage(s)} for s in GERMAN_META_INPUTS]
     return v
 
 

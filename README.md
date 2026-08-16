@@ -1,12 +1,12 @@
 # sanskrit-util
 
-_Created: 15-06-2026 · Last updated: 23-07-2026_
+_Created: 15-06-2026 · Last updated: 16-08-2026_
 
 One **canonical** implementation of the Sanskrit string helpers that were being re-typed in
 ~20+ Sanskrit-Lexicon / CDSL repos: IAST ⇄ SLP1 ⇄ Devanāgarī transcoding plus the
 normalization keys used for search, indexing and form comparison.
 
-**Current release: v0.4.0** (2026-07-04) — see the
+**Current release: v0.6.0** (2026-08-16) — see the
 [GitHub releases](https://github.com/sanskrit-lexicon/sanskrit-util/releases) and
 [`CHANGELOG.md`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/CHANGELOG.md).
 Python and JS carry the same version (`py/pyproject.toml`, `js/package.json`,
@@ -121,6 +121,22 @@ SLP1 behind an opt-in toggle for those who edit source.
   is broken — see above). Candrabindu (`~`→ँ) folds back to anusvāra and avagraha (`'`→ऽ) is
   dropped by `deva_to_slp1`, so those two are not round-trip stable (matching `deva_to_slp1`'s
   own behaviour).
+
+### German lexicographic apparatus (PWG/PW metalanguage)
+
+The PWG/PW dictionaries write their apparatus in German — grammar labels (`adj.`, `m. f. n.`),
+recurring formulae (`vgl.`, `am Ende eines Comp.`, `mit Ergänzung von`, `im Comp. vorangehend`)
+and bare function words reused as placeholders (`eines`, `die`). A DE→RU/EN translation pipeline
+that renders such a span as an ordinary gloss produces the dominant TM defect class measured by
+H2787 (`eines` → «поручать кому-л.»).
+
+| Symbol | Does |
+|---|---|
+| `classify_german_metalanguage(text)` | → list of `{start, end, text, category}` spans; categories `grammar_label` / `recurring_formula` / `function_word` (whole text is bare function words) / `uncertain` (whole text is an ambiguous token like `so` or `Ergänzung` — consumers treat as **not**-gloss and log) |
+| `GERMAN_GRAMMAR_AB` `GERMAN_GRAMMAR_BARE` `GERMAN_FORMULA_AB` `GERMAN_FORMULA_PHRASES` `GERMAN_FUNCTION_WORDS` `GERMAN_AMBIGUOUS_TOKENS` | the harvested token inventories (sets; `GERMAN_FORMULA_PHRASES` = case-insensitive pattern strings), consolidated from the pwg_ru pipeline sources so no consumer keeps a second private token table |
+
+Mid-text function words (`Name eines Baumes`) are **not** flagged — only a span consisting
+entirely of function/ambiguous words is apparatus; ordinary German gloss prose returns `[]`.
 
 ## Use it
 
