@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- [CLAUDE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/CLAUDE.md): dated header (`_Created: 03-07-2026 · Last updated: 20-08-2026_`), full-URL SHARED_CODE / WhitneyRoots / KeySwap architecture links, H2876 German-apparatus API note, `changelog-lint.yml` in the CI table (H3042).
+
 ## [0.9.0] - 2026-08-16
 
 ### Added
