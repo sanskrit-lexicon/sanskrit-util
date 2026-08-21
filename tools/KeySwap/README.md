@@ -1,12 +1,17 @@
 # KeySwap **2.6** — scholarly IAST anywhere + open Cologne dictionary layer
 
-_Created: 23-07-2026 · Last updated: 24-07-2026_  
-_Version: [2.8.0](VERSION)_
+_Created: 23-07-2026 · Last updated: 21-08-2026_  
+_Version: [2.9.0](VERSION)_
 
-**Type IAST (and Devanagari) in any app** — cycle, smart digraphs, or
-[Sanskrit Writer](https://sri.auroville.org/projects/sanskrit-writer/)-style
-mark-then-letter (`-a` long a, `~n`, `'s`). Then check the word against
+**Type IAST (and Devanagari) in any app** — **letter then `=`** (default), or
+opt-in smart / [Sanskrit Writer](https://sri.auroville.org/projects/sanskrit-writer/)-style
+digraphs. Then check the word against
 **Cologne** (headword check, optional DCS frequency, full **gloss** page).
+
+**Do not leave smart mode on while writing English.** Smart rewrites ordinary
+pairs (`ll` `ss` `tt` `nn` `sh` `ng` `aa` …) into IAST as you type, so words
+like *call*, *class*, *letter*, *English*, *that* become unwritable. Cycle
+mode does not: diacritics appear only after you press `=` on the last letter.
 
 ```text
 n  =  =  =     cycle diacritics
@@ -50,8 +55,8 @@ Do **not** run both. Details: [packaging/VENDOR_PE.md](packaging/VENDOR_PE.md) �
 1. **One install:**  
    `powershell -ExecutionPolicy Bypass -File tools\KeySwap\packaging\install-windows.ps1`  
    (or double-click [windows/KeySwap.ahk](windows/KeySwap.ahk) after [AHK v2](https://www.autohotkey.com/)).  
-2. Tray icon — type in Notepad: `n` then `=` · or Writer mode: `-` then `a`.  
-3. Tray → **Profile: Writer-scheme** or **Mode: smart**.  
+2. Tray icon — default is **cycle**: type in Notepad `n` then `=`.  
+3. Leave **Mode: cycle**. Turn on **Mode: smart** only for a Sanskrit burst; it will mangle English (`ll`→ḷ, `ss`→ṣ, `sh`→ś, `tt`→ṭ).  
 4. Ctrl+Alt+D toggles script mode; Ctrl+Alt+V converts clipboard.
 
 Full install notes: [packaging/INSTALL.md](packaging/INSTALL.md).  
@@ -282,7 +287,8 @@ After edit: **F6** (AHK) or quit tray app and relaunch (vendor PE). Chandrabindu
 | Font snaps to Cambria after cycle | PE quirk; try AHK; type into already-selected font |
 | Mac / iPhone / Chromebook | Mac app · iOS keyboard · PWA (not the PE) |
 | Need ISO r̥ / r̥̄ | `configs/iso15919.txt` or add to config |
-| Need speed like Azhagi phonetic | Enable **smart** digraphs; or Keyman/Azhagi for pure phonetic Deva/IAST |
+| Need speed like Azhagi phonetic | Enable **smart** only while typing IAST; it rewrites English (`ll`/`ss`/`sh`/`tt`). Or Keyman/Azhagi. |
+| English words get diacritics (`call`→caḷ, `English`→Eṅgliś) | You are in **smart** (or writer). Tray → **Mode: cycle**. Default since 2.9 / [H3278](https://github.com/gasyoun/Uprava/blob/main/handoffs/H3278-Grok_sanskrit-util_keyswap-cycle-only-default_21.08.26.md). |
 | Headword check `? rate-limited` / API 429 | Cologne is throttling; local seed still ✓/✗ common words; use **Ctrl+Alt+C** in browser; expand list with `build_local_wordlist.py --from-spellcheck` |
 | Headword check offline / no Internet | Works via `data/local_headwords.txt` (seed ~1k). Full MW: `build_local_wordlist.py --from-spellcheck` or set `KEYSWAP_WORDLIST` |
 
