@@ -1,6 +1,6 @@
 # KeySwap — one install path (Windows + Mac)
 
-_Created: 24-07-2026 · Last updated: 24-07-2026_
+_Created: 24-07-2026 · Last updated: 21-08-2026_
 
 **Goal:** double-click (or one script) and type — without hunting folders.
 
@@ -54,8 +54,8 @@ If you already run a portable `keyswap.exe` from another folder, **exit it first
 ### Manual (same result)
 
 1. Double-click [`windows/KeySwap.ahk`](../windows/KeySwap.ahk)  
-2. Tray → **Profile: Writer-scheme** or **Mode: smart**  
-3. Type in Notepad: `n` then `=` · or Writer: `-` then `a` → ā  
+2. Default is **cycle** only (`n` then `=`). Tray → **Mode: smart** if you want digraphs.  
+3. Type in Notepad: `n` then `=` → ṇ. Writer-scheme is tray **Mode: writer** (`-` then `a` → ā).  
 
 ### First hotkeys
 

@@ -22,7 +22,7 @@ final class AppModel: ObservableObject {
     @Published var profile: KeySwapProfile = .iastClassic
     @Published var status: String = "Starting…"
     @Published var trusted: Bool = false
-    @Published var smartOn: Bool = true
+    @Published var smartOn: Bool = false
     /// Target script for convert-to-mode (IAST ⇄ Devanāgarī), like Sanskrit Writer output toggle.
     @Published var scriptModeIsDeva: Bool = false
     /// V3 plugin tray opt-in (H1639) — mirrors windows/KeySwap.ahk's EnabledPlugins.

@@ -1,14 +1,15 @@
 # KeySwap 2.8 for Windows (AutoHotkey v2)
 
-_Created: 23-07-2026 · Last updated: 15-08-2026_
+_Created: 23-07-2026 · Last updated: 21-08-2026_
 
 ## Run
 
 1. Install [AutoHotkey v2](https://www.autohotkey.com/).  
 2. Double-click [`KeySwap.ahk`](KeySwap.ahk).  
-3. Default mode: **smart** (digraphs + cycle).
+3. Default mode: **cycle** (letter then `=` only). Smart digraphs are opt-in.
 
 ```text
+autohotkey64.exe KeySwap.ahk "..\configs\iast-classic.txt"
 autohotkey64.exe KeySwap.ahk "..\configs\iast-classic.txt" smart
 autohotkey64.exe KeySwap.ahk "..\configs\vedic-svara.txt" cycle
 autohotkey64.exe KeySwap.ahk "..\config.txt" deadkey
