@@ -10,7 +10,7 @@ open class KeyboardViewController: UIInputViewController {
 
     private var smart = SmartTables.default
     private var shiftOn = false
-    private var smartOn = true
+    private var smartOn = false
     private var longPressBase: String?
     private var longPressTimer: Timer?
     private var menuView: UIStackView?

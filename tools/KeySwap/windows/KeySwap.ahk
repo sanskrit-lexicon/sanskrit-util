@@ -1,7 +1,7 @@
 ; KeySwap 2.9 for Windows — AutoHotkey v2
 ; MIT — sanskrit-util tools/KeySwap
 ;
-; Modes: cycle | smart (default) | deadkey | writer (Writer-scheme digraphs)
+; Modes: cycle (default) | smart | deadkey | writer (Writer-scheme digraphs)
 ; Script mode: iast | deva (Ctrl+Alt+D toggles; Ctrl+Alt+V converts clipboard)
 ; Guards: Keyman process warn; optional allowlist.txt; teaching HUD tooltips
 ; Trigger presets (2.8): equals | bracket | slash | backtick  (trigger.ini / tray)
@@ -29,7 +29,7 @@
 Persistent
 
 global ConfigPath := A_Args.Length >= 1 ? A_Args[1] : A_ScriptDir "\..\config.txt"
-global Mode := A_Args.Length >= 2 ? StrLower(A_Args[2]) : "smart"
+global Mode := A_Args.Length >= 2 ? StrLower(A_Args[2]) : "cycle"
 global Chains := []
 global FormIndex := Map()
 global LastForm := ""
@@ -812,8 +812,8 @@ BuildTray() {
     A_TrayMenu.Add("KeySwap 2.9", (*) => 0)
     A_TrayMenu.Disable("KeySwap 2.9")
     A_TrayMenu.Add()
-    A_TrayMenu.Add("Mode: cycle", (*) => SetMode("cycle"))
-    A_TrayMenu.Add("Mode: smart (default)", (*) => SetMode("smart"))
+    A_TrayMenu.Add("Mode: cycle (default)", (*) => SetMode("cycle"))
+    A_TrayMenu.Add("Mode: smart", (*) => SetMode("smart"))
     A_TrayMenu.Add("Mode: writer (Sanskrit Writer-style)", (*) => SetMode("writer"))
     A_TrayMenu.Add("Mode: deadkey", (*) => SetMode("deadkey"))
     A_TrayMenu.Add()

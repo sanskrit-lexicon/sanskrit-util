@@ -36,7 +36,7 @@
 </head>
 <body>
   <h1>KeySwap 2.8 <span class="hint">offline IAST pad</span></h1>
-  <p class="hint">Type in the box, press the <strong>cycle trigger</strong> (default <code>=</code>), or long-press a letter. Smart: aa→ā, sh→ś. Non-US: pick trigger below.</p>
+  <p class="hint">Type in the box, press the <strong>cycle trigger</strong> (default <code>=</code>) after a letter. Smart digraphs (aa→ā, sh→ś) are off unless you tick the box. Non-US: pick trigger below.</p>
   <textarea id="t" placeholder="Type rāma, saMskRta (HK), raama (ITRANS)…" spellcheck="false"></textarea>
   <div class="row">
     <select id="profile" title="Profile"></select>
@@ -46,7 +46,7 @@
       <option value="/">/ slash</option>
       <option value="`">` backtick</option>
     </select>
-    <label><input type="checkbox" id="smart" checked /> smart</label>
+    <label><input type="checkbox" id="smart" /> smart</label>
     <button type="button" id="cycle" class="primary">cycle</button>
     <button type="button" id="copy">Copy</button>
     <button type="button" id="clear">Clear</button>
