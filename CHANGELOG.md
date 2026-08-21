@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **tools/KeySwap** — default input is **cycle only** (letter then `=`). Smart digraphs (`aa`→ā, `ll`→ḷ, `ss`→ṣ, …) and Writer-scheme marks no longer fire unless the tray / PWA / Mac / iOS **smart** toggle is on. Restores the original Yes Vedanta Keyswap model.
 
+- **tools/KeySwap docs** — smart mode is documented as **English-hostile**: `ll`/`ss`/`tt`/`nn`/`sh`/`ng`/`aa` rewrite ordinary words (*call*, *class*, *letter*, *English*). Cycle only for mixed typing. H3279.
+
 - [CLAUDE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/CLAUDE.md): dated header (`_Created: 03-07-2026 · Last updated: 20-08-2026_`), full-URL SHARED_CODE / WhitneyRoots / KeySwap architecture links, H2876 German-apparatus API note, `changelog-lint.yml` in the CI table (H3042).
 
 ## [0.9.0] - 2026-08-16

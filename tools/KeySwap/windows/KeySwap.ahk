@@ -349,6 +349,8 @@ DeadMap(letter) {
     return m.Has(letter) ? m[letter] : ""
 }
 
+; Smart/writer digraphs collide with English (ll/ss/tt/nn/sh/ng/aa).
+; Default Mode is cycle — do not InitSmartPairs on startup.
 InitSmartPairs(mode := "smart") {
     global SmartPairs
     SmartPairs := []

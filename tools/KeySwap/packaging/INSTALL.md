@@ -54,7 +54,7 @@ If you already run a portable `keyswap.exe` from another folder, **exit it first
 ### Manual (same result)
 
 1. Double-click [`windows/KeySwap.ahk`](../windows/KeySwap.ahk)  
-2. Default is **cycle** only (`n` then `=`). Tray → **Mode: smart** if you want digraphs.  
+2. Default is **cycle** only (`n` then `=`). Tray → **Mode: smart** only for a Sanskrit burst: smart rewrites English (`ll`→ḷ, `ss`→ṣ, `sh`→ś, `tt`→ṭ) and you cannot type ordinary words.  
 3. Type in Notepad: `n` then `=` → ṇ. Writer-scheme is tray **Mode: writer** (`-` then `a` → ā).  
 
 ### First hotkeys

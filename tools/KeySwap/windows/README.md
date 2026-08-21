@@ -19,9 +19,10 @@ autohotkey64.exe KeySwap.ahk "..\config.txt" deadkey
 
 | Mode | Behaviour |
 |------|-----------|
-| `cycle` | Letter then `=` only |
-| `smart` | Digraphs + `=` cycle |
+| `cycle` | Letter then `=` only. **Default.** English stays ASCII until you press `=`. |
+| `smart` | Digraphs + `=` cycle. **Do not use for mixed English.** `ll`→ḷ, `ss`→ṣ, `tt`→ṭ, `nn`→ṇ, `sh`→ś, `ng`→ṅ, `aa`→ā fire on every word (*call*, *class*, *letter*, *cannot*, *English*, *that*). |
 | `deadkey` | `'` then letter → ā ī ū ṛ … |
+| `writer` | Sanskrit Writer marks (`-a`, `~n`, `'s`) plus the same English-hostile digraphs |
 
 ## 2.1 guards & HUD
 
