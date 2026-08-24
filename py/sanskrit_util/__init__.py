@@ -37,6 +37,20 @@ classify_german_metalanguage(text)   -> list of span dicts {start, end, text, ca
 GERMAN_GRAMMAR_AB / GERMAN_GRAMMAR_BARE / GERMAN_FORMULA_AB / GERMAN_FORMULA_PHRASES /
 GERMAN_FUNCTION_WORDS / GERMAN_AMBIGUOUS_TOKENS   the harvested token inventories
 
+linkid helpers (build/parse/validate the cross-repo Type-D link-ID grammar,
+Uprava's TYPED_LINK_ID_GRAMMAR.md — grammar-anchor ids like gra:3983,
+whitney-sec:611-641, sutra:1.1.1 and target-locus ids like dcs:588488,
+vedaweb:1.1.6:<objectid>, commentary:<work>:<cite>. Same "reuse, don't mint"
+prefixed-verbatim-tail scheme the kosha typed_link_lint.py validator checks —
+this is the reusable library that logic is locked against, see the module
+comment above linkid_build_anchor_id below):
+linkid_build_anchor_id({type, tail})      -> 'type:tail' or None if invalid
+linkid_parse_anchor_id(anchor_id)         -> {type, tail, valid} or None
+linkid_build_target_locus({type, tail})   -> 'type:tail' or None if invalid
+linkid_parse_target_locus(target_locus)   -> {type, tail, valid} or None
+linkid_validate_link_record(record)       -> {valid, errors}
+LINKID_ANCHOR_PREFIXES / LINKID_TARGET_PREFIXES / LINKID_LINK_TYPES / LINKID_MATCH_METHODS
+
 Pick the right key:
   - norm / nfold        : reversible, diacritic-insensitive (search & index lookup)
   - form_key            : compare *generated* forms vs *recorded* forms (length matters)
@@ -45,7 +59,7 @@ Pick the right key:
 import re
 import unicodedata
 
-__version__ = "0.6.0"
+__version__ = "0.10.0"
 
 __all__ = [
     "to_slp1", "from_slp1", "to_roman", "deva_to_iast", "deva_to_slp1", "iast_to_devanagari",
@@ -61,6 +75,12 @@ __all__ = [
     "classify_german_metalanguage",
     "GERMAN_GRAMMAR_AB", "GERMAN_GRAMMAR_BARE", "GERMAN_FORMULA_AB",
     "GERMAN_FORMULA_PHRASES", "GERMAN_FUNCTION_WORDS", "GERMAN_AMBIGUOUS_TOKENS",
+    # linkid: TYPED_LINK_ID_GRAMMAR.md build/parse/validate
+    "linkid_build_anchor_id", "linkid_parse_anchor_id",
+    "linkid_build_target_locus", "linkid_parse_target_locus",
+    "linkid_validate_link_record",
+    "LINKID_ANCHOR_PREFIXES", "LINKID_TARGET_PREFIXES",
+    "LINKID_LINK_TYPES", "LINKID_MATCH_METHODS",
 ]
 
 # ---- IAST -> SLP1 (longest-key-first; aspirates + diphthongs are digraphs) ----
@@ -611,3 +631,160 @@ def classify_german_metalanguage(text):
                if all(w in GERMAN_AMBIGUOUS_TOKENS for w in words) else 'function_word')
         return [{'start': start, 'end': end, 'text': s[start:end], 'category': cat}]
     return []
+
+
+# ---- linkid: TYPED_LINK_ID_GRAMMAR.md builders/parsers/validators ----------
+# Cross-repo Type-D (grammar <-> non-grammar) link-ID grammar, per the concordance
+# roadmap's @DECIDE D2 spec: Uprava/TYPED_LINK_ID_GRAMMAR.md. Every anchor id and
+# target-locus id is '<prefix>:<tail>' where the tail is copied VERBATIM from that
+# source's own stable id (spec §0 "reuse, don't mint" — never a fresh synthetic
+# key, never a URL host). The prefixes/patterns/tiers below are locked verbatim
+# against the spec's canonical validator, kosha/scripts/typed_link_lint.py
+# (ANCHOR_PATTERNS / TARGET_PATTERNS / ANCHOR_TYPE_TO_PREFIX) and
+# kosha/scripts/concordance_core.py (TYPE_D_LINK_TYPES / TIER_CONFIDENCE) — this
+# module exists so a Type-D builder can call one shared, tested implementation
+# instead of re-rolling the grammar per pilot.
+#
+# `\w` in the target-locus patterns is compiled with re.ASCII to match JS's
+# ASCII-only `\w` (Python's `\w` is Unicode-aware by default) — the same
+# cross-language parity trap as _WS_CHARS/\s above; every known target-locus
+# tail (work slugs, index names) is ASCII.
+LINKID_ANCHOR_PREFIXES = ('gra', 'whitney-root', 'whitney-sec', 'root', 'sutra')
+LINKID_TARGET_PREFIXES = ('dcs', 'vedaweb', 'commentary', 'subject')
+LINKID_LINK_TYPES = ('translation-witness', 'commentary-citation', 'thematic')
+# tier -> confidence; also the canonical match_method membership list (spec §1).
+LINKID_MATCH_METHODS = ('id-link', 'xref', 'curated', 'exact', 'floor', 'relaxed', 'fuzzy')
+
+_LINKID_ANCHOR_RE = {
+    'gra': re.compile(r'^\d+(\.\d+)?$'),              # gra:3983, gra:5833.1 (homonym suffix)
+    'whitney-root': re.compile(r'^\d+$'),             # whitney-root:1
+    'whitney-sec': re.compile(r'^\d+(-\d+)?$'),       # whitney-sec:611[-641]
+    'root': re.compile(r'^[A-Za-z]+$'),               # root:BU (SLP1)
+    'sutra': re.compile(r'^\d+\.\d+\.\d+$'),          # sutra:1.1.1
+}
+_LINKID_TARGET_RE = {
+    'dcs': re.compile(r'^.+$'),                                    # dcs:<sent_id>, opaque
+    'vedaweb': re.compile(r'^\d+(\.\d+)*:[0-9a-fA-F]{24}$', re.ASCII),  # vedaweb:1.1.6:<ObjectId>
+    'commentary': re.compile(r'^[\w-]+:.+$', re.ASCII),            # commentary:<work>:<cite>
+    'subject': re.compile(r'^[\w-]+:[\w.-]+$', re.ASCII),          # subject:<index>:<category>
+}
+# record-level `anchor_type` -> anchor-id prefix (spec §1 vs §2 naming differs for
+# two rows — id-gra/gra, panini-sutra/sutra); verbatim from typed_link_lint.py.
+_LINKID_ANCHOR_TYPE_TO_PREFIX = {
+    'id-gra': 'gra',
+    'whitney-root': 'whitney-root',
+    'whitney-sec': 'whitney-sec',
+    'root': 'root',
+    'panini-sutra': 'sutra',
+}
+_LINKID_DATE_RE = re.compile(r'^\d{2}-\d{2}-\d{4}$')
+_LINKID_MATCH_METHOD_SET = frozenset(LINKID_MATCH_METHODS)
+
+
+def linkid_build_anchor_id(spec):
+    """{'type': <LINKID_ANCHOR_PREFIXES member>, 'tail': <that source's own id, verbatim>}
+    -> '<type>:<tail>', or None if type is unknown or tail fails that prefix's §2 syntax.
+    'Reuse, don't mint' (§0): this only joins and validates, never derives or renumbers
+    the tail."""
+    if not isinstance(spec, dict):
+        return None
+    t = spec.get('type')
+    tail = spec.get('tail')
+    rx = _LINKID_ANCHOR_RE.get(t)
+    if rx is None or not isinstance(tail, str) or not rx.match(tail):
+        return None
+    return t + ':' + tail
+
+
+def linkid_parse_anchor_id(anchor_id):
+    """'<type>:<tail>' -> {'type', 'tail', 'valid'} (valid = tail matches that prefix's §2
+    syntax), or None if there's no ':' or the prefix isn't a known LINKID_ANCHOR_PREFIXES
+    member."""
+    if not isinstance(anchor_id, str) or ':' not in anchor_id:
+        return None
+    prefix, tail = anchor_id.split(':', 1)
+    rx = _LINKID_ANCHOR_RE.get(prefix)
+    if rx is None:
+        return None
+    return {'type': prefix, 'tail': tail, 'valid': bool(rx.match(tail))}
+
+
+def linkid_build_target_locus(spec):
+    """{'type': <LINKID_TARGET_PREFIXES member>, 'tail': <verbatim tail, §3>} ->
+    '<type>:<tail>', or None if type is unknown or tail fails that prefix's syntax.
+    Never a URL host (§0)."""
+    if not isinstance(spec, dict):
+        return None
+    t = spec.get('type')
+    tail = spec.get('tail')
+    rx = _LINKID_TARGET_RE.get(t)
+    if rx is None or not isinstance(tail, str) or not rx.match(tail):
+        return None
+    return t + ':' + tail
+
+
+def linkid_parse_target_locus(target_locus):
+    """'<type>:<tail>' -> {'type', 'tail', 'valid'}, or None if there's no ':' or the
+    prefix isn't a known LINKID_TARGET_PREFIXES member."""
+    if not isinstance(target_locus, str) or ':' not in target_locus:
+        return None
+    prefix, tail = target_locus.split(':', 1)
+    rx = _LINKID_TARGET_RE.get(prefix)
+    if rx is None:
+        return None
+    return {'type': prefix, 'tail': tail, 'valid': bool(rx.match(tail))}
+
+
+def linkid_validate_link_record(record):
+    """Validate one TYPE_D_RECORD_FIELDS-shaped dict against TYPED_LINK_ID_GRAMMAR.md end to
+    end — anchor_id prefix/syntax against its anchor_type, target_locus prefix/syntax, the
+    URL-host ban, link_type/match_method membership, a DD-MM-YYYY date — and return
+    {'valid': bool, 'errors': [str, ...]}. Same checks as kosha/scripts/typed_link_lint.py's
+    lint_row(), minus the line-number framing (one record here, not a TSV row)."""
+    errors = []
+    if not isinstance(record, dict):
+        return {'valid': False, 'errors': ["record is not an object"]}
+
+    anchor_type = (record.get('anchor_type') or '')
+    anchor_id = (record.get('anchor_id') or '')
+    expected_prefix = _LINKID_ANCHOR_TYPE_TO_PREFIX.get(anchor_type)
+    if expected_prefix is None:
+        errors.append("unknown anchor_type '%s'" % (anchor_type,))
+    else:
+        parsed = linkid_parse_anchor_id(anchor_id)
+        if parsed is None:
+            errors.append("anchor_id '%s' has no known prefix (expected '%s:...')"
+                           % (anchor_id, expected_prefix))
+        elif parsed['type'] != expected_prefix:
+            errors.append("anchor_id '%s' prefix '%s' does not match anchor_type '%s' "
+                           "(expected '%s:...')" % (anchor_id, parsed['type'], anchor_type, expected_prefix))
+        elif not parsed['valid']:
+            errors.append("anchor_id '%s': tail '%s' fails '%s' syntax"
+                           % (anchor_id, parsed['tail'], parsed['type']))
+
+    target_locus = (record.get('target_locus') or '')
+    parsed_t = linkid_parse_target_locus(target_locus)
+    if parsed_t is None:
+        errors.append("target_locus '%s' has no known prefix" % (target_locus,))
+    elif not parsed_t['valid']:
+        errors.append("target_locus '%s': tail '%s' fails '%s' syntax"
+                       % (target_locus, parsed_t['tail'], parsed_t['type']))
+    if isinstance(target_locus, str) and target_locus.startswith(('http://', 'https://', 'www.')):
+        errors.append("target_locus '%s' looks like a URL host — reuse the source's own "
+                       "stable id (spec section 0)" % (target_locus,))
+
+    link_type = (record.get('link_type') or '')
+    if link_type not in LINKID_LINK_TYPES:
+        errors.append("link_type '%s' not in [%s]" % (link_type, ', '.join(LINKID_LINK_TYPES)))
+
+    match_method = (record.get('match_method') or '')
+    if match_method not in _LINKID_MATCH_METHOD_SET:
+        errors.append("match_method '%s' not in [%s]" % (match_method, ', '.join(LINKID_MATCH_METHODS)))
+
+    date = (record.get('date') or '')
+    if not date:
+        errors.append("date is missing")
+    elif not _LINKID_DATE_RE.match(str(date)):
+        errors.append("date '%s' is not DD-MM-YYYY" % (date,))
+
+    return {'valid': not errors, 'errors': errors}

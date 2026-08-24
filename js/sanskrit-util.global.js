@@ -428,7 +428,140 @@ function classify_german_metalanguage(text) {
   return [];
 }
 
+// ---- linkid: TYPED_LINK_ID_GRAMMAR.md builders/parsers/validators ----------
+// Cross-repo Type-D (grammar <-> non-grammar) link-ID grammar, per the concordance
+// roadmap's @DECIDE D2 spec: Uprava/TYPED_LINK_ID_GRAMMAR.md. Every anchor id and
+// target-locus id is '<prefix>:<tail>' where the tail is copied VERBATIM from that
+// source's own stable id (spec section 0 "reuse, don't mint" — never a fresh
+// synthetic key, never a URL host). The prefixes/patterns/tiers below are locked
+// verbatim against the spec's canonical validator, kosha/scripts/typed_link_lint.py
+// (ANCHOR_PATTERNS / TARGET_PATTERNS / ANCHOR_TYPE_TO_PREFIX) and
+// kosha/scripts/concordance_core.py (TYPE_D_LINK_TYPES / TIER_CONFIDENCE) — behaviour-
+// identical port of the linkid_* section in py/sanskrit_util/__init__.py (proved by
+// ../vectors/vectors.json). JS `\w` is already ASCII-only (unlike Python's
+// Unicode-aware default), so no extra flag is needed here — see the Python port's
+// note on this cross-language parity trap.
+const LINKID_ANCHOR_PREFIXES = ['gra', 'whitney-root', 'whitney-sec', 'root', 'sutra'];
+const LINKID_TARGET_PREFIXES = ['dcs', 'vedaweb', 'commentary', 'subject'];
+const LINKID_LINK_TYPES = ['translation-witness', 'commentary-citation', 'thematic'];
+const LINKID_MATCH_METHODS = ['id-link', 'xref', 'curated', 'exact', 'floor', 'relaxed', 'fuzzy'];
+
+const LINKID_ANCHOR_RE = {
+  'gra': /^\d+(\.\d+)?$/,
+  'whitney-root': /^\d+$/,
+  'whitney-sec': /^\d+(-\d+)?$/,
+  'root': /^[A-Za-z]+$/,
+  'sutra': /^\d+\.\d+\.\d+$/,
+};
+const LINKID_TARGET_RE = {
+  'dcs': /^.+$/,
+  'vedaweb': /^\d+(\.\d+)*:[0-9a-fA-F]{24}$/,
+  'commentary': /^[\w-]+:.+$/,
+  'subject': /^[\w-]+:[\w.-]+$/,
+};
+const LINKID_ANCHOR_TYPE_TO_PREFIX = {
+  'id-gra': 'gra',
+  'whitney-root': 'whitney-root',
+  'whitney-sec': 'whitney-sec',
+  'root': 'root',
+  'panini-sutra': 'sutra',
+};
+const LINKID_DATE_RE = /^\d{2}-\d{2}-\d{4}$/;
+const LINKID_MATCH_METHOD_SET = new Set(LINKID_MATCH_METHODS);
+
+function linkid_build_anchor_id(spec) {
+  if (spec === null || typeof spec !== 'object') return null;
+  const t = spec.type;
+  const tail = spec.tail;
+  const rx = LINKID_ANCHOR_RE[t];
+  if (!rx || typeof tail !== 'string' || !rx.test(tail)) return null;
+  return `${t}:${tail}`;
+}
+
+function linkid_parse_anchor_id(anchorId) {
+  if (typeof anchorId !== 'string' || !anchorId.includes(':')) return null;
+  const i = anchorId.indexOf(':');
+  const prefix = anchorId.slice(0, i);
+  const tail = anchorId.slice(i + 1);
+  const rx = LINKID_ANCHOR_RE[prefix];
+  if (!rx) return null;
+  return { type: prefix, tail, valid: rx.test(tail) };
+}
+
+function linkid_build_target_locus(spec) {
+  if (spec === null || typeof spec !== 'object') return null;
+  const t = spec.type;
+  const tail = spec.tail;
+  const rx = LINKID_TARGET_RE[t];
+  if (!rx || typeof tail !== 'string' || !rx.test(tail)) return null;
+  return `${t}:${tail}`;
+}
+
+function linkid_parse_target_locus(targetLocus) {
+  if (typeof targetLocus !== 'string' || !targetLocus.includes(':')) return null;
+  const i = targetLocus.indexOf(':');
+  const prefix = targetLocus.slice(0, i);
+  const tail = targetLocus.slice(i + 1);
+  const rx = LINKID_TARGET_RE[prefix];
+  if (!rx) return null;
+  return { type: prefix, tail, valid: rx.test(tail) };
+}
+
+function linkid_validate_link_record(record) {
+  const errors = [];
+  if (record === null || typeof record !== 'object') {
+    return { valid: false, errors: ['record is not an object'] };
+  }
+
+  const anchorType = record.anchor_type || '';
+  const anchorId = record.anchor_id || '';
+  const expectedPrefix = LINKID_ANCHOR_TYPE_TO_PREFIX[anchorType];
+  if (!expectedPrefix) {
+    errors.push(`unknown anchor_type '${anchorType}'`);
+  } else {
+    const parsed = linkid_parse_anchor_id(anchorId);
+    if (parsed === null) {
+      errors.push(`anchor_id '${anchorId}' has no known prefix (expected '${expectedPrefix}:...')`);
+    } else if (parsed.type !== expectedPrefix) {
+      errors.push(`anchor_id '${anchorId}' prefix '${parsed.type}' does not match anchor_type '${anchorType}' (expected '${expectedPrefix}:...')`);
+    } else if (!parsed.valid) {
+      errors.push(`anchor_id '${anchorId}': tail '${parsed.tail}' fails '${parsed.type}' syntax`);
+    }
+  }
+
+  const targetLocus = record.target_locus || '';
+  const parsedT = linkid_parse_target_locus(targetLocus);
+  if (parsedT === null) {
+    errors.push(`target_locus '${targetLocus}' has no known prefix`);
+  } else if (!parsedT.valid) {
+    errors.push(`target_locus '${targetLocus}': tail '${parsedT.tail}' fails '${parsedT.type}' syntax`);
+  }
+  if (typeof targetLocus === 'string'
+      && (targetLocus.startsWith('http://') || targetLocus.startsWith('https://') || targetLocus.startsWith('www.'))) {
+    errors.push(`target_locus '${targetLocus}' looks like a URL host — reuse the source's own stable id (spec section 0)`);
+  }
+
+  const linkType = record.link_type || '';
+  if (!LINKID_LINK_TYPES.includes(linkType)) {
+    errors.push(`link_type '${linkType}' not in [${LINKID_LINK_TYPES.join(', ')}]`);
+  }
+
+  const matchMethod = record.match_method || '';
+  if (!LINKID_MATCH_METHOD_SET.has(matchMethod)) {
+    errors.push(`match_method '${matchMethod}' not in [${LINKID_MATCH_METHODS.join(', ')}]`);
+  }
+
+  const date = record.date || '';
+  if (!date) {
+    errors.push('date is missing');
+  } else if (!LINKID_DATE_RE.test(String(date))) {
+    errors.push(`date '${date}' is not DD-MM-YYYY`);
+  }
+
+  return { valid: errors.length === 0, errors };
+}
+
   root.SanskritUtil = Object.freeze({
-    to_slp1, to_roman, from_slp1, deva_to_iast, deva_to_slp1, slp1_to_devanagari, iast_to_devanagari, norm, nfold, form_key, normalize_sanskrit, SLP1_VOWELS, SLP1_MARKS, SLP1_CONSONANTS, SLP1_ALPHABET, strip_slp1_accents, slp1_norm, slp1_form_key, slp1_simplify, source_line_to_iast, source_text_to_iast, GERMAN_GRAMMAR_AB, GERMAN_GRAMMAR_BARE, GERMAN_FORMULA_AB, GERMAN_FORMULA_PHRASES, GERMAN_FUNCTION_WORDS, GERMAN_AMBIGUOUS_TOKENS, classify_german_metalanguage,
+    to_slp1, to_roman, from_slp1, deva_to_iast, deva_to_slp1, slp1_to_devanagari, iast_to_devanagari, norm, nfold, form_key, normalize_sanskrit, SLP1_VOWELS, SLP1_MARKS, SLP1_CONSONANTS, SLP1_ALPHABET, strip_slp1_accents, slp1_norm, slp1_form_key, slp1_simplify, source_line_to_iast, source_text_to_iast, GERMAN_GRAMMAR_AB, GERMAN_GRAMMAR_BARE, GERMAN_FORMULA_AB, GERMAN_FORMULA_PHRASES, GERMAN_FUNCTION_WORDS, GERMAN_AMBIGUOUS_TOKENS, classify_german_metalanguage, LINKID_ANCHOR_PREFIXES, LINKID_TARGET_PREFIXES, LINKID_LINK_TYPES, LINKID_MATCH_METHODS, linkid_build_anchor_id, linkid_parse_anchor_id, linkid_build_target_locus, linkid_parse_target_locus, linkid_validate_link_record,
   });
 })(typeof globalThis !== 'undefined' ? globalThis : this);

@@ -1,12 +1,12 @@
 # sanskrit-util
 
-_Created: 15-06-2026 · Last updated: 16-08-2026_
+_Created: 15-06-2026 · Last updated: 24-08-2026_
 
 One **canonical** implementation of the Sanskrit string helpers that were being re-typed in
 ~20+ Sanskrit-Lexicon / CDSL repos: IAST ⇄ SLP1 ⇄ Devanāgarī transcoding plus the
 normalization keys used for search, indexing and form comparison.
 
-**Current release: v0.6.0** (2026-08-16) — see the
+**Current release: v0.10.0** (2026-08-24) — see the
 [GitHub releases](https://github.com/sanskrit-lexicon/sanskrit-util/releases) and
 [`CHANGELOG.md`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/CHANGELOG.md).
 Python and JS carry the same version (`py/pyproject.toml`, `js/package.json`,
@@ -138,6 +138,35 @@ H2787 (`eines` → «поручать кому-л.»).
 Mid-text function words (`Name eines Baumes`) are **not** flagged — only a span consisting
 entirely of function/ambiguous words is apparatus; ordinary German gloss prose returns `[]`.
 
+### linkid — TYPED_LINK_ID_GRAMMAR.md build/parse/validate
+
+Cross-repo **Type-D** (grammar ↔ non-grammar) link-ID grammar per Uprava's
+[`TYPED_LINK_ID_GRAMMAR.md`](https://github.com/gasyoun/Uprava/blob/main/TYPED_LINK_ID_GRAMMAR.md):
+a grammar-anchor id (`gra:3983`, `whitney-sec:611-641`, `sutra:1.1.1`) linked to a target-locus id
+(`dcs:588488`, `vedaweb:1.1.6:668bbf5c1e18769f3d9aafc3`, `commentary:gita-tm:2.47`). Every id is
+`<prefix>:<tail>` where the tail is the source's **own** stable id, copied verbatim — never a
+fresh synthetic key, never a URL host (spec §0 "reuse, don't mint"). These functions are the
+reusable implementation the spec's canonical validator, `kosha/scripts/typed_link_lint.py`, is
+locked against (`tools/gen_vectors.py`'s `linkid_donor_regression()`).
+
+| Symbol | Does |
+|---|---|
+| `linkid_build_anchor_id({type, tail})` | `{type: 'gra', tail: '3983'}` → `'gra:3983'`, or `None`/`null` if `type` isn't a `LINKID_ANCHOR_PREFIXES` member or `tail` fails that prefix's syntax |
+| `linkid_parse_anchor_id(anchor_id)` | `'gra:3983'` → `{type, tail, valid}`, or `None`/`null` if there's no known prefix |
+| `linkid_build_target_locus({type, tail})` | same shape as the anchor builder, for `LINKID_TARGET_PREFIXES` |
+| `linkid_parse_target_locus(target_locus)` | same shape as the anchor parser |
+| `linkid_validate_link_record(record)` | validate a full `TYPE_D_RECORD_FIELDS`-shaped record (anchor/target prefix+syntax, the URL-host ban, `link_type`/`match_method` membership, `DD-MM-YYYY` date) → `{valid, errors}` |
+| `LINKID_ANCHOR_PREFIXES` `LINKID_TARGET_PREFIXES` `LINKID_LINK_TYPES` `LINKID_MATCH_METHODS` | the known prefix/type/tier lists (tuples/arrays) |
+
+```python
+from sanskrit_util import linkid_build_anchor_id, linkid_validate_link_record
+linkid_build_anchor_id({'type': 'gra', 'tail': '3983'})   # 'gra:3983'
+linkid_validate_link_record({
+    'anchor_type': 'id-gra', 'anchor_id': 'gra:3983', 'target_locus': 'vedaweb:1.1.6:668bbf5c1e18769f3d9aafc3',
+    'link_type': 'translation-witness', 'source_dataset': '...', 'match_method': 'id-link', 'date': '08-07-2026',
+})   # {'valid': True, 'errors': []}
+```
+
 ## Use it
 
 ### Python
@@ -188,10 +217,12 @@ node   js/build-global.mjs --check    # browser global build is not stale
 ```
 
 `tools/gen_vectors.py` additionally (a) locks the `SLP1_VOWELS/MARKS/CONSONANTS` constants
-set-equal to the independent literals in the SanskritSpellCheck `slp1util.py` donor, and (b) runs
-the **SLP1 ⇄ Devanāgarī round-trip property test** — `deva_to_slp1(slp1_to_devanagari(s)) == s`
+set-equal to the independent literals in the SanskritSpellCheck `slp1util.py` donor, (b) locks the
+`LINKID_*` prefix/type/tier constants against the sibling `kosha/scripts/typed_link_lint.py` +
+`concordance_core.py` donors, and (c) runs the **SLP1 ⇄ Devanāgarī round-trip property test** —
+`deva_to_slp1(slp1_to_devanagari(s)) == s`
 over the full alphabet plus [`vectors/slp1_roundtrip_sample.txt`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/vectors/slp1_roundtrip_sample.txt)
-(1000 real MW `<k1>` headwords). Both are skipped gracefully if the sibling repos are absent.
+(1000 real MW `<k1>` headwords). All three are skipped gracefully if the sibling repos are absent.
 
 ## Related tools (optional, not part of the library API)
 

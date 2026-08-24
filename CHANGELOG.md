@@ -5,6 +5,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-08-24
+
+### Added
+
+- **linkid: `TYPED_LINK_ID_GRAMMAR.md` build/parse/validate** (H3341): `linkid_build_anchor_id` /
+  `linkid_parse_anchor_id` / `linkid_build_target_locus` / `linkid_parse_target_locus` /
+  `linkid_validate_link_record` in both ports, implementing Uprava's cross-repo Type-D
+  (grammar ↔ non-grammar) link-ID grammar — grammar-anchor ids (`gra:<L>`, `whitney-root:<n>`,
+  `whitney-sec:<§>`, `root:<slp1>`, `sutra:<a.p.n>`) and target-locus ids (`dcs:<sent_id>`,
+  `vedaweb:<RV-locus>:<resource-id>`, `commentary:<work>:<cite>`, `subject:<index>:<category>`),
+  plus the `LINKID_ANCHOR_PREFIXES` / `LINKID_TARGET_PREFIXES` / `LINKID_LINK_TYPES` /
+  `LINKID_MATCH_METHODS` constant lists. 53 shared golden vectors pin Py==JS. The prefix/pattern/
+  tier constants are locked against the spec's canonical validator,
+  [kosha/scripts/typed_link_lint.py](https://github.com/gasyoun/kosha/blob/main/scripts/typed_link_lint.py)
+  + `concordance_core.py`, by `tools/gen_vectors.py`'s new `linkid_donor_regression()` (skipped
+  gracefully if the sibling checkout is absent). Library package versions bumped to **0.10.0**
+  in `py/pyproject.toml`, `js/package.json`, and `__version__` (resyncing them with the git tag
+  sequence — they had drifted to the 0.6.0 they were resynced to for v0.9.0 while tags moved on
+  to v0.9.0).
+
 ### Changed
 
 - **tools/KeySwap** — default input is **cycle only** (letter then `=`). Smart digraphs (`aa`→ā, `ll`→ḷ, `ss`→ṣ, …) and Writer-scheme marks no longer fire unless the tray / PWA / Mac / iOS **smart** toggle is on. Restores the original Yes Vedanta Keyswap model.
