@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-_Created: 03-07-2026 · Last updated: 20-08-2026_
+_Created: 03-07-2026 · Last updated: 24-08-2026_
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -83,9 +83,17 @@ cd js && npm test                     # full JS suite (as CI runs it)
 - **German lexicographic-apparatus detection is library API** (H2876 / changelog
   0.9.0): `classify_german_metalanguage(text)` plus the harvested
   `GERMAN_*` inventories. Do not keep a second private token table in a
-  PWG/PW DE→RU/EN pipeline. Library package versions are resynced to
-  **0.6.0** (`py/pyproject.toml`, `js/package.json`, `__version__`) —
-  the GitHub release tag is `v0.9.0`.
+  PWG/PW DE→RU/EN pipeline.
+- **linkid is library API** (H3341 / changelog 0.10.0): `linkid_build_anchor_id` /
+  `linkid_parse_anchor_id` / `linkid_build_target_locus` / `linkid_parse_target_locus` /
+  `linkid_validate_link_record` implement Uprava's
+  [`TYPED_LINK_ID_GRAMMAR.md`](https://github.com/gasyoun/Uprava/blob/main/TYPED_LINK_ID_GRAMMAR.md)
+  (Type-D grammar↔non-grammar link IDs). The prefix/type/tier constants are locked
+  against the spec's canonical validator, `kosha/scripts/typed_link_lint.py` +
+  `concordance_core.py`, by `tools/gen_vectors.py`'s `linkid_donor_regression()` — a
+  Type-D builder should call these, not re-roll the grammar per pilot. Library package
+  versions are **0.10.0** (`py/pyproject.toml`, `js/package.json`, `__version__`),
+  matching the `v0.10.0` GitHub release tag.
 - **Consumption in a sibling repo without publishing:** drop a small re-export
   shim named `sanskrit_util.py` that loads this package's `py/sanskrit_util/__init__.py`
   by relative path — see the working example at

@@ -72,6 +72,95 @@ SLP1_SIMPLIFY_INPUTS = [
 ]
 # gaṇa-number lists for to_roman
 NUM_INPUTS = [[], [1], [1, 2, 3], [4, 9, 10], [11], [0, 1, 10, 99], [5, 5, 6]]
+# linkid — TYPED_LINK_ID_GRAMMAR.md build/parse inputs: one valid case per prefix (§2/§3),
+# an invalid-tail case per prefix, an unknown-prefix case, and the empty/missing-field edges.
+LINKID_ANCHOR_BUILD_INPUTS = [
+    {'type': 'gra', 'tail': '3983'}, {'type': 'gra', 'tail': '5833.1'},
+    {'type': 'whitney-root', 'tail': '1'}, {'type': 'whitney-sec', 'tail': '611'},
+    {'type': 'whitney-sec', 'tail': '611-641'}, {'type': 'root', 'tail': 'BU'},
+    {'type': 'sutra', 'tail': '1.1.1'},
+    {'type': 'gra', 'tail': 'abc'}, {'type': 'whitney-root', 'tail': '1-2'},
+    {'type': 'root', 'tail': ''}, {'type': 'unknown', 'tail': '1'}, {},
+]
+LINKID_ANCHOR_PARSE_INPUTS = [
+    'gra:3983', 'gra:5833.1', 'whitney-root:1', 'whitney-sec:611', 'whitney-sec:611-641',
+    'root:BU', 'sutra:1.1.1', 'gra:abc', 'unknown:1', 'noColonHere', '',
+]
+LINKID_TARGET_BUILD_INPUTS = [
+    {'type': 'dcs', 'tail': '588488'},
+    {'type': 'vedaweb', 'tail': '1.1.6:668bbf5c1e18769f3d9aafc3'},
+    {'type': 'commentary', 'tail': 'gita-tm:2.47'},
+    {'type': 'subject', 'tail': 'sanskritgrammar:present-root-class'},
+    {'type': 'vedaweb', 'tail': '1.1.6:zzz'}, {'type': 'subject', 'tail': 'sanskritgrammar'},
+    {'type': 'unknown', 'tail': 'x'}, {},
+]
+LINKID_TARGET_PARSE_INPUTS = [
+    'dcs:588488', 'vedaweb:1.1.6:668bbf5c1e18769f3d9aafc3', 'commentary:gita-tm:2.47',
+    'subject:sanskritgrammar:present-root-class', 'vedaweb:1.1.6:zzz', 'unknown:x', 'noColon', '',
+]
+# linkid — TYPED_LINK_ID_GRAMMAR.md §4 worked examples (translation-witness / thematic /
+# commentary-citation, all valid) plus one invalid variant per validate_link_record check.
+LINKID_RECORD_INPUTS = [
+    {  # §4a — landed VedaWeb Grassmann-de layer
+        'anchor_type': 'id-gra', 'anchor_id': 'gra:3983', 'anchor_key_slp1': 'tva',
+        'target_locus': 'vedaweb:1.1.6:668bbf5c1e18769f3d9aafc3', 'link_type': 'translation-witness',
+        'source_dataset': 'VisualDCS/non-derived/vedaweb/grassmann_de_1876_1877.json',
+        'match_method': 'id-link', 'confidence': 0.99, 'evidence_count': 4712, 'date': '08-07-2026',
+    },
+    {  # §4b — landed SubjectConcordance
+        'anchor_type': 'whitney-sec', 'anchor_id': 'whitney-sec:611',
+        'target_locus': 'subject:sanskritgrammar:present-root-class', 'link_type': 'thematic',
+        'source_dataset': 'SanskritGrammar/SubjectConcordance/catalog.mdx',
+        'match_method': 'curated', 'date': '10-07-2026',
+    },
+    {  # §4c — landed Q4.1 commentary-citation pilot
+        'anchor_type': 'root', 'anchor_id': 'root:BU', 'anchor_key_slp1': 'BU',
+        'target_locus': 'commentary:gita-tm:2.47', 'link_type': 'commentary-citation',
+        'source_dataset': 'CommentaryStrategies/data/gita_tm.json',
+        'match_method': 'exact', 'confidence': 0.95, 'evidence_count': 1, 'date': '11-07-2026',
+    },
+    {  # unknown anchor_type
+        'anchor_type': 'bogus', 'anchor_id': 'gra:3983', 'target_locus': 'dcs:1',
+        'link_type': 'thematic', 'source_dataset': 'x', 'match_method': 'curated', 'date': '01-01-2026',
+    },
+    {  # anchor_id prefix doesn't match anchor_type
+        'anchor_type': 'root', 'anchor_id': 'gra:3983', 'target_locus': 'dcs:1',
+        'link_type': 'thematic', 'source_dataset': 'x', 'match_method': 'curated', 'date': '01-01-2026',
+    },
+    {  # anchor_id tail fails its own prefix's syntax (root wants letters only)
+        'anchor_type': 'root', 'anchor_id': 'root:123', 'target_locus': 'dcs:1',
+        'link_type': 'thematic', 'source_dataset': 'x', 'match_method': 'curated', 'date': '01-01-2026',
+    },
+    {  # target_locus prefix unknown
+        'anchor_type': 'root', 'anchor_id': 'root:BU', 'target_locus': 'unknown:1',
+        'link_type': 'thematic', 'source_dataset': 'x', 'match_method': 'curated', 'date': '01-01-2026',
+    },
+    {  # target_locus tail fails its prefix's syntax (vedaweb ObjectId not 24 hex chars)
+        'anchor_type': 'root', 'anchor_id': 'root:BU', 'target_locus': 'vedaweb:1.1.6:zzz',
+        'link_type': 'thematic', 'source_dataset': 'x', 'match_method': 'curated', 'date': '01-01-2026',
+    },
+    {  # target_locus is a URL host (spec §0 ban) — also has no known prefix
+        'anchor_type': 'root', 'anchor_id': 'root:BU', 'target_locus': 'https://example.com/gra/3983',
+        'link_type': 'thematic', 'source_dataset': 'x', 'match_method': 'curated', 'date': '01-01-2026',
+    },
+    {  # link_type not a Type-D subtype
+        'anchor_type': 'root', 'anchor_id': 'root:BU', 'target_locus': 'dcs:1',
+        'link_type': 'bogus', 'source_dataset': 'x', 'match_method': 'curated', 'date': '01-01-2026',
+    },
+    {  # match_method not a known tier
+        'anchor_type': 'root', 'anchor_id': 'root:BU', 'target_locus': 'dcs:1',
+        'link_type': 'thematic', 'source_dataset': 'x', 'match_method': 'bogus', 'date': '01-01-2026',
+    },
+    {  # date missing
+        'anchor_type': 'root', 'anchor_id': 'root:BU', 'target_locus': 'dcs:1',
+        'link_type': 'thematic', 'source_dataset': 'x', 'match_method': 'curated',
+    },
+    {  # date wrong format
+        'anchor_type': 'root', 'anchor_id': 'root:BU', 'target_locus': 'dcs:1',
+        'link_type': 'thematic', 'source_dataset': 'x', 'match_method': 'curated', 'date': '2026-01-01',
+    },
+    'not-a-record',  # not an object at all
+]
 # German-apparatus inputs for classify_german_metalanguage — the H2787 defect tokens
 # (eines, im Comp., so, Ergänzung), the H2684 repair extras (demin., personif.,
 # Uebertr.), the harvested grammar/formula inventories, and the negative cases that
@@ -107,7 +196,72 @@ def build():
     v['slp1_simplify'] = [{'in': s, 'out': su.slp1_simplify(s)} for s in SLP1_SIMPLIFY_INPUTS]
     v['classify_german_metalanguage'] = [
         {'in': s, 'out': su.classify_german_metalanguage(s)} for s in GERMAN_META_INPUTS]
+    v['linkid_build_anchor_id'] = [
+        {'in': s, 'out': su.linkid_build_anchor_id(s)} for s in LINKID_ANCHOR_BUILD_INPUTS]
+    v['linkid_parse_anchor_id'] = [
+        {'in': s, 'out': su.linkid_parse_anchor_id(s)} for s in LINKID_ANCHOR_PARSE_INPUTS]
+    v['linkid_build_target_locus'] = [
+        {'in': s, 'out': su.linkid_build_target_locus(s)} for s in LINKID_TARGET_BUILD_INPUTS]
+    v['linkid_parse_target_locus'] = [
+        {'in': s, 'out': su.linkid_parse_target_locus(s)} for s in LINKID_TARGET_PARSE_INPUTS]
+    v['linkid_validate_link_record'] = [
+        {'in': s, 'out': su.linkid_validate_link_record(s)} for s in LINKID_RECORD_INPUTS]
     return v
+
+
+def linkid_donor_regression():
+    """Lock the linkid prefix/pattern/tier constants against the CANONICAL validator they exist
+    to back: kosha/scripts/typed_link_lint.py (ANCHOR_PATTERNS/TARGET_PATTERNS/
+    ANCHOR_TYPE_TO_PREFIX) and kosha/scripts/concordance_core.py (TYPE_D_LINK_TYPES/
+    TIER_CONFIDENCE). Compares regex SOURCE strings and key sets, not compiled objects, so it
+    works whether or not the sibling checkout is present. Returns None if kosha is absent
+    (skipped), else a list of (what, package, donor) mismatches."""
+    kosha_root = os.path.abspath(os.path.join(ROOT, '..', 'kosha', 'scripts'))
+    lint_p = os.path.join(kosha_root, 'typed_link_lint.py')
+    core_p = os.path.join(kosha_root, 'concordance_core.py')
+    if not (os.path.exists(lint_p) and os.path.exists(core_p)):
+        return None
+    import re as _re
+    lint_src = open(lint_p, encoding='utf-8').read()
+    core_src = open(core_p, encoding='utf-8').read()
+    fails = []
+
+    def _extract_dict_block(src, name):
+        # non-greedy up to a '}' at column 0 (the dict's own close) — NOT '[^}]*', which stops
+        # early at the literal '}' inside e.g. the vedaweb pattern's regex source ('{24}').
+        m = _re.search(name + r'\s*=\s*\{(.*?)\n\}', src, _re.S)
+        return m.group(1) if m else ''
+
+    anchor_block = _extract_dict_block(lint_src, 'ANCHOR_PATTERNS')
+    for prefix in su.LINKID_ANCHOR_PREFIXES:
+        if ('"' + prefix + '"') not in anchor_block and ("'" + prefix + "'") not in anchor_block:
+            fails.append(('ANCHOR_PATTERNS key', prefix, 'missing from kosha donor'))
+
+    target_block = _extract_dict_block(lint_src, 'TARGET_PATTERNS')
+    for prefix in su.LINKID_TARGET_PREFIXES:
+        if ('"' + prefix + '"') not in target_block and ("'" + prefix + "'") not in target_block:
+            fails.append(('TARGET_PATTERNS key', prefix, 'missing from kosha donor'))
+
+    map_block = _extract_dict_block(lint_src, 'ANCHOR_TYPE_TO_PREFIX')
+    for anchor_type, prefix in su._LINKID_ANCHOR_TYPE_TO_PREFIX.items():
+        pair = '"%s": "%s"' % (anchor_type, prefix)
+        pair_sq = "'%s': '%s'" % (anchor_type, prefix)
+        if pair not in map_block and pair_sq not in map_block:
+            fails.append(('ANCHOR_TYPE_TO_PREFIX', '%s->%s' % (anchor_type, prefix), 'missing from kosha donor'))
+
+    link_types_m = _re.search(r'TYPE_D_LINK_TYPES\s*=\s*\(([^)]*)\)', core_src)
+    if link_types_m:
+        donor_types = tuple(t.strip().strip('"\'') for t in link_types_m.group(1).split(',') if t.strip())
+        if donor_types != su.LINKID_LINK_TYPES:
+            fails.append(('LINKID_LINK_TYPES', su.LINKID_LINK_TYPES, donor_types))
+
+    tier_m = _re.search(r'TIER_CONFIDENCE\s*=\s*\{([^}]*)\}', core_src, _re.S)
+    if tier_m:
+        donor_tiers = tuple(_re.findall(r'["\']([\w-]+)["\']\s*:', tier_m.group(1)))
+        if donor_tiers != su.LINKID_MATCH_METHODS:
+            fails.append(('LINKID_MATCH_METHODS', su.LINKID_MATCH_METHODS, donor_tiers))
+
+    return fails
 
 
 def load_donor():
@@ -213,6 +367,18 @@ def main():
         rc = 1
     else:
         print('SLP1-set OK: SLP1_VOWELS/MARKS/CONSONANTS set-equal to slp1util.py donor literals')
+
+    # linkid constants locked against kosha's typed_link_lint.py / concordance_core.py
+    linkid_fails = linkid_donor_regression()
+    if linkid_fails is None:
+        print('linkid donor NOT FOUND (kosha/scripts/typed_link_lint.py + concordance_core.py) — skipped')
+    elif linkid_fails:
+        print(f'LINKID DONOR MISMATCH ({len(linkid_fails)}):')
+        for what, got, donor in linkid_fails:
+            print(f'  {what}: pkg={got!r} donor={donor!r}')
+        rc = 1
+    else:
+        print('linkid OK: prefixes/link-types/match-methods locked to kosha typed_link_lint.py + concordance_core.py')
 
     # SLP1 <-> Devanāgarī round-trip property test (alphabet + real MW headwords)
     rt_fails, nalpha, nlemmas = roundtrip_check()

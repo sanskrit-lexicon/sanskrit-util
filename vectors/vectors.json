@@ -2509,5 +2509,507 @@
     }
    ]
   }
+ ],
+ "linkid_build_anchor_id": [
+  {
+   "in": {
+    "type": "gra",
+    "tail": "3983"
+   },
+   "out": "gra:3983"
+  },
+  {
+   "in": {
+    "type": "gra",
+    "tail": "5833.1"
+   },
+   "out": "gra:5833.1"
+  },
+  {
+   "in": {
+    "type": "whitney-root",
+    "tail": "1"
+   },
+   "out": "whitney-root:1"
+  },
+  {
+   "in": {
+    "type": "whitney-sec",
+    "tail": "611"
+   },
+   "out": "whitney-sec:611"
+  },
+  {
+   "in": {
+    "type": "whitney-sec",
+    "tail": "611-641"
+   },
+   "out": "whitney-sec:611-641"
+  },
+  {
+   "in": {
+    "type": "root",
+    "tail": "BU"
+   },
+   "out": "root:BU"
+  },
+  {
+   "in": {
+    "type": "sutra",
+    "tail": "1.1.1"
+   },
+   "out": "sutra:1.1.1"
+  },
+  {
+   "in": {
+    "type": "gra",
+    "tail": "abc"
+   },
+   "out": null
+  },
+  {
+   "in": {
+    "type": "whitney-root",
+    "tail": "1-2"
+   },
+   "out": null
+  },
+  {
+   "in": {
+    "type": "root",
+    "tail": ""
+   },
+   "out": null
+  },
+  {
+   "in": {
+    "type": "unknown",
+    "tail": "1"
+   },
+   "out": null
+  },
+  {
+   "in": {},
+   "out": null
+  }
+ ],
+ "linkid_parse_anchor_id": [
+  {
+   "in": "gra:3983",
+   "out": {
+    "type": "gra",
+    "tail": "3983",
+    "valid": true
+   }
+  },
+  {
+   "in": "gra:5833.1",
+   "out": {
+    "type": "gra",
+    "tail": "5833.1",
+    "valid": true
+   }
+  },
+  {
+   "in": "whitney-root:1",
+   "out": {
+    "type": "whitney-root",
+    "tail": "1",
+    "valid": true
+   }
+  },
+  {
+   "in": "whitney-sec:611",
+   "out": {
+    "type": "whitney-sec",
+    "tail": "611",
+    "valid": true
+   }
+  },
+  {
+   "in": "whitney-sec:611-641",
+   "out": {
+    "type": "whitney-sec",
+    "tail": "611-641",
+    "valid": true
+   }
+  },
+  {
+   "in": "root:BU",
+   "out": {
+    "type": "root",
+    "tail": "BU",
+    "valid": true
+   }
+  },
+  {
+   "in": "sutra:1.1.1",
+   "out": {
+    "type": "sutra",
+    "tail": "1.1.1",
+    "valid": true
+   }
+  },
+  {
+   "in": "gra:abc",
+   "out": {
+    "type": "gra",
+    "tail": "abc",
+    "valid": false
+   }
+  },
+  {
+   "in": "unknown:1",
+   "out": null
+  },
+  {
+   "in": "noColonHere",
+   "out": null
+  },
+  {
+   "in": "",
+   "out": null
+  }
+ ],
+ "linkid_build_target_locus": [
+  {
+   "in": {
+    "type": "dcs",
+    "tail": "588488"
+   },
+   "out": "dcs:588488"
+  },
+  {
+   "in": {
+    "type": "vedaweb",
+    "tail": "1.1.6:668bbf5c1e18769f3d9aafc3"
+   },
+   "out": "vedaweb:1.1.6:668bbf5c1e18769f3d9aafc3"
+  },
+  {
+   "in": {
+    "type": "commentary",
+    "tail": "gita-tm:2.47"
+   },
+   "out": "commentary:gita-tm:2.47"
+  },
+  {
+   "in": {
+    "type": "subject",
+    "tail": "sanskritgrammar:present-root-class"
+   },
+   "out": "subject:sanskritgrammar:present-root-class"
+  },
+  {
+   "in": {
+    "type": "vedaweb",
+    "tail": "1.1.6:zzz"
+   },
+   "out": null
+  },
+  {
+   "in": {
+    "type": "subject",
+    "tail": "sanskritgrammar"
+   },
+   "out": null
+  },
+  {
+   "in": {
+    "type": "unknown",
+    "tail": "x"
+   },
+   "out": null
+  },
+  {
+   "in": {},
+   "out": null
+  }
+ ],
+ "linkid_parse_target_locus": [
+  {
+   "in": "dcs:588488",
+   "out": {
+    "type": "dcs",
+    "tail": "588488",
+    "valid": true
+   }
+  },
+  {
+   "in": "vedaweb:1.1.6:668bbf5c1e18769f3d9aafc3",
+   "out": {
+    "type": "vedaweb",
+    "tail": "1.1.6:668bbf5c1e18769f3d9aafc3",
+    "valid": true
+   }
+  },
+  {
+   "in": "commentary:gita-tm:2.47",
+   "out": {
+    "type": "commentary",
+    "tail": "gita-tm:2.47",
+    "valid": true
+   }
+  },
+  {
+   "in": "subject:sanskritgrammar:present-root-class",
+   "out": {
+    "type": "subject",
+    "tail": "sanskritgrammar:present-root-class",
+    "valid": true
+   }
+  },
+  {
+   "in": "vedaweb:1.1.6:zzz",
+   "out": {
+    "type": "vedaweb",
+    "tail": "1.1.6:zzz",
+    "valid": false
+   }
+  },
+  {
+   "in": "unknown:x",
+   "out": null
+  },
+  {
+   "in": "noColon",
+   "out": null
+  },
+  {
+   "in": "",
+   "out": null
+  }
+ ],
+ "linkid_validate_link_record": [
+  {
+   "in": {
+    "anchor_type": "id-gra",
+    "anchor_id": "gra:3983",
+    "anchor_key_slp1": "tva",
+    "target_locus": "vedaweb:1.1.6:668bbf5c1e18769f3d9aafc3",
+    "link_type": "translation-witness",
+    "source_dataset": "VisualDCS/non-derived/vedaweb/grassmann_de_1876_1877.json",
+    "match_method": "id-link",
+    "confidence": 0.99,
+    "evidence_count": 4712,
+    "date": "08-07-2026"
+   },
+   "out": {
+    "valid": true,
+    "errors": []
+   }
+  },
+  {
+   "in": {
+    "anchor_type": "whitney-sec",
+    "anchor_id": "whitney-sec:611",
+    "target_locus": "subject:sanskritgrammar:present-root-class",
+    "link_type": "thematic",
+    "source_dataset": "SanskritGrammar/SubjectConcordance/catalog.mdx",
+    "match_method": "curated",
+    "date": "10-07-2026"
+   },
+   "out": {
+    "valid": true,
+    "errors": []
+   }
+  },
+  {
+   "in": {
+    "anchor_type": "root",
+    "anchor_id": "root:BU",
+    "anchor_key_slp1": "BU",
+    "target_locus": "commentary:gita-tm:2.47",
+    "link_type": "commentary-citation",
+    "source_dataset": "CommentaryStrategies/data/gita_tm.json",
+    "match_method": "exact",
+    "confidence": 0.95,
+    "evidence_count": 1,
+    "date": "11-07-2026"
+   },
+   "out": {
+    "valid": true,
+    "errors": []
+   }
+  },
+  {
+   "in": {
+    "anchor_type": "bogus",
+    "anchor_id": "gra:3983",
+    "target_locus": "dcs:1",
+    "link_type": "thematic",
+    "source_dataset": "x",
+    "match_method": "curated",
+    "date": "01-01-2026"
+   },
+   "out": {
+    "valid": false,
+    "errors": [
+     "unknown anchor_type 'bogus'"
+    ]
+   }
+  },
+  {
+   "in": {
+    "anchor_type": "root",
+    "anchor_id": "gra:3983",
+    "target_locus": "dcs:1",
+    "link_type": "thematic",
+    "source_dataset": "x",
+    "match_method": "curated",
+    "date": "01-01-2026"
+   },
+   "out": {
+    "valid": false,
+    "errors": [
+     "anchor_id 'gra:3983' prefix 'gra' does not match anchor_type 'root' (expected 'root:...')"
+    ]
+   }
+  },
+  {
+   "in": {
+    "anchor_type": "root",
+    "anchor_id": "root:123",
+    "target_locus": "dcs:1",
+    "link_type": "thematic",
+    "source_dataset": "x",
+    "match_method": "curated",
+    "date": "01-01-2026"
+   },
+   "out": {
+    "valid": false,
+    "errors": [
+     "anchor_id 'root:123': tail '123' fails 'root' syntax"
+    ]
+   }
+  },
+  {
+   "in": {
+    "anchor_type": "root",
+    "anchor_id": "root:BU",
+    "target_locus": "unknown:1",
+    "link_type": "thematic",
+    "source_dataset": "x",
+    "match_method": "curated",
+    "date": "01-01-2026"
+   },
+   "out": {
+    "valid": false,
+    "errors": [
+     "target_locus 'unknown:1' has no known prefix"
+    ]
+   }
+  },
+  {
+   "in": {
+    "anchor_type": "root",
+    "anchor_id": "root:BU",
+    "target_locus": "vedaweb:1.1.6:zzz",
+    "link_type": "thematic",
+    "source_dataset": "x",
+    "match_method": "curated",
+    "date": "01-01-2026"
+   },
+   "out": {
+    "valid": false,
+    "errors": [
+     "target_locus 'vedaweb:1.1.6:zzz': tail '1.1.6:zzz' fails 'vedaweb' syntax"
+    ]
+   }
+  },
+  {
+   "in": {
+    "anchor_type": "root",
+    "anchor_id": "root:BU",
+    "target_locus": "https://example.com/gra/3983",
+    "link_type": "thematic",
+    "source_dataset": "x",
+    "match_method": "curated",
+    "date": "01-01-2026"
+   },
+   "out": {
+    "valid": false,
+    "errors": [
+     "target_locus 'https://example.com/gra/3983' has no known prefix",
+     "target_locus 'https://example.com/gra/3983' looks like a URL host — reuse the source's own stable id (spec section 0)"
+    ]
+   }
+  },
+  {
+   "in": {
+    "anchor_type": "root",
+    "anchor_id": "root:BU",
+    "target_locus": "dcs:1",
+    "link_type": "bogus",
+    "source_dataset": "x",
+    "match_method": "curated",
+    "date": "01-01-2026"
+   },
+   "out": {
+    "valid": false,
+    "errors": [
+     "link_type 'bogus' not in [translation-witness, commentary-citation, thematic]"
+    ]
+   }
+  },
+  {
+   "in": {
+    "anchor_type": "root",
+    "anchor_id": "root:BU",
+    "target_locus": "dcs:1",
+    "link_type": "thematic",
+    "source_dataset": "x",
+    "match_method": "bogus",
+    "date": "01-01-2026"
+   },
+   "out": {
+    "valid": false,
+    "errors": [
+     "match_method 'bogus' not in [id-link, xref, curated, exact, floor, relaxed, fuzzy]"
+    ]
+   }
+  },
+  {
+   "in": {
+    "anchor_type": "root",
+    "anchor_id": "root:BU",
+    "target_locus": "dcs:1",
+    "link_type": "thematic",
+    "source_dataset": "x",
+    "match_method": "curated"
+   },
+   "out": {
+    "valid": false,
+    "errors": [
+     "date is missing"
+    ]
+   }
+  },
+  {
+   "in": {
+    "anchor_type": "root",
+    "anchor_id": "root:BU",
+    "target_locus": "dcs:1",
+    "link_type": "thematic",
+    "source_dataset": "x",
+    "match_method": "curated",
+    "date": "2026-01-01"
+   },
+   "out": {
+    "valid": false,
+    "errors": [
+     "date '2026-01-01' is not DD-MM-YYYY"
+    ]
+   }
+  },
+  {
+   "in": "not-a-record",
+   "out": {
+    "valid": false,
+    "errors": [
+     "record is not an object"
+    ]
+   }
+  }
  ]
 }
