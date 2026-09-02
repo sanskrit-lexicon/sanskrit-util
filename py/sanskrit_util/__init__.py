@@ -59,7 +59,7 @@ Pick the right key:
 import re
 import unicodedata
 
-__version__ = "0.10.0"
+__version__ = "0.11.0"
 
 __all__ = [
     "to_slp1", "from_slp1", "to_roman", "deva_to_iast", "deva_to_slp1", "iast_to_devanagari",
@@ -340,6 +340,13 @@ def form_key(s):
     if s in ('-', '–', '—'):                    # warnemyr 'no recorded form' placeholder -> blank
         return ''
     s = re.sub('ḥ$', '', s)                     # nom-sg visarga
+    # WORD-FINAL anusvāra is underlyingly /m/: Sanskrit writes final -m as anusvāra before a
+    # consonant and as -m in pausa or before a vowel, so `rasaṃ` and `rasam` are one word in
+    # two spellings. This rule must run BEFORE the general fold below, which would otherwise
+    # send the anusvāra to `n` and leave the real `m` alone — the two spellings then never
+    # collide, and every anusvāra-final attestation reads as un-generated. It deliberately
+    # does NOT touch final `n`: `rājan` and a hypothetical `rājam` stay distinct keys.
+    s = re.sub('[ṃṁ]$', 'm', s)                 # final anusvāra -> m (H3911)
     s = re.sub('[ṃṁṅñṇ]', 'n', s)              # anusvāra + ṅ/ñ/ṇ -> n (precomposed, before NFD)
     out = []
     for ch in unicodedata.normalize('NFD', s):

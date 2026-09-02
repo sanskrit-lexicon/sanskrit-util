@@ -31,6 +31,28 @@ def test_form_key_folds_anusvara_to_homorganic():
     assert su.form_key('krāṃta') == su.form_key('krānta')   # anusvāra == homorganic nasal
 
 
+def test_form_key_folds_word_final_anusvara_to_m():
+    # Sanskrit writes word-final -m as anusvāra before a consonant and as -m in pausa, so
+    # these are one word in two spellings and MUST share a key (H3911). Before the fix the
+    # anusvāra went to 'n' while the real 'm' was untouched, so they never collided and
+    # every anusvāra-final attestation read as un-generated.
+    assert su.form_key('rasaṃ') == su.form_key('rasam') == 'rasam'
+    assert su.form_key('phalaṁ') == su.form_key('phalam')   # ṁ spelling too
+    assert su.form_key('iyaṃ') == su.form_key('iyam')
+
+
+def test_form_key_final_n_stays_distinct_from_final_m():
+    # The fix must not over-fold: final -n and final -m are different endings.
+    assert su.form_key('rājan') != su.form_key('rājam')
+    assert su.form_key('rājan') == 'rājan'
+
+
+def test_form_key_medial_anusvara_still_folds_to_n():
+    # the final-position rule must not disturb the general homorganic fold
+    assert su.form_key('saṃskṛta') == su.form_key('sanskṛta')
+    assert su.form_key('saṃskṛtam') == 'sanskṛtam'          # both rules, one word
+
+
 def test_form_key_drops_visarga_and_vowel_accent():
     assert su.form_key('rāmaḥ') == 'rāma'                   # nom-sg visarga stripped
     assert su.form_key('dev' + 'a' + ACUTE) == 'deva'      # pitch accent on a vowel dropped

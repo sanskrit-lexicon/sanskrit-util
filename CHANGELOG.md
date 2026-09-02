@@ -5,6 +5,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-09-02
+
+### Fixed
+
+- **`form_key`: word-final anusvāra now folds to `m`, so the two spellings of a Sanskrit
+  word-final nasal finally collide** (H3911). ⚠️ **This changes emitted keys — see the
+  migration note below.** Sanskrit writes word-final `-m` as anusvāra before a consonant and
+  as `-m` in pausa or before a vowel, so `rasaṃ` and `rasam` are one word in two spellings.
+  `form_key` folded `[ṃṁṅñṇ] → n` at every position while never touching a literal `m`, so
+  `rasaṃ → rasan` but `rasam → rasam`: the two spellings could never match, and **every
+  anusvāra-final attestation read as un-generated**. The new rule runs *before* the general
+  homorganic fold and applies only word-finally, so medial behaviour is unchanged
+  (`saṃskṛta == sanskṛta`, `krāṃta == krānta`) and final `-n` stays distinct from final `-m`
+  (`rājan != rājam` — the fold is deliberately not widened to merge two different endings).
+  Both ports changed together; `vectors.json` regenerated (3 vectors move:
+  `form_key('saṃ')` `san→sam`, `form_key('ṁ')` `n→m`, `slp1_form_key("aDo'MSukaM")`
+  `adho'nśukan→adho'nśukam` — the medial `M` stays `n`, which is the rule being positional).
+  The `WhitneyRoots/scripts/sanskrit_util.py` regression donor is updated in the same pass so
+  package and donor stay byte-identical.
+
+  **Migration.** Any stored `form_key`/`slp1_form_key` value computed before 0.11.0 and
+  compared against a freshly computed one will mismatch for anusvāra-final forms; rebuild
+  derived keys rather than mixing eras. Measured on the one consumer with a published figure
+  — kosha's A3 generated-vs-attested audit — **24,149 of its 196,378
+  "attested-never-generated" keys (12.30% of rows, 16.86% by corpus weight) stop being gaps**
+  under the fixed key (`rūpaṃ`, `duḥkhaṃ`, `vijñānaṃ` … standard `-am` neuters written with
+  anusvāra), so that dataset's A¬G figure is an upper bound until it is rebuilt. Other known
+  consumers: csl-observatory (`headword_linkage.py`, `error_recapture.py`,
+  `corrector_recapture.py`), csl-atlas (`adjudicate-h4-agent.mjs`,
+  `build-h4-review-packet.mjs`), kosha's concordance builders.
+
 ## [0.10.0] - 2026-08-24
 
 ### Added

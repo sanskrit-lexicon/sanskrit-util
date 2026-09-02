@@ -186,6 +186,13 @@ export function form_key(s) {
   s = wstrim(s || '').toLowerCase();
   if (s === '-' || s === '–' || s === '—') return '';
   s = s.replace(/ḥ$/, '');
+  // WORD-FINAL anusvāra is underlyingly /m/: Sanskrit writes final -m as anusvāra before a
+  // consonant and as -m in pausa or before a vowel, so `rasaṃ` and `rasam` are one word in
+  // two spellings. Must run BEFORE the general fold below, which would otherwise send the
+  // anusvāra to `n` and leave the real `m` alone — the two spellings then never collide, and
+  // every anusvāra-final attestation reads as un-generated. Deliberately does NOT touch
+  // final `n`: `rājan` and a hypothetical `rājam` stay distinct keys.
+  s = s.replace(/[ṃṁ]$/, 'm');            // final anusvāra -> m (H3911)
   s = s.replace(/[ṃṁṅñṇ]/g, 'n');
   const out = [];
   for (const ch of s.normalize('NFD')) {
