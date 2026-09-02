@@ -48,6 +48,21 @@ assert.equal(su.to_slp1('saṁskṛta'), 'saMskfta');
 assert.equal(su.to_slp1('saṁskṛta'), su.to_slp1('saṃskṛta'));
 assert.equal(su.form_key('saṁskṛta'), su.form_key('saṃskṛta'));
 
+// H3911: word-final anusvāra is underlyingly /m/ — Sanskrit writes final -m as anusvāra
+// before a consonant and as -m in pausa, so these are one word in two spellings and must
+// share a key. Before the fix the anusvāra went to 'n' while the real 'm' was untouched, so
+// they never collided and every anusvāra-final attestation read as un-generated.
+assert.equal(su.form_key('rasaṃ'), su.form_key('rasam'));
+assert.equal(su.form_key('rasaṃ'), 'rasam');
+assert.equal(su.form_key('phalaṁ'), su.form_key('phalam'));
+assert.equal(su.form_key('iyaṃ'), su.form_key('iyam'));
+// but the fix must not over-fold: final -n and final -m are different endings
+assert.notEqual(su.form_key('rājan'), su.form_key('rājam'));
+assert.equal(su.form_key('rājan'), 'rājan');
+// and the general homorganic fold is undisturbed
+assert.equal(su.form_key('saṃskṛta'), su.form_key('sanskṛta'));
+assert.equal(su.form_key('saṃskṛtam'), 'sanskṛtam');
+
 // H1394: iast_to_devanagari re-implemented as the to_slp1 -> slp1_to_devanagari composition.
 // The previous naive longest-key-first character substitution never applied virāma/mātrā and
 // was wrong on all 9 of these words (e.g. 'ka' -> 'कअ' instead of 'क').
