@@ -25,6 +25,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   The `WhitneyRoots/scripts/sanskrit_util.py` regression donor is updated in the same pass so
   package and donor stay byte-identical.
 
+- **js: module-scope Set construction no longer uses iterable spread** (H3488). The three
+  v0.11 module-scope sites (`gmSortTokens`, `GM_DOTTED_RE`'s source-set, `GM_FORMULA_NORM`)
+  spread Sets inside array literals, which bundler loose-mode transforms compile to
+  `[].concat(setA, setB)` — Sets are not flattened, so in csl-guides' production bundle
+  module eval called `gmTokenPattern` on Set objects and every page loading the vendor
+  chunk crashed with `TypeError: a.replace is not a function` (caught by the G22 Playwright
+  gate). `Array.from(...)`/`.concat(...)` is spread-free and transform-safe; no behavior
+  change (611 vectors JS == Python stay green). Node-test consumers were never affected —
+  only bundler pipelines, which is why the release tests missed it.
+
   **Migration.** Any stored `form_key`/`slp1_form_key` value computed before 0.11.0 and
   compared against a freshly computed one will mismatch for anusvāra-final forms; rebuild
   derived keys rather than mixing eras. Measured on the one consumer with a published figure
