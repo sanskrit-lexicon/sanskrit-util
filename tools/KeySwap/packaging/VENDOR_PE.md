@@ -1,6 +1,6 @@
 # Vendor PE vs open shells (backlog #10)
 
-_Created: 23-07-2026 · Last updated: 24-07-2026_
+_Created: 23-07-2026 · Last updated: 05-09-2026_
 
 ## Policy (KeySwap 2.1+)
 
@@ -11,7 +11,7 @@ _Created: 23-07-2026 · Last updated: 24-07-2026_
 | Apple / PWA | **Default** for those platforms |
 
 Upstream (Yes Vedanta) documents **2021-09** fixes (“complex 2-bit characters”).
-The vendored PE may predate that build (see [PROVENANCE.md](../PROVENANCE.md)).
+The vendored PE may predate that build (see [PROVENANCE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/PROVENANCE.md)).
 
 ## Portable?
 
@@ -25,7 +25,7 @@ Both are portable; they are **not** the same product.
 
 A copy outside the repo (e.g. `Documents\KeySwap\keyswap.exe`) is still the
 **legacy PE**, not a second install of 2.x. Install docs:
-[INSTALL.md](INSTALL.md) § “Two different Keyswaps”.
+[INSTALL.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/packaging/INSTALL.md) § “Two different Keyswaps”.
 
 ## Do not run both
 

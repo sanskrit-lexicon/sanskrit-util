@@ -1,10 +1,10 @@
 # KeySwap vs similar tools (web survey)
 
-_Created: 23-07-2026 · Last updated: 25-07-2026_  
+_Created: 23-07-2026 · Last updated: 05-09-2026_  
 _Survey: 23-07-2026 · Refresh: 24-07-2026 (post V3-2/V3-7 + product tiers) · 25-07-2026 (post 2.9 residual, H1638; post V3 tray/link-out residual, H1639) · Model: Grok 4.5 (`grok-4.5`); H1638 update: Fable 5 (`claude-fable-5`); H1639 update: Sonnet 5 (`claude-sonnet-5`)_
 
-**Roadmap:** [ROADMAP_KEYSWAP_V2_V3.md](ROADMAP_KEYSWAP_V2_V3.md) — **v2 free/portable** · **v3 heavy open** · **v4 paid full** (Mac/iOS advanced).  
-**Architecture (v3 plugins):** [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md).
+**Roadmap:** [ROADMAP_KEYSWAP_V2_V3.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/ROADMAP_KEYSWAP_V2_V3.md) — **v2 free/portable** · **v3 heavy open** · **v4 paid full** (Mac/iOS advanced).  
+**Architecture (v3 plugins):** [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md).
 
 ## Verdict (one line)
 
@@ -170,7 +170,7 @@ v3 = **heavier open toolkit**, still **not maximum**.
 | Offline fuzzy pack, network autocomplete, link-out sidecars | **v3** (partly shipped) |
 | Morphology/forms, advanced Mac/iOS, paid SKU, signed builds | **v4** |
 
-Full backlog tables: [ROADMAP_KEYSWAP_V2_V3.md](ROADMAP_KEYSWAP_V2_V3.md).
+Full backlog tables: [ROADMAP_KEYSWAP_V2_V3.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/ROADMAP_KEYSWAP_V2_V3.md).
 
 ---
 

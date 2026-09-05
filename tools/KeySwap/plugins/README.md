@@ -1,11 +1,11 @@
 # KeySwap plugins (v3)
 
-_Created: 24-07-2026 · Last updated: 25-07-2026_
+_Created: 24-07-2026 · Last updated: 05-09-2026_
 
 Optional heavy capabilities live here. **Nothing under this tree loads on
 default Startup** (`install-windows.ps1` → `KeySwap.lnk` → `windows/KeySwap.ahk`).
 
-Contract (full): [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](../docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md).
+Contract (full): [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md).
 
 ## Discovery
 
@@ -20,10 +20,10 @@ Contract (full): [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](../docs/KEYSWAP_V3_PLU
 
 | id | V3 item | Status |
 |----|---------|--------|
-| [offline_fuzzy](offline_fuzzy/) | V3-2 | **Implemented** — exact + prefix + edit-distance; enable with `--plugin offline_fuzzy`, `KEYSWAP_PLUGINS`, or the tray toggle. [Full-MW pack docs](offline_fuzzy/README.md#full-mw-pack-opt-in-not-vendored). |
+| [offline_fuzzy](offline_fuzzy/) | V3-2 | **Implemented** — exact + prefix + edit-distance; enable with `--plugin offline_fuzzy`, `KEYSWAP_PLUGINS`, or the tray toggle. [Full-MW pack docs](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/plugins/offline_fuzzy/README.md#full-mw-pack-opt-in-not-vendored). |
 | [network_autocomplete](network_autocomplete/) | V3-7 | **Implemented** — offline first, Cologne only when local is not confident; `--plugin network_autocomplete`, `KEYSWAP_PLUGINS`, or the tray toggle. |
 
-Tray opt-in state is persisted by [`tray_state.py`](tray_state.py) —
+Tray opt-in state is persisted by [`tray_state.py`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/plugins/tray_state.py) —
 `%APPDATA%\KeySwap\plugins.ini` on Windows / `UserDefaults` on Mac, both
 **outside** this repo tree. See `windows/KeySwap.ahk`'s "Plugins (opt-in; off
 by default)" tray submenu, and `apple/macos/KeySwapMacApp.swift`'s equivalent

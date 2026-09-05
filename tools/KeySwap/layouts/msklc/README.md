@@ -1,6 +1,6 @@
 # MSKLC / system layout path (KeySwap 2.1)
 
-_Created: 23-07-2026 · Last updated: 23-07-2026_
+_Created: 23-07-2026 · Last updated: 05-09-2026_
 
 Ship a **no-hook** IAST input path for Windows labs (UBC-style). This folder does
 **not** replace the Microsoft Keyboard Layout Creator GUI; it provides:
@@ -38,7 +38,7 @@ Cycle mode remains: letter then `=` using `configs/iast-classic.txt`.
 4. Project → Build DLL and Setup Package.  
 5. Install the generated MSI on lab images.
 
-A machine-readable chord table is in [`deadkey-chords.tsv`](deadkey-chords.tsv).
+A machine-readable chord table is in [`deadkey-chords.tsv`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/layouts/msklc/deadkey-chords.tsv).
 
 ## When KeySwap PE/AHK still wins
 

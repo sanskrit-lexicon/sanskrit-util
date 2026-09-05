@@ -1,8 +1,8 @@
 # KeySwap product roadmap — **v2 free portable** · **v3 heavy open** · **v4 paid full**
 
-_Created: 24-07-2026 · Last updated: 25-07-2026_  
-_Source: [SIMILARS_COMPARISON.md](SIMILARS_COMPARISON.md) peer survey + shipped 2.0–2.9 + V3-2/V3-7_  
-_Model: Grok 4.5 (`grok-4.5`) · v3 design: [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md) · 2.9 residual (H1638): Fable 5 (`claude-fable-5`) · v3 free-heavy residual (H1639): Sonnet 5 (`claude-sonnet-5`)_
+_Created: 24-07-2026 · Last updated: 05-09-2026_  
+_Source: [SIMILARS_COMPARISON.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/SIMILARS_COMPARISON.md) peer survey + shipped 2.0–2.9 + V3-2/V3-7_  
+_Model: Grok 4.5 (`grok-4.5`) · v3 design: [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md) · 2.9 residual (H1638): Fable 5 (`claude-fable-5`) · v3 free-heavy residual (H1639): Sonnet 5 (`claude-sonnet-5`)_
 
 ## Product principles
 
@@ -62,7 +62,7 @@ Writer-scheme; script mode; gloss; one-install; PE vs AHK; trigger presets; V3 p
 
 ## Version 3 — free, heavier (not maximum)
 
-Architecture: [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md) · [plugins/](plugins/).
+Architecture: [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md) · [plugins/](plugins/).
 
 | # | Item | Status (25-07-2026) | Next |
 |---|------|---------------------|------|

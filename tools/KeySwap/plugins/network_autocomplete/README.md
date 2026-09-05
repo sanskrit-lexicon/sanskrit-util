@@ -1,10 +1,10 @@
 # Plugin: `network_autocomplete` (V3-7)
 
-_Created: 24-07-2026 · Last updated: 24-07-2026_
+_Created: 24-07-2026 · Last updated: 05-09-2026_
 
 Optional **network autocomplete** over the Cologne Simple Search API, gated
 **after** the offline fuzzy index (V3-2). See
-[KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](../../docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md).
+[KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md).
 
 ## Why not core?
 

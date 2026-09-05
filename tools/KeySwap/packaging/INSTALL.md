@@ -1,11 +1,11 @@
 # KeySwap — one install path (Windows + Mac)
 
-_Created: 24-07-2026 · Last updated: 21-08-2026_
+_Created: 24-07-2026 · Last updated: 05-09-2026_
 
 **Goal:** double-click (or one script) and type — without hunting folders.
 
 Notarized / code-signed binaries still need a human Apple/Windows cert
-([APP_STORE.md](APP_STORE.md)). Until then this is the **supported developer install**.
+([APP_STORE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/packaging/APP_STORE.md)). Until then this is the **supported developer install**.
 
 ---
 
@@ -21,7 +21,7 @@ Notarized / code-signed binaries still need a human Apple/Windows cert
 
 **Do not run PE and AHK at the same time.** Both hook keyboard input; dual `=` handlers fight (Word glitches, double-inserts). Quit `keyswap.exe` / remove its Startup entry before using AHK 2.x.
 
-Policy detail: [VENDOR_PE.md](VENDOR_PE.md). Provenance of any vendored exe: [PROVENANCE.md](../PROVENANCE.md).
+Policy detail: [VENDOR_PE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/packaging/VENDOR_PE.md). Provenance of any vendored exe: [PROVENANCE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/PROVENANCE.md).
 
 ---
 
@@ -53,7 +53,7 @@ If you already run a portable `keyswap.exe` from another folder, **exit it first
 
 ### Manual (same result)
 
-1. Double-click [`windows/KeySwap.ahk`](../windows/KeySwap.ahk)  
+1. Double-click [`windows/KeySwap.ahk`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/windows/KeySwap.ahk)  
 2. Default is **cycle** only (`n` then `=`). Tray → **Mode: smart** only for a Sanskrit burst: smart rewrites English (`ll`→ḷ, `ss`→ṣ, `sh`→ś, `tt`→ṭ) and you cannot type ordinary words.  
 3. Type in Notepad: `n` then `=` → ṇ. Writer-scheme is tray **Mode: writer** (`-` then `a` → ā).  
 
@@ -117,7 +117,7 @@ python tools/KeySwap/typing_check.py --local-only --hud "rāma"
 | | KeySwap | Sanskrit Writer |
 |--|---------|-----------------|
 | Install | AHK script or Mac tray app (this page) | Desktop app installer |
-| Signed store build | Checklist only ([APP_STORE.md](APP_STORE.md)) | Product binary |
+| Signed store build | Checklist only ([APP_STORE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/packaging/APP_STORE.md)) | Product binary |
 | After install | Tray icon; type system-wide | App-focused output modes |
 
 _Dr. Mārcis Gasūns_

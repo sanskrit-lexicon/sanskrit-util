@@ -1,6 +1,6 @@
 # KeySwap provenance
 
-_Created: 23-07-2026 · Last updated: 23-07-2026_
+_Created: 23-07-2026 · Last updated: 05-09-2026_
 
 ## Open components (this repo)
 
@@ -15,7 +15,7 @@ _Created: 23-07-2026 · Last updated: 23-07-2026_
 
 | Field | Value |
 |-------|--------|
-| Path | [`vendor/keyswap.exe`](vendor/keyswap.exe) |
+| Path | [`vendor/keyswap.exe`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/vendor/keyswap.exe) |
 | Upstream | [https://www.yesvedanta.com/keyswap/](https://www.yesvedanta.com/keyswap/) |
 | Author | Andre Vas (Yes Vedanta) |
 | PE ProductVersion | 1.0.0.0 |
@@ -26,7 +26,7 @@ _Created: 23-07-2026 · Last updated: 23-07-2026_
 
 | Field | Value |
 |-------|--------|
-| Path | [`vendor/key.bin`](vendor/key.bin) |
+| Path | [`vendor/key.bin`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/vendor/key.bin) |
 | Meaning | `uint32` LE virtual-key code; default `0x000000BB` = `VK_OEM_PLUS` (`=`) |
 | **SHA-256** | `cc2767afee4ba0da3615c64d506c93740a9cec3a0eb7078f672dffc025ccb47a` |
 

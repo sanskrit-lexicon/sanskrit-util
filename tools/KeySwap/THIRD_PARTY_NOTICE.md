@@ -1,10 +1,10 @@
 # Third-party notice — vendored Keyswap binary
 
-_Created: 23-07-2026 · Last updated: 23-07-2026_
+_Created: 23-07-2026 · Last updated: 05-09-2026_
 
-The file [`vendor/keyswap.exe`](vendor/keyswap.exe) (and companion
-[`vendor/key.bin`](vendor/key.bin), [`vendor/ReadMe.txt`](vendor/ReadMe.txt),
-[`vendor/rtfm.txt`](vendor/rtfm.txt)) is **not** original to the sanskrit-util
+The file [`vendor/keyswap.exe`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/vendor/keyswap.exe) (and companion
+[`vendor/key.bin`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/vendor/key.bin), [`vendor/ReadMe.txt`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/vendor/ReadMe.txt),
+[`vendor/rtfm.txt`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/vendor/rtfm.txt)) is **not** original to the sanskrit-util
 project.
 
 - **Product:** Keyswap — IAST diacritics Windows software  

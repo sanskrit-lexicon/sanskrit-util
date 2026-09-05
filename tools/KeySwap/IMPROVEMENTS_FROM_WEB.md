@@ -1,6 +1,6 @@
 # KeySwap — web survey: how else to improve
 
-_Created: 23-07-2026 · Last updated: 23-07-2026_  
+_Created: 23-07-2026 · Last updated: 05-09-2026_  
 _Survey date: 23-07-2026 · Model: Grok 4.5 (`grok-4-1-thinking`) · feeds **KeySwap 2.x**_
 
 Sources: upstream [Keyswap (Yes Vedanta)](https://www.yesvedanta.com/keyswap/),
@@ -63,6 +63,6 @@ From the vendor site troubleshooting:
 4. **Profiles remain data**; modes are shells.  
 5. **Classroom default** = `iast-classic` + system layouts / deadkey.
 
-See [README.md](README.md), [VERSION](VERSION) (**2.1.0**).
+See [README.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/README.md), [VERSION](VERSION) (**2.1.0**).
 
 _Dr. Mārcis Gasūns_

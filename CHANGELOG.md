@@ -1,3 +1,5 @@
+_Created: 15-06-2026 · Last updated: 05-09-2026_
+
 # Changelog
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
@@ -164,7 +166,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **#8 live Deva, in place (Windows)** — `Ctrl+Alt+Shift+D` converts the current text
     selection to Devanāgarī and pastes it back without a manual clipboard round trip.
     Opt-in (nothing changes unless pressed); continuous per-keystroke auto-flip was
-    considered and parked — see [ROADMAP_KEYSWAP_V2_V3.md](tools/KeySwap/ROADMAP_KEYSWAP_V2_V3.md)
+    considered and parked — see [ROADMAP_KEYSWAP_V2_V3.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/ROADMAP_KEYSWAP_V2_V3.md)
     § "Residual free backlog" for the reason. Mac/iOS parked with the same reason.
   - **Portable packaging** — audited `packaging/INSTALL.md` / `VENDOR_PE.md`; already
     one clear path per platform, no changes needed.
@@ -173,8 +175,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **tools/KeySwap product tiers** — [SIMILARS_COMPARISON.md](tools/KeySwap/SIMILARS_COMPARISON.md)
-  and [ROADMAP_KEYSWAP_V2_V3.md](tools/KeySwap/ROADMAP_KEYSWAP_V2_V3.md) refreshed:
+- **tools/KeySwap product tiers** — [SIMILARS_COMPARISON.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/SIMILARS_COMPARISON.md)
+  and [ROADMAP_KEYSWAP_V2_V3.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/ROADMAP_KEYSWAP_V2_V3.md) refreshed:
   **v2 free portable** · **v3 free heavy (not max)** · **v4 paid full** (Mac/iOS + forms).
   Umbrella handoff H1619.
 
@@ -193,7 +195,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Registration surfaces for KeySwap v3 plugins** (H1583 `/artifact-propagate`):
   root README “Related tools”, `CLAUDE.md` KeySwap agent rules + table rows,
   `.ai_state.md` completed entry, architecture
-  [metadoc](tools/KeySwap/docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.meta.md).
+  [metadoc](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.meta.md).
 
 ## [0.8.8] - 2026-07-24
 
@@ -201,7 +203,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **tools/KeySwap 2.8** (`2.8.0`) — non-US **cycle trigger presets**
   (`equals` / `bracket` / `slash` / `backtick`): tray submenu, `windows/trigger.ini`,
-  env `KEYSWAP_TRIGGER`, shared table [`trigger_presets.py`](tools/KeySwap/trigger_presets.py);
+  env `KEYSWAP_TRIGGER`, shared table [`trigger_presets.py`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/trigger_presets.py);
   PWA trigger select + Mac `KEYSWAP_TRIGGER` keycode. Shift+trigger = literal.
 
 ## [0.8.7] - 2026-07-24
@@ -219,7 +221,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **tools/KeySwap v3 design (H1581)** — plugin/sibling architecture memo
-  ([`docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md`](tools/KeySwap/docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md));
+  ([`docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md));
   first-pick **V3-2** scaffold [`plugins/offline_fuzzy/`](tools/KeySwap/plugins/offline_fuzzy/)
   (`never_autoload`, seed exact-match only; no SQLite pack / no default AHK load);
   ROADMAP Version 3 status rows updated.
@@ -283,11 +285,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   convert `--from`, guards, HUD) and 2.0 (smart/long-press/PWA). Not part of
   the PyPI/npm library API.
 - **tools/KeySwap** — peer-tool survey + lean roadmap:
-  [`SIMILARS_COMPARISON.md`](tools/KeySwap/SIMILARS_COMPARISON.md) (Lexilogos,
+  [`SIMILARS_COMPARISON.md`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/SIMILARS_COMPARISON.md) (Lexilogos,
   Keyman/Heidelberg, EasyUnicode, SanskritTypist, Sanscript, Aksharamukha, …)
   with Tier A light-next features and explicit heavy-skips.
 - **tools/KeySwap** — upstream page + **80-comment** analysis
-  ([`UPSTREAM_KEYSWAP_ANALYSIS.md`](tools/KeySwap/UPSTREAM_KEYSWAP_ANALYSIS.md));
+  ([`UPSTREAM_KEYSWAP_ANALYSIS.md`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/UPSTREAM_KEYSWAP_ANALYSIS.md));
   README hero, Word/`=` troubleshooting, config recipes (danda, ॐ, svara),
   first-60-seconds launch path.
 
@@ -356,7 +358,7 @@ Housed here so both sides run the same code; re-vendor via `/cologne-sanskrit-ut
 in via `--today`, never `Date.now()`, so re-runs are byte-identical); `seed_recipes.py` /
 `seed_gaps.py` / `seed_contradictions.py` / `seed_dead_ends.py` / `scan_assumptions.py` emit
 `⚙️ auto` candidate rows a human confirms or deletes. `seed_contradictions.py` reuses `form_key`
-when the package is importable. See [`tools/epistemic/README.md`](tools/epistemic/README.md).
+when the package is importable. See [`tools/epistemic/README.md`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/epistemic/README.md).
 
 ## [0.4.0] - 2026-07-04
 
@@ -474,3 +476,5 @@ its six importing scripts are unchanged.
   toolchain's own vendored dependency; reuse it from `csl-pywork`, don't fold it here.
 - `scripts/dcs/` Roman↔Arabic + fold helpers in WhitneyRoots — a separate corpus-class
   pipeline, intentionally kept apart upstream.
+
+_Dr. Mārcis Gasūns_

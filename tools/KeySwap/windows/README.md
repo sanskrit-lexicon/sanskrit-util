@@ -1,11 +1,11 @@
 # KeySwap 2.8 for Windows (AutoHotkey v2)
 
-_Created: 23-07-2026 · Last updated: 21-08-2026_
+_Created: 23-07-2026 · Last updated: 05-09-2026_
 
 ## Run
 
 1. Install [AutoHotkey v2](https://www.autohotkey.com/).  
-2. Double-click [`KeySwap.ahk`](KeySwap.ahk).  
+2. Double-click [`KeySwap.ahk`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/windows/KeySwap.ahk).  
 3. Default mode: **cycle** (letter then `=` only). Smart digraphs are opt-in.
 
 ```text
@@ -64,10 +64,10 @@ When `=` is wrong for your layout (or Word steals it), pick another cycle key:
 **Ways to set:**
 
 1. Tray → **Trigger: …** submenu (writes `trigger.ini`)  
-2. Edit [`trigger.ini`](trigger.ini) (copy from [`trigger.example.ini`](trigger.example.ini)): `preset=bracket`  
+2. Edit [`trigger.ini`](trigger.ini) (copy from [`trigger.example.ini`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/windows/trigger.example.ini)): `preset=bracket`  
 3. Env `KEYSWAP_TRIGGER=bracket` (wins over file)
 
-Canonical table: [`../trigger_presets.py`](../trigger_presets.py).
+Canonical table: [`../trigger_presets.py`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/trigger_presets.py).
 
 Also:
 
@@ -90,6 +90,6 @@ several calls (reload) must use a named function (`ReloadConfig`), not
 
 ## Legacy PE
 
-Optional: [`../vendor/`](../vendor/) — see [packaging/VENDOR_PE.md](../packaging/VENDOR_PE.md).
+Optional: [`../vendor/`](../vendor/) — see [packaging/VENDOR_PE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/packaging/VENDOR_PE.md).
 
 _Dr. Mārcis Gasūns_

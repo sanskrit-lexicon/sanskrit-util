@@ -1,6 +1,6 @@
 # Episteme registry protocol — confirm → promote → delete
 
-_Created: 08-07-2026 · Last updated: 08-07-2026_
+_Created: 08-07-2026 · Last updated: 05-09-2026_
 
 The seven episteme registries (`ASSUMPTIONS`, `CONTRADICTIONS`, `GAPS`, `DEAD_ENDS`, `RECIPES`,
 `STALENESS`, `GLOSSARY`) are **staging areas**, not archives. A row is a claim in one of a few
@@ -99,7 +99,7 @@ they stay live.
 
 ## Provenance conventions (every `> **Source:**` line)
 
-Enforced by [`_provenance.py`](_provenance.py) + [`normalize_provenance.py`](normalize_provenance.py)
+Enforced by [`_provenance.py`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/epistemic/_provenance.py) + [`normalize_provenance.py`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/epistemic/normalize_provenance.py)
 (run the normalizer as the finishing pass before committing edited registries):
 
 - **Every repo tag is a clickable link** (verified owner map in `_provenance.py`) — no bare

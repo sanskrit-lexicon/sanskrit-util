@@ -1,7 +1,7 @@
 # Classroom pack — when to use a **layout** vs **KeySwap**
 
-_Created: 24-07-2026 · Last updated: 24-07-2026_  
-_Roadmap: v2 item #6 · [ROADMAP_KEYSWAP_V2_V3.md](../ROADMAP_KEYSWAP_V2_V3.md)_
+_Created: 24-07-2026 · Last updated: 05-09-2026_  
+_Roadmap: v2 item #6 · [ROADMAP_KEYSWAP_V2_V3.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/ROADMAP_KEYSWAP_V2_V3.md)_
 
 University labs often want **zero background hooks**. Use this one-pager.
 
@@ -27,7 +27,7 @@ University labs often want **zero background hooks**. Use this one-pager.
 - Want **Writer-scheme** or smart digraphs without learning Option chords  
 - Personal machine (Startup tray is fine)
 
-Install: [packaging/INSTALL.md](../packaging/INSTALL.md).
+Install: [packaging/INSTALL.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/packaging/INSTALL.md).
 
 ## Do not dual-run
 

@@ -1,10 +1,10 @@
 # Plugin: `offline_fuzzy` (V3-2)
 
-_Created: 24-07-2026 · Last updated: 25-07-2026_
+_Created: 24-07-2026 · Last updated: 05-09-2026_
 
 Optional **offline fuzzy** headword lookup over the KeySwap local SLP1 wordlist
 (exact → prefix → edit-distance). First v3 capability pick per
-[KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](../../docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md).
+[KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md).
 
 ## Why not core?
 

@@ -1,8 +1,8 @@
 # KeySwap v3 — plugin / sibling architecture
 
-_Created: 24-07-2026 · Last updated: 25-07-2026_  
+_Created: 24-07-2026 · Last updated: 05-09-2026_  
 _Handoff: [H1581](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1581-Sonnet_sanskrit-util_keyswap-v3-former-skips-heavy-wave_24.07.26.md) · [H1583](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1583-Sonnet_sanskrit-util_keyswap-v3-7-network-autocomplete_24.07.26.md) · [H1639](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1639-Sonnet_sanskrit-util_keyswap-v3-free-heavy-residual_25.07.26.md) · Model: Grok 4.5 (`grok-4.5`); H1639 update: Sonnet 5 (`claude-sonnet-5`)_  
-_Roadmap: [ROADMAP_KEYSWAP_V2_V3.md](../ROADMAP_KEYSWAP_V2_V3.md) · Peers: [SIMILARS_COMPARISON.md](../SIMILARS_COMPARISON.md)_
+_Roadmap: [ROADMAP_KEYSWAP_V2_V3.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/ROADMAP_KEYSWAP_V2_V3.md) · Peers: [SIMILARS_COMPARISON.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/SIMILARS_COMPARISON.md)_
 
 ## Hard principle
 

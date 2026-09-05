@@ -1,6 +1,6 @@
 # Classroom / no-hook layouts (KeySwap 2.0)
 
-_Created: 23-07-2026 · Last updated: 23-07-2026_
+_Created: 23-07-2026 · Last updated: 05-09-2026_
 
 Universities (e.g. [UBC Sanskrit tools](https://blogs.ubc.ca/ubcsanskrit/tools/))
 prefer **system keyboard layouts** over global hooks: no admin PE, works with
@@ -33,7 +33,7 @@ Approximate Option (Mac) / AltGr-style chords — verify on your layout viewer:
 | ṣ | underdot + s |
 | ṃ ḥ | underdot / candrabindu variants |
 
-Print [cheatsheet-iast-classic.md](cheatsheet-iast-classic.md) for the **cycle**
+Print [cheatsheet-iast-classic.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/layouts/cheatsheet-iast-classic.md) for the **cycle**
 order used when KeySwap *is* running (letter then `=`).
 
 ## When to use what

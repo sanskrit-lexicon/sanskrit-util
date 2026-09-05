@@ -1,6 +1,6 @@
 # KeySwap 2.0 for iPhone and Mac
 
-_Created: 23-07-2026 · Last updated: 23-07-2026_  
+_Created: 23-07-2026 · Last updated: 05-09-2026_  
 _Version: 2.0.0_
 
 | Target | Features |
@@ -23,7 +23,7 @@ Same as 1.x shell, plus:
 3. Optional App Group `group.keyswap` for profile sync (`profile` key).  
 4. iOS: long-press any letter key; toggle **smart✓** on the bottom row.
 
-Full steps: parent [README.md](../README.md) + this file’s 1.x instructions remain valid for target creation:
+Full steps: parent [README.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/README.md) + this file’s 1.x instructions remain valid for target creation:
 
 1. New iOS App → replace with `ios-host/KeySwapHostApp.swift`.  
 2. Add Custom Keyboard Extension → `ios-keyboard/*`.  

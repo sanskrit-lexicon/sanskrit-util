@@ -1,6 +1,6 @@
 # tools/epistemic — auto-derivation builders for the seven epistemic sibling registries
 
-_Created: 08-07-2026 · Last updated: 08-07-2026_
+_Created: 08-07-2026 · Last updated: 05-09-2026_
 
 Seven builders that seed / generate the **epistemic sibling registries** minted under
 [H356](https://github.com/gasyoun/Uprava/blob/main/handoffs/archive/H356-Opus_csl-corrections_epistemic-sibling-registries_08.07.26.md).
@@ -16,27 +16,27 @@ code; re-vendor to any consumer on a version bump via
 
 | Script | Layer | Automation | What it emits |
 |--------|-------|-----------|---------------|
-| [`derive_staleness.py`](derive_staleness.py) | STALENESS | **full** (regenerate, never hand-edit) | the whole confidence-decay table over a FINDINGS file |
-| [`seed_recipes.py`](seed_recipes.py) | RECIPES | high | recipe stubs from manifest builders + FINDINGS command-citations |
-| [`seed_gaps.py`](seed_gaps.py) | GAPS | high | set-difference candidates (manifest datasets with no FINDINGS row) |
-| [`seed_contradictions.py`](seed_contradictions.py) | CONTRADICTIONS | medium | crosswalk-mismatch candidates (two TSVs, shared key, differing value) |
-| [`seed_dead_ends.py`](seed_dead_ends.py) | DEAD_ENDS | medium | QUESTIONS_LOG refuted rows + SERVER_OUTAGES permanent-dead hosts |
-| [`scan_assumptions.py`](scan_assumptions.py) | ASSUMPTIONS | low | `# ASSUMES:` / `# INVARIANT:` / builder-`assert` tag grep |
+| [`derive_staleness.py`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/epistemic/derive_staleness.py) | STALENESS | **full** (regenerate, never hand-edit) | the whole confidence-decay table over a FINDINGS file |
+| [`seed_recipes.py`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/epistemic/seed_recipes.py) | RECIPES | high | recipe stubs from manifest builders + FINDINGS command-citations |
+| [`seed_gaps.py`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/epistemic/seed_gaps.py) | GAPS | high | set-difference candidates (manifest datasets with no FINDINGS row) |
+| [`seed_contradictions.py`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/epistemic/seed_contradictions.py) | CONTRADICTIONS | medium | crosswalk-mismatch candidates (two TSVs, shared key, differing value) |
+| [`seed_dead_ends.py`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/epistemic/seed_dead_ends.py) | DEAD_ENDS | medium | QUESTIONS_LOG refuted rows + SERVER_OUTAGES permanent-dead hosts |
+| [`scan_assumptions.py`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/epistemic/scan_assumptions.py) | ASSUMPTIONS | low | `# ASSUMES:` / `# INVARIANT:` / builder-`assert` tag grep |
 | (glossary) | GLOSSARY | none | hand-curated; token-frequency assist only |
-| [`build_epistemic_dashboard.py`](build_epistemic_dashboard.py) | (all 7) | full | `epistemic.json` for the dashboard — per-layer row/importance/origin counts + STALENESS flags |
-| [`normalize_provenance.py`](normalize_provenance.py) | (all 6 entry) | — | finishing pass: clickable repo tags, bare model version id, commits-by-date link in every `> **Source:**` line (idempotent) |
-| [`_provenance.py`](_provenance.py) | — | — | shared helpers (verified repo→URL map, `repo_link`, `date_link`, `strip_model_tier`) used by the seeders + normalizer |
+| [`build_epistemic_dashboard.py`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/epistemic/build_epistemic_dashboard.py) | (all 7) | full | `epistemic.json` for the dashboard — per-layer row/importance/origin counts + STALENESS flags |
+| [`normalize_provenance.py`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/epistemic/normalize_provenance.py) | (all 6 entry) | — | finishing pass: clickable repo tags, bare model version id, commits-by-date link in every `> **Source:**` line (idempotent) |
+| [`_provenance.py`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/epistemic/_provenance.py) | — | — | shared helpers (verified repo→URL map, `repo_link`, `date_link`, `strip_model_tier`) used by the seeders + normalizer |
 
-### The lifecycle — read [`PROTOCOL.md`](PROTOCOL.md)
+### The lifecycle — read [`PROTOCOL.md`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/epistemic/PROTOCOL.md)
 
-[`PROTOCOL.md`](PROTOCOL.md) is the algorithm for moving a row along: **confirm** an `⚙️ auto`
+[`PROTOCOL.md`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/epistemic/PROTOCOL.md) is the algorithm for moving a row along: **confirm** an `⚙️ auto`
 candidate to `✍️ human` (or delete it), **graduate** a vouched row into `FINDINGS` /
 `CROSS_REPO_DECISIONS`, or **delete** it — with the per-layer exit conditions. The registries are
 staging areas, not archives; that doc is how they stay live.
 
 ### The dashboard
 
-[`build_epistemic_dashboard.py`](build_epistemic_dashboard.py) parses whichever of the seven
+[`build_epistemic_dashboard.py`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/epistemic/build_epistemic_dashboard.py) parses whichever of the seven
 registries exist in `--dir` into one `epistemic.json`. It feeds a small self-contained
 dashboard published on the **Sanskrit-data** side (public Pages,
 <https://gasyoun.github.io/SanskritLexicography/episteme/>) and generated locally on the

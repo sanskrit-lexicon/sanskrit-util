@@ -1,6 +1,6 @@
 # KeySwap **2.6** — scholarly IAST anywhere + open Cologne dictionary layer
 
-_Created: 23-07-2026 · Last updated: 21-08-2026_  
+_Created: 23-07-2026 · Last updated: 05-09-2026_  
 _Version: [2.9.0](VERSION)_
 
 **Type IAST (and Devanagari) in any app** — **letter then `=`** (default), or
@@ -21,15 +21,15 @@ Ctrl+Alt+S / G headword check / open MW gloss
 ```
 
 Open multi-platform toolkit (not a closed desktop-only writer app).  
-**One install:** [packaging/INSTALL.md](packaging/INSTALL.md).
+**One install:** [packaging/INSTALL.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/packaging/INSTALL.md).
 
 **Two Windows runtimes — pick one:** the legacy portable **`keyswap.exe`** (PE,
 optional under [vendor/](vendor/)) vs **AHK + `windows/KeySwap.ahk`** (default 2.x).
-Do **not** run both. Details: [packaging/VENDOR_PE.md](packaging/VENDOR_PE.md) ·
-[INSTALL.md](packaging/INSTALL.md).
+Do **not** run both. Details: [packaging/VENDOR_PE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/packaging/VENDOR_PE.md) ·
+[INSTALL.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/packaging/INSTALL.md).
 
 **Origin UX:** [Yes Vedanta Keyswap](https://www.yesvedanta.com/keyswap/)  
-(`=` cycle). Analysis: [UPSTREAM_KEYSWAP_ANALYSIS.md](UPSTREAM_KEYSWAP_ANALYSIS.md).
+(`=` cycle). Analysis: [UPSTREAM_KEYSWAP_ANALYSIS.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/UPSTREAM_KEYSWAP_ANALYSIS.md).
 
 ### KeySwap vs Sanskrit Writer
 
@@ -54,24 +54,24 @@ Do **not** run both. Details: [packaging/VENDOR_PE.md](packaging/VENDOR_PE.md) �
 
 1. **One install:**  
    `powershell -ExecutionPolicy Bypass -File tools\KeySwap\packaging\install-windows.ps1`  
-   (or double-click [windows/KeySwap.ahk](windows/KeySwap.ahk) after [AHK v2](https://www.autohotkey.com/)).  
+   (or double-click [windows/KeySwap.ahk](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/windows/KeySwap.ahk) after [AHK v2](https://www.autohotkey.com/)).  
 2. Tray icon — default is **cycle**: type in Notepad `n` then `=`.  
 3. Leave **Mode: cycle**. Turn on **Mode: smart** only for a Sanskrit burst; it will mangle English (`ll`→ḷ, `ss`→ṣ, `sh`→ś, `tt`→ṭ).  
 4. Ctrl+Alt+D toggles script mode; Ctrl+Alt+V converts clipboard.
 
-Full install notes: [packaging/INSTALL.md](packaging/INSTALL.md).  
+Full install notes: [packaging/INSTALL.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/packaging/INSTALL.md).  
 Legacy PE: [vendor/](vendor/) — prefer AHK.
 
 ---
 
 ## Roadmap (v2 free portable · v3 heavy open · v4 paid full)
 
-See **[ROADMAP_KEYSWAP_V2_V3.md](ROADMAP_KEYSWAP_V2_V3.md)** and peer survey
-**[SIMILARS_COMPARISON.md](SIMILARS_COMPARISON.md)**:
+See **[ROADMAP_KEYSWAP_V2_V3.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/ROADMAP_KEYSWAP_V2_V3.md)** and peer survey
+**[SIMILARS_COMPARISON.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/SIMILARS_COMPARISON.md)**:
 
 - **v2 (free, mostly portable)** — light shell; residual **shipped in 2.9**: iOS Writer parity + live Deva (Windows)  
 - **v3 (free, heavier, not max)** — opt-in plugins (never default Startup)  
-  — [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md)  
+  — [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md)  
   — **V3-2 offline_fuzzy** · **V3-7 network_autocomplete** (shipped opt-in)  
 - **v4 (paid)** — most peer features: forms/morphology, advanced **Mac + iOS**, signed builds
 
@@ -174,7 +174,7 @@ smart digraphs · long-press · PWA · profiles · AHK cycle/smart/deadkey
 
 | Platform | Recommended |
 |----------|-------------|
-| **Windows** | [`windows/KeySwap.ahk`](windows/KeySwap.ahk) |
+| **Windows** | [`windows/KeySwap.ahk`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/windows/KeySwap.ahk) |
 | **iPhone** | [`apple/`](apple/) keyboard |
 | **Mac** | [`apple/macos/`](apple/macos/) menu bar |
 | **Browser** | [`pwa/`](pwa/) |
@@ -240,7 +240,7 @@ python tools/KeySwap/test_local_wordlist.py
 | Ctrl+Alt+C | Clipboard → Cologne Simple Search |
 | Ctrl+Alt+S | Clipboard **headword check** (Cologne API → local wordlist fallback) |
 
-Copy [`windows/allowlist.example.txt`](windows/allowlist.example.txt) → `allowlist.txt` to restrict apps.
+Copy [`windows/allowlist.example.txt`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/windows/allowlist.example.txt) → `allowlist.txt` to restrict apps.
 
 **Non-US keyboards (2.8):** on Spanish layouts the physical key may be `+` not `=`. Set another **cycle trigger** via tray **Trigger:**, `windows/trigger.ini` (`preset=bracket`), or env `KEYSWAP_TRIGGER=bracket|slash|backtick`. Shift+trigger still types the raw character. Layout often only affects the **trigger**, not the base letters (Hakon / Norway).
 
@@ -292,7 +292,7 @@ After edit: **F6** (AHK) or quit tray app and relaunch (vendor PE). Chandrabindu
 | Headword check `? rate-limited` / API 429 | Cologne is throttling; local seed still ✓/✗ common words; use **Ctrl+Alt+C** in browser; expand list with `build_local_wordlist.py --from-spellcheck` |
 | Headword check offline / no Internet | Works via `data/local_headwords.txt` (seed ~1k). Full MW: `build_local_wordlist.py --from-spellcheck` or set `KEYSWAP_WORDLIST` |
 
-Full comment analysis: [UPSTREAM_KEYSWAP_ANALYSIS.md](UPSTREAM_KEYSWAP_ANALYSIS.md).
+Full comment analysis: [UPSTREAM_KEYSWAP_ANALYSIS.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/UPSTREAM_KEYSWAP_ANALYSIS.md).
 
 ---
 
