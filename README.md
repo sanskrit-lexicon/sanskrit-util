@@ -1,12 +1,12 @@
 # sanskrit-util
 
-_Created: 15-06-2026 · Last updated: 24-08-2026_
+_Created: 15-06-2026 · Last updated: 06-09-2026_
 
 One **canonical** implementation of the Sanskrit string helpers that were being re-typed in
 ~20+ Sanskrit-Lexicon / CDSL repos: IAST ⇄ SLP1 ⇄ Devanāgarī transcoding plus the
 normalization keys used for search, indexing and form comparison.
 
-**Current release: v0.10.0** (2026-08-24) — see the
+**Current release: v0.12.0** (2026-09-06) — see the
 [GitHub releases](https://github.com/sanskrit-lexicon/sanskrit-util/releases) and
 [`CHANGELOG.md`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/CHANGELOG.md).
 Python and JS carry the same version (`py/pyproject.toml`, `js/package.json`,
@@ -99,8 +99,11 @@ SLP1 behind an opt-in toggle for those who edit source.
 - **Search / index lookup** → `norm` (and `nfold` as a fallback alias). Reversible-ish,
   diacritic-insensitive, keeps `am`/`an` distinct on the exact key.
 - **Comparing two word forms** (vidyut output vs warnemyr vs DCS) → `form_key`. Length is
-  meaningful: `krānta` (PPP) ≠ `kranta`; anusvāra folds to its homorganic nasal; the nom-sg
-  visarga is stripped; pitch accents on vowels drop but `ś` and the retroflex dots survive.
+  meaningful: `krānta` (PPP) ≠ `kranta`; anusvāra folds to its homorganic nasal — `n` in
+  general (`krāṃta == krānta`), but **`m` word-finally and before a labial**, because that is
+  where the homorganic nasal actually is `m` (`rasaṃ == rasam`, `saṃbhavaḥ == sambhavaḥ`); the
+  nom-sg visarga is stripped; pitch accents on vowels drop but `ś` and the retroflex dots
+  survive. Final `-n` is never merged into `-m` (`rājan != rājam`).
 - **A crude ASCII bucket** (you explicitly want no diacritics at all) → `normalize_sanskrit`.
   This is *lossy* and not the same as `norm`; prefer `norm` unless you really need bare ASCII.
 - **A CDSL SLP1 headword key** (align `<k1>` across dictionaries) → `slp1_norm`. Strips accents
@@ -177,6 +180,7 @@ pip install -e py            # from this directory; editable install
 from sanskrit_util import to_slp1, form_key, norm
 to_slp1('aiśvarya')   # 'ESvarya'
 form_key('krāṃta')    # 'krānta'   (anusvāra → homorganic n, length kept)
+form_key('saṃbhavaḥ') # 'sambhava' (before a labial the homorganic nasal is m; visarga dropped)
 norm('धर्म')           # 'dharma'   (Devanāgarī-aware)
 ```
 

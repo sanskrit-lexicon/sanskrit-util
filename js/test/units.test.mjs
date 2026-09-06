@@ -63,6 +63,22 @@ assert.equal(su.form_key('rājan'), 'rājan');
 assert.equal(su.form_key('saṃskṛta'), su.form_key('sanskṛta'));
 assert.equal(su.form_key('saṃskṛtam'), 'sanskṛtam');
 
+// H3975: before a labial (p ph b bh m) the homorganic nasal IS /m/, so an anusvāra there is
+// the same word as a written 'm'. Folding it to 'n' made 278 of kosha's 2,521 A3
+// slot-conflict rows (11.03%) pure spelling twins that reached a human as disagreements.
+assert.equal(su.form_key('saṃbhavaḥ'), su.form_key('sambhavaḥ'));
+assert.equal(su.form_key('saṃbhavaḥ'), 'sambhava');
+assert.equal(su.form_key('saṃpadā'), su.form_key('sampadā'));
+assert.equal(su.form_key('saṃbandhaḥ'), su.form_key('sambandhaḥ'));
+assert.equal(su.form_key('saṃmukhaṃ'), su.form_key('sammukham'));
+assert.equal(su.form_key('vaiśaṃpāyana'), 'vaiśampāyana');
+assert.equal(su.form_key('saṁpadā'), su.form_key('sampadā'));
+// only a LABIAL follower switches the target to 'm'
+assert.equal(su.form_key('krāṃta'), 'krānta');
+assert.equal(su.form_key('saṃvatsara'), 'sanvatsara');
+assert.equal(su.form_key('siṃha'), 'sinha');
+assert.equal(su.form_key('paṅpa'), 'panpa');
+
 // H1394: iast_to_devanagari re-implemented as the to_slp1 -> slp1_to_devanagari composition.
 // The previous naive longest-key-first character substitution never applied virāma/mātrā and
 // was wrong on all 9 of these words (e.g. 'ka' -> 'कअ' instead of 'क').

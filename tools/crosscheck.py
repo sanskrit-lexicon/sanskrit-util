@@ -36,6 +36,10 @@ EXOTIC = [
     'agni' + SVAR, 'devá'.replace('á', 'a' + ACUTE), 'índra'.replace('í', 'i' + ACUTE),
     'kṛṣṇa' + ANUD, 'धर्मं', 'अग्निः', 'क्ष्म्य', 'श्री', 'ॐ', 'a‍b', 'ṛṝḷḹ',
     'AÁBC', 'XYZ123', 'saṃskṛtam', 'kāṃkṣ', 'tat tvam asi', 'kó',
+    # H3975 medial anusvara before a labial. Without these the donor comparison had no
+    # input that could tell the 0.11 fold from the 0.12 one, so a STALE donor checkout
+    # passed the 3-way check green - the exact false-green this donor gate exists to stop.
+    'saṃbhavaḥ', 'sambhavaḥ', 'saṁpadā', 'vaiśaṃpāyana', 'saṃvatsara', 'paṅpa',
 ]
 
 
@@ -47,7 +51,12 @@ EXOTIC += [_BOM + 'agni', 'agni' + _BOM, 'a' + _BOM + 'b', _NEL + 'rama', 'rama'
 
 
 def load_donor():
-    p = os.path.abspath(os.path.join(ROOT, '..', 'WhitneyRoots', 'scripts', 'sanskrit_util.py'))
+    # SANSKRIT_UTIL_DONOR overrides the sibling-checkout path — see gen_vectors.load_donor():
+    # WhitneyRoots is a guarded shared main tree, so the donor half of a paired change lives in
+    # a session worktree until it lands, and the check must be pointable at it (H3975).
+    p = os.environ.get('SANSKRIT_UTIL_DONOR') or os.path.join(
+        ROOT, '..', 'WhitneyRoots', 'scripts', 'sanskrit_util.py')
+    p = os.path.abspath(p)
     if not os.path.exists(p):
         return None
     # load by file path under a private name so it doesn't collide with the package

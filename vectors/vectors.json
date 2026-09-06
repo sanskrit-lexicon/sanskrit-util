@@ -137,6 +137,58 @@
    "out": "M"
   },
   {
+   "in": "saṃbhavaḥ",
+   "out": "saMBavaH"
+  },
+  {
+   "in": "sambhavaḥ",
+   "out": "samBavaH"
+  },
+  {
+   "in": "saṃpadā",
+   "out": "saMpadA"
+  },
+  {
+   "in": "sampadā",
+   "out": "sampadA"
+  },
+  {
+   "in": "saṁpadā",
+   "out": "saMpadA"
+  },
+  {
+   "in": "saṃbandhaḥ",
+   "out": "saMbanDaH"
+  },
+  {
+   "in": "saṃmukhaṃ",
+   "out": "saMmuKaM"
+  },
+  {
+   "in": "sammukham",
+   "out": "sammuKam"
+  },
+  {
+   "in": "vaiśaṃpāyana",
+   "out": "vESaMpAyana"
+  },
+  {
+   "in": "vaiśampāyana",
+   "out": "vESampAyana"
+  },
+  {
+   "in": "saṃvatsara",
+   "out": "saMvatsara"
+  },
+  {
+   "in": "siṃha",
+   "out": "siMha"
+  },
+  {
+   "in": "paṅpa",
+   "out": "paNpa"
+  },
+  {
    "in": "krānta",
    "out": "krAnta"
   },
@@ -469,6 +521,58 @@
    "out": "ṁ"
   },
   {
+   "in": "saṃbhavaḥ",
+   "out": "saṃbhavaḥ"
+  },
+  {
+   "in": "sambhavaḥ",
+   "out": "sambhavaḥ"
+  },
+  {
+   "in": "saṃpadā",
+   "out": "saṃpadā"
+  },
+  {
+   "in": "sampadā",
+   "out": "sampadā"
+  },
+  {
+   "in": "saṁpadā",
+   "out": "saṁpadā"
+  },
+  {
+   "in": "saṃbandhaḥ",
+   "out": "saṃbandhaḥ"
+  },
+  {
+   "in": "saṃmukhaṃ",
+   "out": "saṃmukhaṃ"
+  },
+  {
+   "in": "sammukham",
+   "out": "sammukham"
+  },
+  {
+   "in": "vaiśaṃpāyana",
+   "out": "vaiśaṃpāyana"
+  },
+  {
+   "in": "vaiśampāyana",
+   "out": "vaiśampāyana"
+  },
+  {
+   "in": "saṃvatsara",
+   "out": "saṃvatsara"
+  },
+  {
+   "in": "siṃha",
+   "out": "siṃha"
+  },
+  {
+   "in": "paṅpa",
+   "out": "paṅpa"
+  },
+  {
    "in": "krānta",
    "out": "krānta"
   },
@@ -753,6 +857,58 @@
    "out": "ं"
   },
   {
+   "in": "saṃbhavaḥ",
+   "out": "संभवः"
+  },
+  {
+   "in": "sambhavaḥ",
+   "out": "सम्भवः"
+  },
+  {
+   "in": "saṃpadā",
+   "out": "संपदा"
+  },
+  {
+   "in": "sampadā",
+   "out": "सम्पदा"
+  },
+  {
+   "in": "saṁpadā",
+   "out": "संपदा"
+  },
+  {
+   "in": "saṃbandhaḥ",
+   "out": "संबन्धः"
+  },
+  {
+   "in": "saṃmukhaṃ",
+   "out": "संमुखं"
+  },
+  {
+   "in": "sammukham",
+   "out": "सम्मुखम्"
+  },
+  {
+   "in": "vaiśaṃpāyana",
+   "out": "वैशंपायन"
+  },
+  {
+   "in": "vaiśampāyana",
+   "out": "वैशम्पायन"
+  },
+  {
+   "in": "saṃvatsara",
+   "out": "संवत्सर"
+  },
+  {
+   "in": "siṃha",
+   "out": "सिंह"
+  },
+  {
+   "in": "paṅpa",
+   "out": "पङ्प"
+  },
+  {
    "in": "krānta",
    "out": "क्रान्त"
   },
@@ -973,6 +1129,58 @@
   {
    "in": "ṁ",
    "out": "m"
+  },
+  {
+   "in": "saṃbhavaḥ",
+   "out": "sambhavah"
+  },
+  {
+   "in": "sambhavaḥ",
+   "out": "sambhavah"
+  },
+  {
+   "in": "saṃpadā",
+   "out": "sampada"
+  },
+  {
+   "in": "sampadā",
+   "out": "sampada"
+  },
+  {
+   "in": "saṁpadā",
+   "out": "sampada"
+  },
+  {
+   "in": "saṃbandhaḥ",
+   "out": "sambandhah"
+  },
+  {
+   "in": "saṃmukhaṃ",
+   "out": "sammukham"
+  },
+  {
+   "in": "sammukham",
+   "out": "sammukham"
+  },
+  {
+   "in": "vaiśaṃpāyana",
+   "out": "vaisampayana"
+  },
+  {
+   "in": "vaiśampāyana",
+   "out": "vaisampayana"
+  },
+  {
+   "in": "saṃvatsara",
+   "out": "samvatsara"
+  },
+  {
+   "in": "siṃha",
+   "out": "simha"
+  },
+  {
+   "in": "paṅpa",
+   "out": "panpa"
   },
   {
    "in": "krānta",
@@ -1197,6 +1405,58 @@
    "out": "n"
   },
   {
+   "in": "saṃbhavaḥ",
+   "out": "sanbhavah"
+  },
+  {
+   "in": "sambhavaḥ",
+   "out": "sanbhavah"
+  },
+  {
+   "in": "saṃpadā",
+   "out": "sanpada"
+  },
+  {
+   "in": "sampadā",
+   "out": "sanpada"
+  },
+  {
+   "in": "saṁpadā",
+   "out": "sanpada"
+  },
+  {
+   "in": "saṃbandhaḥ",
+   "out": "sanbandhah"
+  },
+  {
+   "in": "saṃmukhaṃ",
+   "out": "sannukhan"
+  },
+  {
+   "in": "sammukham",
+   "out": "sannukhan"
+  },
+  {
+   "in": "vaiśaṃpāyana",
+   "out": "vaisanpayana"
+  },
+  {
+   "in": "vaiśampāyana",
+   "out": "vaisanpayana"
+  },
+  {
+   "in": "saṃvatsara",
+   "out": "sanvatsara"
+  },
+  {
+   "in": "siṃha",
+   "out": "sinha"
+  },
+  {
+   "in": "paṅpa",
+   "out": "panpa"
+  },
+  {
    "in": "krānta",
    "out": "kranta"
   },
@@ -1417,6 +1677,58 @@
   {
    "in": "ṁ",
    "out": "m"
+  },
+  {
+   "in": "saṃbhavaḥ",
+   "out": "sambhava"
+  },
+  {
+   "in": "sambhavaḥ",
+   "out": "sambhava"
+  },
+  {
+   "in": "saṃpadā",
+   "out": "sampadā"
+  },
+  {
+   "in": "sampadā",
+   "out": "sampadā"
+  },
+  {
+   "in": "saṁpadā",
+   "out": "sampadā"
+  },
+  {
+   "in": "saṃbandhaḥ",
+   "out": "sambandha"
+  },
+  {
+   "in": "saṃmukhaṃ",
+   "out": "sammukham"
+  },
+  {
+   "in": "sammukham",
+   "out": "sammukham"
+  },
+  {
+   "in": "vaiśaṃpāyana",
+   "out": "vaiśampāyana"
+  },
+  {
+   "in": "vaiśampāyana",
+   "out": "vaiśampāyana"
+  },
+  {
+   "in": "saṃvatsara",
+   "out": "sanvatsara"
+  },
+  {
+   "in": "siṃha",
+   "out": "sinha"
+  },
+  {
+   "in": "paṅpa",
+   "out": "panpa"
   },
   {
    "in": "krānta",
@@ -1641,6 +1953,58 @@
    "out": "m"
   },
   {
+   "in": "saṃbhavaḥ",
+   "out": "sambhavah"
+  },
+  {
+   "in": "sambhavaḥ",
+   "out": "sambhavah"
+  },
+  {
+   "in": "saṃpadā",
+   "out": "sampada"
+  },
+  {
+   "in": "sampadā",
+   "out": "sampada"
+  },
+  {
+   "in": "saṁpadā",
+   "out": "sampada"
+  },
+  {
+   "in": "saṃbandhaḥ",
+   "out": "sambandhah"
+  },
+  {
+   "in": "saṃmukhaṃ",
+   "out": "sammukham"
+  },
+  {
+   "in": "sammukham",
+   "out": "sammukham"
+  },
+  {
+   "in": "vaiśaṃpāyana",
+   "out": "vaisampayana"
+  },
+  {
+   "in": "vaiśampāyana",
+   "out": "vaisampayana"
+  },
+  {
+   "in": "saṃvatsara",
+   "out": "samvatsara"
+  },
+  {
+   "in": "siṃha",
+   "out": "simha"
+  },
+  {
+   "in": "paṅpa",
+   "out": "panpa"
+  },
+  {
    "in": "krānta",
    "out": "kranta"
   },
@@ -1801,6 +2165,26 @@
   {
    "in": "anSa",
    "out": "anSa"
+  },
+  {
+   "in": "saMBavaH",
+   "out": "saMBavaH"
+  },
+  {
+   "in": "samBavaH",
+   "out": "samBavaH"
+  },
+  {
+   "in": "saMpadA",
+   "out": "saMpadA"
+  },
+  {
+   "in": "sampadA",
+   "out": "sampadA"
+  },
+  {
+   "in": "saMvatsara",
+   "out": "saMvatsara"
   }
  ],
  "slp1_norm": [
@@ -1879,6 +2263,26 @@
   {
    "in": "anSa",
    "out": "anSa"
+  },
+  {
+   "in": "saMBavaH",
+   "out": "saMBavaH"
+  },
+  {
+   "in": "samBavaH",
+   "out": "samBavaH"
+  },
+  {
+   "in": "saMpadA",
+   "out": "saMpadA"
+  },
+  {
+   "in": "sampadA",
+   "out": "sampadA"
+  },
+  {
+   "in": "saMvatsara",
+   "out": "saMvatsara"
   }
  ],
  "slp1_form_key": [
@@ -1957,6 +2361,26 @@
   {
    "in": "anSa",
    "out": "anśa"
+  },
+  {
+   "in": "saMBavaH",
+   "out": "sambhava"
+  },
+  {
+   "in": "samBavaH",
+   "out": "sambhava"
+  },
+  {
+   "in": "saMpadA",
+   "out": "sampadā"
+  },
+  {
+   "in": "sampadA",
+   "out": "sampadā"
+  },
+  {
+   "in": "saMvatsara",
+   "out": "sanvatsara"
   }
  ],
  "slp1_to_devanagari": [

@@ -34,6 +34,12 @@ STR_INPUTS = [
     # ṁ (U+1E41, m-with-dot-above) -> M on the IAST->SLP1 side: the named blocker for dropping
     # sanscript from SamudraManthanam. NFD/form_key must also treat it like anusvāra ṃ.
     'saṁskṛta', 'ṁ',
+    # H3975 medial anusvāra before a labial (p ph b bh m) is /m/, so `saṃbhavaḥ == sambhavaḥ`;
+    # anywhere else it keeps folding to n (`saṃvatsara`, `siṃha`, and `saṃskṛta` above). Before
+    # this rule the vector set had NO medial-labial case at all, so the fold was untested in
+    # both ports. The ṅ case pins that the real letters are never rewritten to m.
+    'saṃbhavaḥ', 'sambhavaḥ', 'saṃpadā', 'sampadā', 'saṁpadā', 'saṃbandhaḥ',
+    'saṃmukhaṃ', 'sammukham', 'vaiśaṃpāyana', 'vaiśampāyana', 'saṃvatsara', 'siṃha', 'paṅpa',
     # accent / visarga / placeholder edge cases for form_key
     'krānta', 'krāṃta', 'kranta', 'rāmaḥ', 'devá'.replace('á', 'a' + A),
     'agniḥ'.replace('i', 'i' + A), 'śas', 'ā' + A, 'sá'.replace('á', 'a' + A) + 's',
@@ -55,6 +61,9 @@ SLP1_INPUTS = ['', 'Siva', 'kfzRa', 'jYAna', 'saMskftam', 'EkSvarya', 'OzaDa', '
 SLP1_NORM_INPUTS = [
     '', 'agni', 'agni2', 'aMSa', 'a/MSa', 'aMSa3', 'kf/zRa', 'Si^va', 'a~Nga', 'rAma\\',
     '  agni  ', 'deva 2', "aDo'MSukaM", 'mfL', 'saMskftam2', 'BAvaH', 'Siva', 'aMSaH', 'anSa',
+    # H3975 on the SLP1 side: M before a labial transcodes to ṃ before p/b/m and must reach the
+    # same key as a written m ('saMBavaH' == 'samBavaH'), while M before a non-labial does not.
+    'saMBavaH', 'samBavaH', 'saMpadA', 'sampadA', 'saMvatsara',
 ]
 # SLP1 inputs for slp1_to_devanagari — alphabet coverage + conjuncts, inherent 'a', mātrās,
 # independent vowels, marks (M/H anusvāra/visarga), the Vedic L, avagraha ('), and the two
@@ -265,8 +274,16 @@ def linkid_donor_regression():
 
 
 def load_donor():
-    """Load the original WhitneyRoots donor module by file path (not import name)."""
-    p = os.path.join(ROOT, '..', 'WhitneyRoots', 'scripts', 'sanskrit_util.py')
+    """Load the original WhitneyRoots donor module by file path (not import name).
+
+    `SANSKRIT_UTIL_DONOR` overrides the sibling-checkout path. WhitneyRoots is a guarded
+    shared main tree, so the donor half of a paired change is authored in a session worktree
+    and the main-tree copy can sit on an unrelated branch for days — pointing the regression
+    at the worktree is what lets the pair be *proved* identical before either half lands
+    (H3975). Absent donor (e.g. CI, which checks out this repo alone) skips the check.
+    """
+    p = os.environ.get('SANSKRIT_UTIL_DONOR') or os.path.join(
+        ROOT, '..', 'WhitneyRoots', 'scripts', 'sanskrit_util.py')
     p = os.path.abspath(p)
     if not os.path.exists(p):
         return None
