@@ -47,10 +47,28 @@ def test_form_key_final_n_stays_distinct_from_final_m():
     assert su.form_key('rājan') == 'rājan'
 
 
-def test_form_key_medial_anusvara_still_folds_to_n():
-    # the final-position rule must not disturb the general homorganic fold
+def test_form_key_medial_anusvara_before_labial_folds_to_m():
+    # H3975: before a labial (p ph b bh m) the homorganic nasal IS /m/, so an anusvāra there
+    # is the same word as a written 'm'. Folding it to 'n' made 278 of kosha's 2,521 A3
+    # slot-conflict rows (11.03%) pure spelling twins that reached a human as disagreements.
+    assert su.form_key('saṃbhavaḥ') == su.form_key('sambhavaḥ') == 'sambhava'
+    assert su.form_key('saṃpadā') == su.form_key('sampadā')      # p
+    assert su.form_key('saṃbandhaḥ') == su.form_key('sambandhaḥ')  # b
+    assert su.form_key('saṃmukhaṃ') == su.form_key('sammukham')  # m, plus the final rule
+    assert su.form_key('vaiśaṃpāyana') == su.form_key('vaiśampāyana') == 'vaiśampāyana'
+    assert su.form_key('saṁpadā') == su.form_key('sampadā')      # ṁ spelling too
+
+
+def test_form_key_medial_anusvara_still_folds_to_n_elsewhere():
+    # the two positional rules must not disturb the general homorganic fold: only a LABIAL
+    # follower switches the target to 'm'.
     assert su.form_key('saṃskṛta') == su.form_key('sanskṛta')
     assert su.form_key('saṃskṛtam') == 'sanskṛtam'          # both rules, one word
+    assert su.form_key('krāṃta') == su.form_key('krānta') == 'krānta'   # dental
+    assert su.form_key('saṃvatsara') == 'sanvatsara'        # v is NOT a labial stop here
+    assert su.form_key('siṃha') == 'sinha'                  # h
+    # and the real letters ṅ/ñ/ṇ are never rewritten to 'm', labial follower or not
+    assert su.form_key('paṅpa') == 'panpa'
 
 
 def test_form_key_drops_visarga_and_vowel_accent():

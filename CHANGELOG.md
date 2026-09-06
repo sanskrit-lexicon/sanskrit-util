@@ -1,4 +1,4 @@
-_Created: 15-06-2026 · Last updated: 05-09-2026_
+_Created: 15-06-2026 · Last updated: 06-09-2026_
 
 # Changelog
 
@@ -6,6 +6,50 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.12.0] - 2026-09-06
+
+### Fixed
+
+- **`form_key`: medial anusvāra before a LABIAL now folds to `m`, finishing the nasal fix
+  0.11.0 started** (H3975). ⚠️ **This changes emitted keys — see the migration note below.**
+  0.11.0 collided the *word-final* nasal (`rasaṃ == rasam`) and deliberately left every medial
+  anusvāra folding to `n`. But "homorganic" is a place of articulation, and before `p ph b bh m`
+  that place is labial: the nasal there **is** `/m/`. So `saṃbhavaḥ` keyed as `sanbhava` while
+  `sambhavaḥ` keyed as `sambhava`, and one word in its two standard spellings could never meet.
+  The new rule runs after the word-final rule and before the general homorganic fold, and is
+  deliberately narrow: `ph`/`bh` need no separate class (the digraphs start with `p`/`b`),
+  anusvāra anywhere else still folds to `n` (`saṃskṛta == sanskṛta`, `krāṃta == krānta`,
+  `saṃvatsara → sanvatsara`, `siṃha → sinha`), the real letters `ṅ/ñ/ṇ` are never rewritten to
+  `m` (`paṅpa → panpa`), and final `-n` still never merges into `-m` (`rājan != rājam`). Both
+  ports changed together.
+
+- **The donor and vector gates could not see this class of change at all** (H3975, found while
+  fixing the above). `vectors.json` held **no** medial-anusvāra-before-labial input, so
+  regenerating it after the fix moved **zero** of 611 vectors — a key-changing edit passed the
+  staleness gate silently. `tools/crosscheck.py`'s adversarial set had the same hole and so
+  reported "package == donor" **green against a stale donor checkout**. Both input sets now
+  carry the class (611 → 717 vectors), and `crosscheck.py` fails against a 0.11-era donor as it
+  should. Both loaders also honour a new `SANSKRIT_UTIL_DONOR` env override: WhitneyRoots is a
+  guarded shared main tree, so the donor half of a paired change lives in a session worktree
+  until it lands, and the regression has to be pointable at it to prove the pair identical
+  *before* either half merges. CI is unaffected (it checks out this repo alone, so the donor
+  comparison is skipped there as before).
+
+  **Migration.** Any stored `form_key`/`slp1_form_key` value computed before 0.12.0 mismatches a
+  freshly computed one for anusvāra-before-labial forms; rebuild derived keys rather than mixing
+  eras. Measured on the one class that reaches a human — kosha's A3 generated-vs-attested
+  **slot conflicts**, the rows a reviewer is asked to adjudicate — **278 of 2,521 rows (11.03%
+  of the class, 11.58% by corpus weight) are not disagreements at all** but the same word in two
+  spellings (`saṃbhavaḥ`/`sambhavaḥ`, `saṃbandhaḥ`/`sambandhaḥ`, `vaiśaṃpāyana`/`vaiśampāyanaḥ`
+  at 1,108 attestations alone), plus 90 further candidates that collapse into their own lemma
+  once refolded. Reproduce with `python scripts/measure_medial_anusvara_residual.py` in kosha.
+  Repos that call `form_key`/`slp1_form_key` and hold derived keys: **SanskritLexicography,
+  kosha, kosha-les1990, WhitneyRoots, csl-atlas, csl-observatory, telegram-sanskrit-corpus,
+  csl-santam, csl-guides, csl-apidev, Systema-Sanscriticum, SamudraManthanam**. kosha's
+  `scripts/rebuild_a3_chain.py` refuses to run against a library that lacks the invariants
+  (now four, covering both the fold and its deliberate limits) — copy that pattern rather than
+  trusting a checkout.
 
 ## [0.11.0] - 2026-09-02
 
