@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-_Created: 03-07-2026 · Last updated: 24-08-2026_
+_Created: 03-07-2026 · Last updated: 06-09-2026_
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -69,6 +69,16 @@ cd js && npm test                     # full JS suite (as CI runs it)
   (length-preserving form comparison), `normalize_sanskrit` (lossy ASCII fold,
   kept only for v3-explorer parity), plus the SLP1-side family
   (`slp1_norm`/`slp1_form_key`/`slp1_simplify`) for CDSL SLP1-native headwords.
+- **`form_key`'s nasal fold is POSITIONAL, and changing it changes stored keys in ~12 repos.**
+  Anusvāra folds to `m` word-finally (0.11.0, H3911) and before a labial `p ph b bh m`
+  (0.12.0, H3975) — those are the two positions where the homorganic nasal actually *is* `m`;
+  everywhere else it folds to `n` (`saṃskṛta == sanskṛta`, `saṃvatsara → sanvatsara`). Final
+  `-n` is never merged into `-m` (`rājan != rājam`), and the real letters `ṅ/ñ/ṇ` are never
+  rewritten to `m`. Any further narrowing is a **key-era change**: bump the minor version, add
+  the case to `STR_INPUTS` in `tools/gen_vectors.py` **and** `EXOTIC` in `tools/crosscheck.py`
+  (a class absent from both passes the staleness and donor gates green — that is how the 0.12.0
+  edit initially moved zero of 611 vectors), update the WhitneyRoots donor in the same pass,
+  and write the migration note naming the consumers that must rebuild derived keys.
 - **In standard SLP1, case is phonemic** (`R`=ṇ, `S`=ś, `T`=th — distinct from
   lowercase `r`/`s`/`t`). `slp1_simplify` deliberately folds these for fuzzy
   matching; every other SLP1 function preserves case. Forgetting `R`→`n` in a
@@ -92,8 +102,8 @@ cd js && npm test                     # full JS suite (as CI runs it)
   against the spec's canonical validator, `kosha/scripts/typed_link_lint.py` +
   `concordance_core.py`, by `tools/gen_vectors.py`'s `linkid_donor_regression()` — a
   Type-D builder should call these, not re-roll the grammar per pilot. Library package
-  versions are **0.10.0** (`py/pyproject.toml`, `js/package.json`, `__version__`),
-  matching the `v0.10.0` GitHub release tag.
+  versions are **0.12.0** (`py/pyproject.toml`, `js/package.json`, `__version__`),
+  matching the `v0.12.0` GitHub release tag. Bump all three in the same commit.
 - **Consumption in a sibling repo without publishing:** drop a small re-export
   shim named `sanskrit_util.py` that loads this package's `py/sanskrit_util/__init__.py`
   by relative path — see the working example at
