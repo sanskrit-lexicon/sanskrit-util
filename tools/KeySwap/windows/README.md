@@ -64,7 +64,7 @@ When `=` is wrong for your layout (or Word steals it), pick another cycle key:
 **Ways to set:**
 
 1. Tray → **Trigger: …** submenu (writes `trigger.ini`)  
-2. Edit [`trigger.ini`](trigger.ini) (copy from [`trigger.example.ini`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/windows/trigger.example.ini)): `preset=bracket`  
+2. Edit `trigger.ini` (copy from [`trigger.example.ini`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/windows/trigger.example.ini)): `preset=bracket`  
 3. Env `KEYSWAP_TRIGGER=bracket` (wins over file)
 
 Canonical table: [`../trigger_presets.py`](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/trigger_presets.py).

@@ -363,7 +363,7 @@ would have conflicted at install time — removing this one resolves that.
 
 ### Added — `csl_pyutil` package: `render_review_sheet()` HTML emitter (H925)
 
-New sibling package [`csl_pyutil/`](csl_pyutil/) (own `pyproject.toml`, own version
+New sibling package `csl_pyutil/` (own `pyproject.toml`, own version
 track `0.1.0`, no shared code with `sanskrit_util`) — generic, non-Sanskrit-specific
 CDSL/Sanskrit-Lexicon tooling. First (and so far only) export:
 `render_review_sheet(items, *, sheet_id, title, ...)`, extracting the interactive
