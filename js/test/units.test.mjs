@@ -139,4 +139,29 @@ assert.equal(su.source_line_to_iast('', 'mw'), '');
 assert.equal(su.source_line_to_iast(null, 'mw'), '');
 assert.equal(su.source_text_to_iast('{#aBAga#}¦\n{#A#}', 'pw'), 'abhāga\nā');  // multi-line preserves breaks
 
+// IAST-side API parity (mirrors py tests: test_norm_is_diacritic_insensitive_but_length_blind,
+// test_norm_is_devanagari_aware, test_nfold_folds_nasals_only_as_fallback,
+// test_normalize_sanskrit_is_lossy_ascii) — JS literals == Python literals
+assert.equal(su.norm('Śiva'), su.norm('śiva'));   // case + diacritic folded
+assert.equal(su.norm('rājan'), 'rajan');
+assert.equal(su.norm('  Agni  '), 'agni');        // trims + lowercases
+assert.equal(su.norm('धर्म'), 'dharma');            // transliterates first
+assert.equal(su.nfold('saṃ'), su.nfold('san'));   // anusvāra reaches homorganic
+assert.notEqual(su.norm('am'), su.norm('an'));    // exact key keeps am/an distinct
+assert.equal(su.normalize_sanskrit('Śiva'), 'siva');
+assert.equal(su.normalize_sanskrit('kṛṣṇa'), 'krsna'); // length+retroflex collapsed to ASCII
+
+// to_roman: out-of-range dropped (mirrors py test_empty_and_none_safe)
+assert.deepEqual(su.to_roman([]), []);
+assert.deepEqual(su.to_roman([11]), []);
+assert.deepEqual(su.to_roman([5]), ['V']);
+
+// null/empty safety sweep (mirrors py test_empty_and_none_safe)
+for (const f of [su.to_slp1, su.from_slp1, su.deva_to_iast, su.deva_to_slp1,
+  su.iast_to_devanagari, su.norm, su.nfold, su.form_key, su.normalize_sanskrit,
+  su.slp1_to_devanagari, su.slp1_simplify]) {
+  assert.equal(f(''), '');
+  assert.equal(f(null), '');
+}
+
 console.log('OK: sanskrit-util SLP1 unit tests passed (JS == Python literals)');
