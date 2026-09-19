@@ -1,0 +1,28 @@
+{
+  "_doc": "H3325 VCR primitive pilot (arm B) — feature_list.json: each feature is a state-machine record (planned -> active -> verified -> passing). ONLY scripts/verify.sh may set passing; it refuses the flip when checks fail and appends an audit line per transition (scripts/verify_audit.log). scripts/verify.sh --check re-derives passing from the audit trail, so hand-editing the JSON state cannot bypass the gate.",
+  "metric": {
+    "vcr": "verified features / activated features (target 1.0)",
+    "effective_code_share": "lines in passing features / all lines written",
+    "wip": "concurrent active features (discipline: 1)"
+  },
+  "features": [
+    {
+      "id": "B1",
+      "goal": "Pin py nfold as the recall-fallback key: folds every nasal to n, deliberately NOT the H3975 labial-m rule that form_key applies",
+      "acceptance_cmd": "python3 -m pytest py/tests/test_units.py::test_nfold_is_fallback_not_labial_m -q",
+      "state": "passing"
+    },
+    {
+      "id": "B2",
+      "goal": "Lock the H3975 labial fold on the SLP1 side of slp1_form_key (JS == Python literals)",
+      "acceptance_cmd": "node js/test/units.test.mjs",
+      "state": "passing"
+    },
+    {
+      "id": "B3",
+      "goal": "First-ever coverage for classify_german_metalanguage: JS == Python smoke pins (grammar_label positive, uncertain whole-text, plain prose negative)",
+      "acceptance_cmd": "python3 -m pytest py/tests/test_units.py::test_classify_german_metalanguage_smoke -q && node js/test/units.test.mjs",
+      "state": "passing"
+    }
+  ]
+}

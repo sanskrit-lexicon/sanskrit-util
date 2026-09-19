@@ -164,4 +164,19 @@ for (const f of [su.to_slp1, su.from_slp1, su.deva_to_iast, su.deva_to_slp1,
   assert.equal(f(null), '');
 }
 
+// H3325/B2: the H3975 labial fold must hold on the SLP1 side of slp1_form_key too
+// (JS == Python literals)
+assert.equal(su.slp1_form_key('saMpadA'), su.slp1_form_key('sampadA'));
+assert.equal(su.slp1_form_key('saMpadA'), 'sampadā');
+assert.equal(su.slp1_form_key('krAMta'), 'krānta');            // dental: folds to n, not m
+assert.equal(su.slp1_form_key('vEzAMpAyana'), 'vaiṣāmpāyana'); // labial p: folds to m
+
+// H3325/B3: classify_german_metalanguage smoke (JS == Python behaviour)
+assert.deepEqual(su.classify_german_metalanguage('f.'),
+  [{ start: 0, end: 2, text: 'f.', category: 'grammar_label' }]);
+assert.deepEqual(su.classify_german_metalanguage('so'),
+  [{ start: 0, end: 2, text: 'so', category: 'uncertain' }]);
+assert.deepEqual(su.classify_german_metalanguage('Name eines Baumes'), []);
+assert.deepEqual(su.classify_german_metalanguage('voller Glanz'), []);
+
 console.log('OK: sanskrit-util SLP1 unit tests passed (JS == Python literals)');

@@ -1,0 +1,67 @@
+=== H3325 arm B: verify.sh gate transcript (2026-09-19T01:46:42Z) ===
+--- WIP=1 discipline: B1 active ---
+OK: B1: planned -> active (state-only)
+--- B1 verified (acceptance runs) ---
+.                                                                        [100%]
+1 passed in 0.01s
+OK: B1: active -> verified (acceptance_cmd)
+--- B1 passing (full checks) ---
+npm notice run @sanskrit-lexicon/sanskrit-util@0.12.0 test
+npm notice run node test/vectors.test.mjs && node test/units.test.mjs && node test/global.test.mjs
+OK: 717 vectors match across 21 functions (JS == Python)
+OK: sanskrit-util SLP1 unit tests passed (JS == Python literals)
+OK: global build matches 717 vectors (window.SanskritUtil == ESM == Python)
+...............................                                          [100%]
+31 passed in 0.02s
+OK: B1: verified -> passing (full checks)
+--- TAMPER DEMO: hand-edit B2 planned->passing in JSON (no gate), --check must REFUSE ---
+npm notice run @sanskrit-lexicon/sanskrit-util@0.12.0 test
+npm notice run node test/vectors.test.mjs && node test/units.test.mjs && node test/global.test.mjs
+OK: 717 vectors match across 21 functions (JS == Python)
+OK: sanskrit-util SLP1 unit tests passed (JS == Python literals)
+OK: global build matches 717 vectors (window.SanskritUtil == ESM == Python)
+...............................                                          [100%]
+31 passed in 0.02s
+REFUSED: TAMPERED state diverges from audit trail: ['B2']
+VCR: 2/2 verified/active; passing=2; WIP(active)=0
+exit=1
+--- revert hand-edit; gate green again ---
+--- BAD INPUT: illegal skip B1 passing->planned must REFUSE ---
+REFUSED: B1: passing -> planned is not the next state
+exit=1
+--- B2 full gated cycle ---
+OK: B2: planned -> active (state-only)
+OK: sanskrit-util SLP1 unit tests passed (JS == Python literals)
+OK: B2: active -> verified (acceptance_cmd)
+npm notice run @sanskrit-lexicon/sanskrit-util@0.12.0 test
+npm notice run node test/vectors.test.mjs && node test/units.test.mjs && node test/global.test.mjs
+OK: 717 vectors match across 21 functions (JS == Python)
+OK: sanskrit-util SLP1 unit tests passed (JS == Python literals)
+OK: global build matches 717 vectors (window.SanskritUtil == ESM == Python)
+...............................                                          [100%]
+31 passed in 0.02s
+OK: B2: verified -> passing (full checks)
+--- B3 full gated cycle ---
+OK: B3: planned -> active (state-only)
+.                                                                        [100%]
+1 passed in 0.01s
+OK: sanskrit-util SLP1 unit tests passed (JS == Python literals)
+OK: B3: active -> verified (acceptance_cmd)
+npm notice run @sanskrit-lexicon/sanskrit-util@0.12.0 test
+npm notice run node test/vectors.test.mjs && node test/units.test.mjs && node test/global.test.mjs
+OK: 717 vectors match across 21 functions (JS == Python)
+OK: sanskrit-util SLP1 unit tests passed (JS == Python literals)
+OK: global build matches 717 vectors (window.SanskritUtil == ESM == Python)
+...............................                                          [100%]
+31 passed in 0.02s
+OK: B3: verified -> passing (full checks)
+--- final --check ---
+npm notice run @sanskrit-lexicon/sanskrit-util@0.12.0 test
+npm notice run node test/vectors.test.mjs && node test/units.test.mjs && node test/global.test.mjs
+OK: 717 vectors match across 21 functions (JS == Python)
+OK: sanskrit-util SLP1 unit tests passed (JS == Python literals)
+OK: global build matches 717 vectors (window.SanskritUtil == ESM == Python)
+...............................                                          [100%]
+31 passed in 0.02s
+VCR: 3/3 verified/active; passing=3; WIP(active)=0
+exit=0
