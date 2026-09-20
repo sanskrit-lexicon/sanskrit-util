@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-_Created: 03-07-2026 · Last updated: 24-08-2026_
+_Created: 03-07-2026 · Last updated: 20-09-2026 (H5176 SLA review: commands, key inventory, KeySwap plugin rules re-verified current; NOTE: local main carries unpushed d31431c and is 6 behind origin — reconcile before next push)_
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
