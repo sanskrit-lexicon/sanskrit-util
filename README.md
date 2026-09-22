@@ -174,7 +174,8 @@ linkid_validate_link_record({
 
 ### Python
 ```bash
-pip install -e py            # from this directory; editable install
+pip install cdsl-sanskrit-util   # from PyPI (distribution name; import stays `sanskrit_util`)
+pip install -e py                # from this directory; editable install
 ```
 ```python
 from sanskrit_util import to_slp1, form_key, norm
