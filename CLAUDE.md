@@ -1,6 +1,12 @@
 # CLAUDE.md
 
-_Created: 03-07-2026 · Last updated: 21-09-2026_
+_Created: 03-07-2026 · Last updated: 09-10-2026 (H5885 truth refresh: PyPI publish as cdsl-sanskrit-util)_
+
+**PyPI packaging (09-10-2026, #80):** the Python port publishes to PyPI as
+**`cdsl-sanskrit-util`** (the `sanskrit-util` name is taken there; the import
+package stays `sanskrit_util`). `pip install cdsl-sanskrit-util` is the
+canonical out-of-estate consumption path; sibling re-export shims remain
+fine for in-estate use.
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
