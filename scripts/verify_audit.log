@@ -1,0 +1,10 @@
+2026-09-19T01:46:42Z	dd34acb	B1	planned->active	OK	state-only
+2026-09-19T01:46:42Z	dd34acb	B1	active->verified	OK	acceptance_cmd
+2026-09-19T01:46:42Z	dd34acb	B1	verified->passing	PASS	full checks
+2026-09-19T01:46:43Z	dd34acb	B1	passing->planned	REFUSE	illegal transition
+2026-09-19T01:46:43Z	dd34acb	B2	planned->active	OK	state-only
+2026-09-19T01:46:43Z	dd34acb	B2	active->verified	OK	acceptance_cmd
+2026-09-19T01:46:43Z	dd34acb	B2	verified->passing	PASS	full checks
+2026-09-19T01:46:44Z	dd34acb	B3	planned->active	OK	state-only
+2026-09-19T01:46:44Z	dd34acb	B3	active->verified	OK	acceptance_cmd
+2026-09-19T01:46:44Z	dd34acb	B3	verified->passing	PASS	full checks

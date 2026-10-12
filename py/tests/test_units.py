@@ -245,6 +245,28 @@ def test_source_line_to_iast_per_dict_markup():
     assert su.source_text_to_iast('{#aBAga#}¦\n{#A#}', 'pw') == 'abhāga\nā'  # multi-line
 
 
+def test_nfold_is_fallback_not_labial_m():
+    # H3325/B1: nfold is the RECALL FALLBACK — every nasal folds to n, including before a
+    # labial, where form_key (the exact compare key) applies the H3975 labial-m rule instead.
+    # The two keys must stay distinct so consumers cannot mistake fallback for exact.
+    assert su.nfold('saṃpāta') == 'sanpata'                 # fallback n, NOT the labial m
+    assert su.nfold('saṃvāda') == 'sanvada'
+    assert su.nfold('krāṃta') == 'kranta'
+    assert su.form_key('saṃpāta') == 'sampāta'              # exact key DOES apply labial-m
+    assert su.nfold('saṃpāta') != su.form_key('saṃpāta')
+
+
+def test_classify_german_metalanguage_smoke():
+    # H3325/B3: first coverage for the German apparatus detector — pin the JS==Python
+    # behaviour on a positive, an ambiguous whole-text, and plain prose.
+    assert su.classify_german_metalanguage('f.') == [
+        {'start': 0, 'end': 2, 'text': 'f.', 'category': 'grammar_label'}]
+    assert su.classify_german_metalanguage('so') == [
+        {'start': 0, 'end': 2, 'text': 'so', 'category': 'uncertain'}]
+    assert su.classify_german_metalanguage('Name eines Baumes') == []
+    assert su.classify_german_metalanguage('voller Glanz') == []
+
+
 if __name__ == '__main__':
     import traceback
     funcs = [v for k, v in sorted(globals().items()) if k.startswith('test_') and callable(v)]
