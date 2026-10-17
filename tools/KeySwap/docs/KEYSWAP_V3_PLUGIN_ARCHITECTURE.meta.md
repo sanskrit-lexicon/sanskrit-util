@@ -18,7 +18,7 @@ vs sibling app.
 | Field | Value |
 |-------|--------|
 | Subject | [KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md) |
-| Handoffs | [H1581](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1581-Sonnet_sanskrit-util_keyswap-v3-former-skips-heavy-wave_24.07.26.md) (design + V3-2), [H1583](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1583-Sonnet_sanskrit-util_keyswap-v3-7-network-autocomplete_24.07.26.md) (V3-7) |
+| Handoffs | [H1581](https://github.com/gasyoun/Uprava/blob/main/handoffs/archive/H1581-Sonnet_sanskrit-util_keyswap-v3-former-skips-heavy-wave_24.07.26.md) (design + V3-2), [H1583](https://github.com/gasyoun/Uprava/blob/main/handoffs/archive/H1583-Sonnet_sanskrit-util_keyswap-v3-7-network-autocomplete_24.07.26.md) (V3-7) |
 | Model (this metadoc) | Grok 4.5 (`grok-4.5`) |
 
 ## Ranked improvement backlog

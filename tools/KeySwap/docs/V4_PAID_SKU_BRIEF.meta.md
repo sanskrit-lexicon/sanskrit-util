@@ -11,8 +11,8 @@ free→paid bridge note (V4-E). Options for a human ruling, never decisions.
 **Audience:** the human ruling the two `@DECIDE` rows; the future execution handoffs
 that consume §2/§3 as their scope documents.
 
-**Provenance:** [H1640](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1640-Fable_sanskrit-util_keyswap-v4-paid-sku-and-apple_25.07.26.md)
-(child C3 of [H1619](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1619-Fable_sanskrit-util_keyswap-v2-v3-v4-full-improvement_24.07.26.md)),
+**Provenance:** [H1640](https://github.com/gasyoun/Uprava/blob/main/handoffs/archive/H1640-Fable_sanskrit-util_keyswap-v4-paid-sku-and-apple_25.07.26.md)
+(child C3 of [H1619](https://github.com/gasyoun/Uprava/blob/main/handoffs/archive/H1619-Fable_sanskrit-util_keyswap-v2-v3-v4-full-improvement_24.07.26.md)),
 authored 26-07-2026 by Fable 5 (`claude-fable-5`). License facts in §4 were checked
 against [ambuda-org/vidyut](https://github.com/ambuda-org/vidyut) the same day, not from memory.
 

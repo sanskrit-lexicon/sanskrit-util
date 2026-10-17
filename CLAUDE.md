@@ -113,7 +113,7 @@ cd js && npm test                     # full JS suite (as CI runs it)
 - **Consumption in a sibling repo without publishing:** drop a small re-export
   shim named `sanskrit_util.py` that loads this package's `py/sanskrit_util/__init__.py`
   by relative path — see the working example at
-  [`WhitneyRoots/scripts/sanskrit_util.py`](https://github.com/sanskrit-lexicon/WhitneyRoots/blob/main/scripts/sanskrit_util.py).
+  [`WhitneyRoots/scripts/sanskrit_util.py`](https://github.com/gasyoun/WhitneyRoots/blob/main/scripts/sanskrit_util.py).
   Do not copy/fork the implementation into a new repo — that's exactly the
   duplication this package exists to end.
 

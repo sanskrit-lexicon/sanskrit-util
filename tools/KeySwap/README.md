@@ -288,7 +288,7 @@ After edit: **F6** (AHK) or quit tray app and relaunch (vendor PE). Chandrabindu
 | Mac / iPhone / Chromebook | Mac app · iOS keyboard · PWA (not the PE) |
 | Need ISO r̥ / r̥̄ | `configs/iso15919.txt` or add to config |
 | Need speed like Azhagi phonetic | Enable **smart** only while typing IAST; it rewrites English (`ll`/`ss`/`sh`/`tt`). Or Keyman/Azhagi. |
-| English words get diacritics (`call`→caḷ, `English`→Eṅgliś) | You are in **smart** (or writer). Tray → **Mode: cycle**. Default since 2.9 / [H3278](https://github.com/gasyoun/Uprava/blob/main/handoffs/H3278-Grok_sanskrit-util_keyswap-cycle-only-default_21.08.26.md). |
+| English words get diacritics (`call`→caḷ, `English`→Eṅgliś) | You are in **smart** (or writer). Tray → **Mode: cycle**. Default since 2.9 / [H3278](https://github.com/gasyoun/Uprava/blob/main/handoffs/archive/H3278-Grok_sanskrit-util_keyswap-cycle-only-default_21.08.26.md). |
 | Headword check `? rate-limited` / API 429 | Cologne is throttling; local seed still ✓/✗ common words; use **Ctrl+Alt+C** in browser; expand list with `build_local_wordlist.py --from-spellcheck` |
 | Headword check offline / no Internet | Works via `data/local_headwords.txt` (seed ~1k). Full MW: `build_local_wordlist.py --from-spellcheck` or set `KEYSWAP_WORDLIST` |
 

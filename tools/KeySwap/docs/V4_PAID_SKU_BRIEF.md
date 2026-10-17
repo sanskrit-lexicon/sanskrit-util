@@ -3,9 +3,9 @@
 _Created: 26-07-2026 · Last updated: 26-07-2026_
 
 **What this is:** the decision brief that makes **V4-A ruleable** and **V4-B/C/D scopeable** —
-[H1640](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1640-Fable_sanskrit-util_keyswap-v4-paid-sku-and-apple_25.07.26.md),
+[H1640](https://github.com/gasyoun/Uprava/blob/main/handoffs/archive/H1640-Fable_sanskrit-util_keyswap-v4-paid-sku-and-apple_25.07.26.md),
 child C3 of the
-[H1619 programme](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1619-Fable_sanskrit-util_keyswap-v2-v3-v4-full-improvement_24.07.26.md).
+[H1619 programme](https://github.com/gasyoun/Uprava/blob/main/handoffs/archive/H1619-Fable_sanskrit-util_keyswap-v2-v3-v4-full-improvement_24.07.26.md).
 It presents **options for a human ruling, not decisions**: no price is chosen here, no data
 right is ruled here. Authored by Fable 5 (`claude-fable-5`).
 
@@ -146,7 +146,7 @@ rights-clear for KeySwap and is not a candidate.
 - **Org prior art:** the org already drives `vidyut.prakriya` locally — kosha's
   [H1368 derivation harness](https://github.com/gasyoun/Uprava/blob/main/handoffs/archive/H1368-Sonnet_kosha_w2a-vidyut-prakriya-derivation-harness_20.07.26.md)
   and SamudraManthanam's
-  [H906 vidyut-diff work](https://github.com/gasyoun/Uprava/blob/main/handoffs/H906-Opus_SamudraManthanam_nkrya-sa-morphology-dcs-vidyut_14.07.26.md) —
+  [H906 vidyut-diff work](https://github.com/gasyoun/Uprava/blob/main/handoffs/archive/H906-Opus_SamudraManthanam_nkrya-sa-morphology-dcs-vidyut_14.07.26.md) —
   so integration expertise exists in-house.
 - **Two integration shapes** for the execution handoff: (a) **precompute** forms tables
   offline (kosha-harness style) and ship them as a pack — keeps the paid app light, no

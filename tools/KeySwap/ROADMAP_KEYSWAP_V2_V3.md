@@ -73,7 +73,7 @@ Architecture: [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](https://github.com/sanskr
 | V3-5 | TTS | **link-out shipped** (tray "Ecosystem" ▸ Sanskrit Text-to-Speech, H1639 — replaces the former vague "SRI TTS etc." mention) | stay link-out |
 | V3-6 | Heritage segmenter | **link-out shipped** (tray "Ecosystem" ▸ Sanskrit Heritage segmenter, H1639) | optional microservice later |
 | V3-7 | Network autocomplete | **shipped** opt-in offline-first + **tray opt-in shipped** (H1639) | none — residual closed |
-| V3-8 | Morphology / forms DB | **parked** (sibling design) | **owned by v4 paid**, child C3 ([H1640](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1640-Fable_sanskrit-util_keyswap-v4-paid-sku-and-apple_25.07.26.md)), not free maximum |
+| V3-8 | Morphology / forms DB | **parked** (sibling design) | **owned by v4 paid**, child C3 ([H1640](https://github.com/gasyoun/Uprava/blob/main/handoffs/archive/H1640-Fable_sanskrit-util_keyswap-v4-paid-sku-and-apple_25.07.26.md)), not free maximum |
 
 **v3 free-heavy residual — closed 25-07-2026 (H1639):** tray opt-in for
 offline_fuzzy/network_autocomplete (Windows menu + Mac status-bar menu,
@@ -129,9 +129,9 @@ Paid SKUs must get **most** features that free/paid peers have, especially:
 
 ## Session starters
 
-v2 residual (2.9): 🔴 EXECUTED: [H1638-Sonnet_sanskrit-util_keyswap-v2-9-free-portable-residual_25.07.26.md](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1638-Sonnet_sanskrit-util_keyswap-v2-9-free-portable-residual_25.07.26.md)
+v2 residual (2.9): 🔴 EXECUTED: [H1638-Sonnet_sanskrit-util_keyswap-v2-9-free-portable-residual_25.07.26.md](https://github.com/gasyoun/Uprava/blob/main/handoffs/archive/H1638-Sonnet_sanskrit-util_keyswap-v2-9-free-portable-residual_25.07.26.md)
 
-v3 free-heavy residual: 🔴 EXECUTED: [H1639-Sonnet_sanskrit-util_keyswap-v3-free-heavy-residual_25.07.26.md](https://github.com/gasyoun/Uprava/blob/main/handoffs/H1639-Sonnet_sanskrit-util_keyswap-v3-free-heavy-residual_25.07.26.md)
+v3 free-heavy residual: 🔴 EXECUTED: [H1639-Sonnet_sanskrit-util_keyswap-v3-free-heavy-residual_25.07.26.md](https://github.com/gasyoun/Uprava/blob/main/handoffs/archive/H1639-Sonnet_sanskrit-util_keyswap-v3-free-heavy-residual_25.07.26.md)
 
 Full improvement programme (this plan’s umbrella):
 
