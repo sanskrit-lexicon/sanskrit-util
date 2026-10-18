@@ -1,4 +1,4 @@
-_Created: 15-06-2026 · Last updated: 06-09-2026_
+_Created: 15-06-2026 · Last updated: 18-10-2026_
 
 # Changelog
 
@@ -8,6 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Added a root `AGENTS.md` agent-entrypoint stub (H4634): names itself the agent entrypoint, links [CLAUDE.md](CLAUDE.md), points at the [Uprava org standard](https://github.com/gasyoun/Uprava/blob/main/AGENTS.md).
+
+## [0.13.0] - 2026-10-18
+
+### Added
+
+- **`sanskrit_util.sidecar` — the data-layer provenance gate** (H6979). One
+  record per derived layer, written by the builder itself:
+  `write_sidecar(dest, payload)` validates and writes `<layer>.meta.json`
+  atomically (UTF-8, no BOM, LF). It **refuses** a payload with no `made_by`,
+  with no consumers and no `dormant` status, `dormant` without `owner` +
+  `review_after`, `human_gold` without a `roundtrip` block that keeps
+  `rows_in == rows_out`, or with an empty `novelty`. `validate_sidecar`,
+  `sidecar_path_for` and `load_sidecar` are exported too, so a builder never
+  copies the rule. Spec: [kosha LAYER_SIDECAR_SPEC](https://github.com/gasyoun/kosha/blob/main/docs/LAYER_SIDECAR_SPEC.md).
+  The reason is D-HUB-2c "one-shot deliverables never wired to consumers": the
+  layer that nobody consumes is the normal failure, and a gate that only has a
+  passing fixture is not a gate (`py/tests/test_sidecar.py`: 17 of its 23
+  cases are refusals).
+
 ## [0.12.0] - 2026-09-06
 
 ### Fixed
