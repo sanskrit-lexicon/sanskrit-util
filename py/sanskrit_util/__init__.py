@@ -51,6 +51,18 @@ linkid_parse_target_locus(target_locus)   -> {type, tail, valid} or None
 linkid_validate_link_record(record)       -> {valid, errors}
 LINKID_ANCHOR_PREFIXES / LINKID_TARGET_PREFIXES / LINKID_LINK_TYPES / LINKID_MATCH_METHODS
 
+data-layer sidecar (H6979) — the provenance gate beside every derived layer. A
+layer with no consumer is not an error, but it must SAY so (`status: dormant`
+plus `owner` + `review_after`), and no layer is written without a `made_by`:
+write_sidecar(dest, payload)   validate + write <layer>.meta.json atomically;
+                               REFUSES a payload with no made_by, no consumers
+                               (unless dormant), dormant without owner+date,
+                               human_gold without roundtrip, or no novelty
+validate_sidecar(payload)      -> list of contract problems (empty == valid)
+sidecar_path_for(output)       -> the sidecar path for a builder artifact
+load_sidecar(path)             -> (payload, problems)
+SIDECAR_SUFFIX / MADE_BY_VALUES / STATUS_VALUES / CONSUMER_KINDS
+
 Pick the right key:
   - norm / nfold        : reversible, diacritic-insensitive (search & index lookup)
   - form_key            : compare *generated* forms vs *recorded* forms (length matters)
@@ -59,7 +71,7 @@ Pick the right key:
 import re
 import unicodedata
 
-__version__ = "0.12.0"
+__version__ = "0.13.0"
 
 __all__ = [
     "to_slp1", "from_slp1", "to_roman", "deva_to_iast", "deva_to_slp1", "iast_to_devanagari",
@@ -81,7 +93,17 @@ __all__ = [
     "linkid_validate_link_record",
     "LINKID_ANCHOR_PREFIXES", "LINKID_TARGET_PREFIXES",
     "LINKID_LINK_TYPES", "LINKID_MATCH_METHODS",
+    # data-layer sidecar (H6979): the provenance gate every derived layer passes
+    "write_sidecar", "validate_sidecar", "sidecar_path_for", "load_sidecar",
+    "SidecarError", "SIDECAR_SUFFIX", "MADE_BY_VALUES", "STATUS_VALUES",
+    "CONSUMER_KINDS",
 ]
+
+# ---- data-layer sidecar (H6979): re-exported so builders import one package ----
+from .sidecar import (  # noqa: E402
+    CONSUMER_KINDS, MADE_BY_VALUES, SIDECAR_SUFFIX, STATUS_VALUES, SidecarError,
+    load_sidecar, sidecar_path_for, validate_sidecar, write_sidecar,
+)
 
 # ---- IAST -> SLP1 (longest-key-first; aspirates + diphthongs are digraphs) ----
 _SLP1 = {
