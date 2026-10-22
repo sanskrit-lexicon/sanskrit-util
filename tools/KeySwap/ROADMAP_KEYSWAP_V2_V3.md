@@ -1,5 +1,9 @@
 # KeySwap product roadmap — **v2 free portable** · **v3 heavy open** · **v4 paid full**
 
+> **Wave-2 verdict 22-10-2026 (H7126):** retained in place — v2/v3 shipped lanes live in the keyswap-feature skill; v4 paid horizon is gated product prose (no live H###), kept as the product frame.
+
+
+
 _Created: 24-07-2026 · Last updated: 05-09-2026_  
 _Source: [SIMILARS_COMPARISON.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/SIMILARS_COMPARISON.md) peer survey + shipped 2.0–2.9 + V3-2/V3-7_  
 _Model: Grok 4.5 (`grok-4.5`) · v3 design: [docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools/KeySwap/docs/KEYSWAP_V3_PLUGIN_ARCHITECTURE.md) · 2.9 residual (H1638): Fable 5 (`claude-fable-5`) · v3 free-heavy residual (H1639): Sonnet 5 (`claude-sonnet-5`)_
