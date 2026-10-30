@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-_Created: 03-07-2026 · Last updated: 09-10-2026 (H5885 truth refresh: PyPI publish as cdsl-sanskrit-util)_
+_Created: 03-07-2026 · Last updated: 30-10-2026 (H7474 truth refresh: version facts corrected to 0.13.0 + tag state, `f821-gate.yml` added to CI table, commands/paths verified)_
 
 **PyPI packaging (09-10-2026, #80):** the Python port publishes to PyPI as
 **`cdsl-sanskrit-util`** (the `sanskrit-util` name is taken there; the import
@@ -60,6 +60,7 @@ cd js && npm test                     # full JS suite (as CI runs it)
 | `ci.yml` | push to `main`, PR | Installs both ports, runs Python pitfall+vector tests, regenerates `vectors.json` and the browser global build expecting **no diff** (staleness gate), runs JS tests, runs the cross-language adversarial check |
 | `changelog-lint.yml` | push to `main`/`master`, PR | Duplicate-bullet guard: `python scripts/changelog_duplicate_bullets.py` (copy of the github-spine changelog guard — do not fork) |
 | `dependabot-auto-merge.yml` | Dependabot PRs | Auto-merges dependency bumps once checks pass |
+| `f821-gate.yml` | push to `main`/`master`, PR | Undefined-name (F821) ruff gate, ruff 0.16.5 pinned (H7243) |
 
 ## Conventions
 
@@ -108,8 +109,9 @@ cd js && npm test                     # full JS suite (as CI runs it)
   against the spec's canonical validator, `kosha/scripts/typed_link_lint.py` +
   `concordance_core.py`, by `tools/gen_vectors.py`'s `linkid_donor_regression()` — a
   Type-D builder should call these, not re-roll the grammar per pilot. Library package
-  versions are **0.12.0** (`py/pyproject.toml`, `js/package.json`, `__version__`),
-  matching the `v0.12.0` GitHub release tag. Bump all three in the same commit.
+  versions are **0.13.0** (`py/pyproject.toml`, `js/package.json`, `__version__` — all
+  three in sync; changelog 0.13.0 dated 2026-10-18, the `v0.13.0` GitHub release tag was
+  not yet cut at this refresh, latest tag `v0.12.0`). Bump all three in the same commit.
 - **Consumption in a sibling repo without publishing:** drop a small re-export
   shim named `sanskrit_util.py` that loads this package's `py/sanskrit_util/__init__.py`
   by relative path — see the working example at
