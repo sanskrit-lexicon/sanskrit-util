@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Nightly bug hunt 07-11-2026 ([BUGHUNT-FINDINGS-sanskrit-util-07.11.2026.md](BUGHUNT-FINDINGS-sanskrit-util-07.11.2026.md)): 0 HIGH · 2 MEDIUM · 5 LOW, report-only (no HIGH code bug → nothing auto-fixed; no committed secrets → no GTD row). MEDIUMs: Python linkid/sidecar validators accept trailing-newline tails the JS twin rejects (`$` vs `\Z` anchor class); `detect_scheme()` misroutes canonical ITRANS to Velthuis so `--from auto` emits wrong transliteration. All suites green at 67e04e1 (pytest 54, node 3, KeySwap 120, crosscheck 546 checks, VCR 3/3).
+
 - Added a root `AGENTS.md` agent-entrypoint stub (H4634): names itself the agent entrypoint, links [CLAUDE.md](CLAUDE.md), points at the [Uprava org standard](https://github.com/gasyoun/Uprava/blob/main/AGENTS.md).
 
 ## [0.13.0] - 2026-10-18
