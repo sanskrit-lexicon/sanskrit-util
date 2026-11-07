@@ -4,7 +4,7 @@ _Created: 07-11-2026 · Last updated: 07-11-2026_
 
 Nightly one-repo bug hunt (MG ruling 26-09-2026: nightly, one repo, auto-fix HIGH). Executor: GLM 5.3 Flash (zai-coding-plan/glm-5.3-flash). Scope: CODE only — [py/](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/py), [js/](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/js), [tools/](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/tools) (incl. KeySwap core + plugins + PWA), [scripts/](https://github.com/sanskrit-lexicon/sanskrit-util/blob/main/scripts); vendored copies, lockfiles, node_modules, data giants skipped. Every finding below carries a live probe I actually ran on the 67e04e1 tree.
 
-**Elapsed:** 03:01:00 → 03:33 +0300 (~32 min) · hunt ~29 min, landing ~3 min.
+**Elapsed:** 03:01:00 → 03:11 +0300 (~10 min wall) — hunt ~7 min, land+merge ~3 min. (An earlier draft over-estimated at ~32 min; corrected same pass after the merge timestamp exposed it.)
 
 **Verdict: 0 HIGH · 2 MEDIUM · 5 LOW.** No HIGH code bugs → nothing auto-fixed this run (MEDIUM/LOW are report-only per the night rules). No committed secrets or credential/infra HIGHs → no GTD `@DO` row minted.
 
