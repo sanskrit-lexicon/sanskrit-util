@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-_Created: 03-07-2026 · Last updated: 30-10-2026 (H7474 truth refresh: version facts corrected to 0.13.0 + tag state, `f821-gate.yml` added to CI table, commands/paths verified)_
+_Created: 03-07-2026 · Last updated: 07-11-2026 (H7749: `py/sanskrit_util/sidecar.py` added to the key-files table, `dependabot-auto-merge.yml` CI row tightened to non-major-only)_
 
 **PyPI packaging (09-10-2026, #80):** the Python port publishes to PyPI as
 **`cdsl-sanskrit-util`** (the `sanskrit-util` name is taken there; the import
@@ -42,6 +42,7 @@ cd js && npm test                     # full JS suite (as CI runs it)
 | Path | Purpose |
 |---|---|
 | `py/sanskrit_util/__init__.py` | Python implementation, importable as `sanskrit_util` |
+| `py/sanskrit_util/sidecar.py` | Data-layer provenance sidecar (H6979): `write_sidecar` / `validate_sidecar` / `sidecar_path_for` / `load_sidecar` — the `<layer>.meta.json` gate beside every derived layer |
 | `py/tests/` | Python unit + golden-vector tests |
 | `js/index.mjs` | JS implementation (ESM) |
 | `js/sanskrit-util.global.js` | **Generated** browser global build (`window.SanskritUtil`) — do not hand-edit, see below |
@@ -59,7 +60,7 @@ cd js && npm test                     # full JS suite (as CI runs it)
 |---|---|---|
 | `ci.yml` | push to `main`, PR | Installs both ports, runs Python pitfall+vector tests, regenerates `vectors.json` and the browser global build expecting **no diff** (staleness gate), runs JS tests, runs the cross-language adversarial check |
 | `changelog-lint.yml` | push to `main`/`master`, PR | Duplicate-bullet guard: `python scripts/changelog_duplicate_bullets.py` (copy of the github-spine changelog guard — do not fork) |
-| `dependabot-auto-merge.yml` | Dependabot PRs | Auto-merges dependency bumps once checks pass |
+| `dependabot-auto-merge.yml` | Dependabot PRs | Auto-merges non-major dependency bumps once checks pass; majors left open for human review |
 | `f821-gate.yml` | push to `main`/`master`, PR | Undefined-name (F821) ruff gate, ruff 0.16.5 pinned (H7243) |
 
 ## Conventions

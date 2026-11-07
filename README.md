@@ -170,6 +170,16 @@ linkid_validate_link_record({
 })   # {'valid': True, 'errors': []}
 ```
 
+### data-layer sidecar — provenance beside every derived layer (H6979)
+
+Every derived layer writes a `<layer>.meta.json` beside itself; `write_sidecar` REFUSES a
+payload with no `made_by`, no consumers (unless declared `dormant` with `owner` +
+`review_after`), no `roundtrip` for `human_gold`, or no `novelty`.
+
+| Symbol | Does |
+|---|---|
+| `write_sidecar(dest, payload)` `validate_sidecar(payload)` `sidecar_path_for(output)` `load_sidecar(path)` | validate + atomically write / validate (→ list of contract problems, empty == valid) / locate / load the provenance sidecar |
+
 ## Use it
 
 ### Python
@@ -247,7 +257,9 @@ over the full alphabet plus [`vectors/slp1_roundtrip_sample.txt`](https://github
 ```
 sanskrit-util/
   py/sanskrit_util/__init__.py   Python implementation (importable as `sanskrit_util`)
+  py/sanskrit_util/sidecar.py    provenance sidecar (H6979): write/validate/load `<layer>.meta.json` beside every derived layer
   py/tests/                      unit + vector tests
+  py/tests/test_sidecar.py       sidecar contract tests
   js/index.mjs                   JS implementation (ESM)
   js/sanskrit-util.global.js     generated browser global build (window.SanskritUtil)
   js/build-global.mjs            regenerates the global build from index.mjs (--check in CI)
