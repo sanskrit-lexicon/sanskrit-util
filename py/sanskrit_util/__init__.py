@@ -14,7 +14,8 @@ to_roman(nums)           [1,2,...] gaṇa numbers -> ['I','II',...]
 deva_to_iast(s)          Devanāgarī -> IAST
 deva_to_slp1(s)          Devanāgarī -> SLP1 (direct; ळ -> L, round-trip partner of from_slp1)
 iast_to_devanagari(s)    IAST -> Devanāgarī (real transcode: to_slp1 -> slp1_to_devanagari)
-norm(s)                  EXACT diacritic-insensitive lookup key (Devanāgarī-aware)
+norm(s)                  exact-per-spelling, diacritic-insensitive lookup key
+                         (Devanāgarī-aware) — LOSSY for lexical identity, see norm()
 nfold(s)                 norm() + every nasal folded to 'n' (recall fallback)
 form_key(s)              length-PRESERVING comparison key (ā≠a) for verb/PPP form matching
 normalize_sanskrit(s)    LOSSY ASCII-folding search key (ā→a, ś→s, ṃ→m …) — v3-explorer style
@@ -330,8 +331,28 @@ _WS_RUN = re.compile('[' + re.escape(_WS_CHARS) + ']+')
 
 
 def norm(s):
-    """EXACT diacritic-insensitive lookup key: (Devanāgarī->IAST if present), NFD, drop all
-    combining marks, NFC, lower, strip. Mirror of reader.js norm()."""
+    """Exact-per-spelling, diacritic-insensitive lookup key: (Devanāgarī->IAST if present),
+    NFD, drop all combining marks, NFC, lower, strip. Mirror of reader.js norm().
+
+    "EXACT" means exact *for one spelling once its diacritics are dropped* — it is NOT
+    lexical identity. Dropping the combining marks folds the sibilants and the vowel length
+    (and the acute accent NFD leaves behind on `ś`), so::
+
+        norm("śiva") == norm("siva") == "siva"        # intentional, lossy
+        norm("krānta") == norm("kranta") == "kranta"
+
+    That lossiness is the point of the key: a diacritic-less query still reaches the
+    diacritic-full form in a search/index. Choose the OPERATION, not just a plausible name:
+
+      * exact lexical lookup where the distinction matters -> ``to_slp1()`` / ``slp1_norm()``.
+        SLP1 case is phonemic, so ``to_slp1("śiva") == "Siva" != "siva" == to_slp1("siva")``
+        and the minimal pair survives.
+      * folded recall (deliberately lossy) -> ``norm()``, then ``nfold()`` for nasals or
+        ``normalize_sanskrit()`` / ``slp1_simplify()`` for the ASCII extreme.
+
+    Never join, dedupe or grade lexemes on a folded key — see github-spine SHARED_CODE.md
+    row 2 and Uprava DEAD_ENDS.md #7.
+    """
     s = s or ''
     if _DEVA_RE.search(s):
         s = deva_to_iast(s)
@@ -437,7 +458,11 @@ def strip_slp1_accents(slp1):
 def slp1_norm(slp1):
     """Canonical CDSL SLP1 HEADWORD key: strip accent marks, drop the trailing homonym-index
     digits, collapse whitespace. SLP1 case is PRESERVED (phonemic). This is the shared form of
-    the per-repo normalize_lemma / normalizeSlp1Lemma headword normalizers."""
+    the per-repo normalize_lemma / normalizeSlp1Lemma headword normalizers.
+
+    The EXACT side of the exact-vs-folded split: no sibilant/length folding happens here, so
+    `Siva` (śiva) and `siva` stay two different keys — where that distinction matters, key
+    with this (or `to_slp1` on the IAST side), not with `norm()`."""
     s = strip_slp1_accents(slp1 or '')
     s = _SLP1_TRAILING_NUM.sub('', s)
     return _WS_RUN.sub(' ', s).strip(_WS_CHARS)

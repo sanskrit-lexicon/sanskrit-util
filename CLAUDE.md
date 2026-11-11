@@ -72,11 +72,14 @@ cd js && npm test                     # full JS suite (as CI runs it)
   donor risks silently diverging from the repo everyone else still points at.
 - **Five normalization keys exist on purpose, each for a different job** — do
   not collapse them or add a sixth without reading the README's "Which key do
-  I want?" section: `norm` (search/index lookup, diacritic-insensitive but
-  exact), `nfold` (recall fallback, nasal-folded), `form_key`
+  I want?" and "Exact lookup vs folded recall" sections: `norm` (search/index
+  lookup, diacritic-insensitive — exact *per spelling after* dropping diacritics,
+  so `norm("śiva") == norm("siva")`, NOT lexical identity), `nfold` (recall
+  fallback, nasal-folded), `form_key`
   (length-preserving form comparison), `normalize_sanskrit` (lossy ASCII fold,
   kept only for v3-explorer parity), plus the SLP1-side family
   (`slp1_norm`/`slp1_form_key`/`slp1_simplify`) for CDSL SLP1-native headwords.
+  Exact lexical joins use `to_slp1()`/`slp1_norm()` (SLP1 case is phonemic).
 - **`form_key`'s nasal fold is POSITIONAL, and changing it changes stored keys in ~12 repos.**
   Anusvāra folds to `m` word-finally (0.11.0, H3911) and before a labial `p ph b bh m`
   (0.12.0, H3975) — those are the two positions where the homorganic nasal actually *is* `m`;
