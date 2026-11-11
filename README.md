@@ -1,6 +1,6 @@
 # sanskrit-util
 
-_Created: 15-06-2026 · Last updated: 06-09-2026_
+_Created: 15-06-2026 · Last updated: 11-11-2026_
 
 One **canonical** implementation of the Sanskrit string helpers that were being re-typed in
 ~20+ Sanskrit-Lexicon / CDSL repos: IAST ⇄ SLP1 ⇄ Devanāgarī transcoding plus the
@@ -57,7 +57,7 @@ batch skill (detect stale copies, re-copy, byte-diff verify, one PR per consumer
 | `deva_to_iast(s)` | Devanāgarī → IAST (inherent-`a` + virāma aware) |
 | `deva_to_slp1(s)` | Devanāgarī → SLP1 (direct; `ळ`→`L`, not `x`) — round-trip partner of `from_slp1` |
 | `iast_to_devanagari(s)` | IAST → Devanāgarī — real transcode (virāma/mātrā aware), implemented as `slp1_to_devanagari(to_slp1(s))` |
-| `norm(s)` | **exact** diacritic-insensitive key — Devanāgarī-aware; lookup/index |
+| `norm(s)` | **exact-per-spelling** diacritic-insensitive key — Devanāgarī-aware; search/index. ⚠️ exact *after* dropping diacritics, **not** lexical identity: `norm("śiva") == norm("siva")` — see [Exact lookup vs folded recall](#exact-lookup-vs-folded-recall--pick-the-operation-not-the-name) |
 | `nfold(s)` | `norm()` + every nasal folded to `n` — recall fallback only |
 | `form_key(s)` | **length-preserving** compare key (`ā`≠`a`) — generated-vs-recorded forms |
 | `normalize_sanskrit(s)` | **lossy** ASCII fold (`ā`→`a`, `ś`→`s`, `ṃ`→`m`) — v3-explorer parity |
@@ -94,10 +94,38 @@ SLP1 behind an opt-in toggle for those who edit source.
 | `source_line_to_iast(text, code)` | one raw source line → IAST: MW `<s>…</s>`, PW/PWG/AP/WIL `{#…#}` (meaning `{%…%}` kept), VCP/SKD whole-line prose; strips tags, `[Page…]`, the `¦` separator. `{#aBAga#}¦, <lex>f.</lex>` → `abhāga, f.` |
 | `source_text_to_iast(text, code)` | multi-line snippet → IAST, line by line (preserves breaks) |
 
+### Exact lookup vs folded recall — pick the operation, not the name
+
+Two different jobs hide behind "normalize this query", and picking by function name alone
+silently changes results:
+
+| | Exact lexical lookup | Folded recall |
+|---|---|---|
+| Keeps `ś`/`s`, `ṣ`/`s`, vowel length? | **yes** | **no — by design** |
+| Use | `to_slp1()` on the IAST side + `slp1_norm()` on the SLP1 side (SLP1 case is phonemic: `S`=ś ≠ `s`) | `norm()`, then `nfold()` (nasals) · `normalize_sanskrit()` / `slp1_simplify()` (ASCII extreme) |
+| Use when | joining, deduping, minimal pairs, exact dictionary keys | search / index: a bare query must still reach the diacritic-full form |
+
+`norm()`'s "exact" means exact *for one spelling once its diacritics are dropped* — it is
+**not** lexical identity, and the loss is intentional (exact column = the exercised csl-atlas
+consumer `normalizeLookupQuery().normalized`; folded column = canonical `norm()`):
+
+| input | exact SLP1 (`to_slp1`) | folded (`norm`) |
+|---|---|---|
+| `rāma` | `rAma` | `rama` |
+| `śiva` | `Siva` | `siva` |
+| `siva` | `siva` | `siva` |
+| `guṇa` | `guRa` | `guna` |
+| `rAma` | `rAma` | `rama` |
+
+So `norm("śiva") == norm("siva") == "siva"`: the `śiva`/`siva` minimal pair survives an exact
+lookup and disappears under folding. Never join, dedupe or grade lexemes on a folded key —
+[`SHARED_CODE.md`](https://github.com/gasyoun/github-spine/blob/main/SHARED_CODE.md) row 2
+and [Uprava `DEAD_ENDS.md` #7](https://github.com/gasyoun/Uprava/blob/main/DEAD_ENDS.md#7-relaxed-tier-length--and-sibilant-folding-concordance-matching--refuted).
+
 ### Which key do I want?
 
 - **Search / index lookup** → `norm` (and `nfold` as a fallback alias). Reversible-ish,
-  diacritic-insensitive, keeps `am`/`an` distinct on the exact key.
+  diacritic-insensitive, keeps `am`/`an` distinct (only `nfold` folds the nasals).
 - **Comparing two word forms** (vidyut output vs warnemyr vs DCS) → `form_key`. Length is
   meaningful: `krānta` (PPP) ≠ `kranta`; anusvāra folds to its homorganic nasal — `n` in
   general (`krāṃta == krānta`), but **`m` word-finally and before a labial**, because that is

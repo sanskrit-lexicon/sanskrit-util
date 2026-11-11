@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- **Exact lookup vs folded recall documented at the reuse entry points** (H8042): `norm()`'s
+  "EXACT" wording now says what the key does and does not preserve — `norm("śiva") ==
+  norm("siva") == "siva"` is intentional lossy search-key behaviour, not a bug — and points
+  exact lexical joins at `to_slp1()` / `slp1_norm()` (SLP1 case is phonemic, so `Siva` ≠
+  `siva`). README gains an "Exact lookup vs folded recall" section with the exercised
+  `rāma/śiva/siva/guṇa/rAma` table; `py` + `js` docstrings/comments mirror it. **Docs only —
+  no behaviour change** (pytest, `npm test`, `gen_vectors` freshness, `build-global --check`,
+  `crosscheck.py` all green).
+
 - Nightly bug hunt 07-11-2026 ([BUGHUNT-FINDINGS-sanskrit-util-07.11.2026.md](BUGHUNT-FINDINGS-sanskrit-util-07.11.2026.md)): 0 HIGH · 2 MEDIUM · 5 LOW, report-only (no HIGH code bug → nothing auto-fixed; no committed secrets → no GTD row). MEDIUMs: Python linkid/sidecar validators accept trailing-newline tails the JS twin rejects (`$` vs `\Z` anchor class); `detect_scheme()` misroutes canonical ITRANS to Velthuis so `--from auto` emits wrong transliteration. All suites green at 67e04e1 (pytest 54, node 3, KeySwap 120, crosscheck 546 checks, VCR 3/3).
 
 - Added a root `AGENTS.md` agent-entrypoint stub (H4634): names itself the agent entrypoint, links [CLAUDE.md](CLAUDE.md), points at the [Uprava org standard](https://github.com/gasyoun/Uprava/blob/main/AGENTS.md).

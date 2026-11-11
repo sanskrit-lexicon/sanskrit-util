@@ -167,12 +167,24 @@ const WS_TRIM_RE = new RegExp('^[' + WS + ']+|[' + WS + ']+$', 'g');
 const WS_RUN_RE = new RegExp('[' + WS + ']+', 'g');
 const wstrim = (s) => s.replace(WS_TRIM_RE, '');
 
+// Exact-per-spelling, diacritic-insensitive lookup key (mirror of py norm()).
+// "EXACT" = exact for one spelling AFTER its diacritics are dropped — NOT lexical identity:
+// NFD + drop-combining-marks folds the sibilants and vowel length, so
+//   norm("śiva") === norm("siva") === "siva"        (intentional, lossy)
+//   norm("krānta") === norm("kranta") === "kranta"
+// That is the search/index key (a diacritic-less query reaches the diacritic-full form).
+// Exact lexical lookup where the distinction matters -> to_slp1()/slp1_norm(), whose SLP1
+// case is phonemic: to_slp1("śiva") === "Siva" !== "siva". Folded recall -> norm()/nfold(),
+// with normalize_sanskrit()/slp1_simplify() the ASCII extremes.
+// Never join or dedupe lexemes on a folded key (github-spine SHARED_CODE row 2,
+// Uprava DEAD_ENDS #7).
 export function norm(s) {
   s = s || '';
   if (DEVA_RE.test(s)) s = deva_to_iast(s);
   return wstrim(s.normalize('NFD').replace(/\p{Mn}/gu, '').normalize('NFC').toLowerCase());
 }
 
+// NASAL-FOLDED recall key: norm() + every nasal -> 'n'. FALLBACK index only (py nfold()).
 export function nfold(s) {
   return norm(s).replace(/[mn]/g, 'n');
 }
