@@ -1,4 +1,4 @@
-_Created: 15-06-2026 · Last updated: 18-10-2026_
+_Created: 15-06-2026 · Last updated: 18-11-2026_
 
 # Changelog
 
@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+<!-- entries land in changelog_queue/ -- appended via tools/changelog_queue_consume.py, consumed by cut_release.py at release-cut (H3355); direct bullets here are hook-blocked -->
 
+## [0.12.1] - 2026-11-18
 - **Exact lookup vs folded recall documented at the reuse entry points** (H8042): `norm()`'s
   "EXACT" wording now says what the key does and does not preserve — `norm("śiva") ==
   norm("siva") == "siva"` is intentional lossy search-key behaviour, not a bug — and points
